@@ -1,5 +1,5 @@
 {
-  "enabled": true,
+  "enabled": false,
   "loginCommand": "/login 123456",
   "delay": 3000
 }

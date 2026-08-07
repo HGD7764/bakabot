@@ -1,0 +1,18 @@
+{
+  "bot": {
+    "host": "hgd7764.click",
+    "port": 25565,
+    "username": "Bot",
+    "auth" : "microsoft"
+  },
+  "commandPrefix": "!",
+  "commandTrigger": "whisper",
+  "plugins": [
+    "auto-login",
+    "core-commands",
+    "navigator",
+    "interactor",
+    "chat",
+    "web-manager"
+  ]
+}

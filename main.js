@@ -4,6 +4,7 @@ const mineflayer = require('mineflayer');
 const fs = require('fs');
 const path = require('path');
 const { EventEmitter } = require('events');
+const { CommandManager } = require('./command-manager');
 
 class PermissionManager {
   constructor(filePath) {
@@ -42,64 +43,22 @@ class PermissionManager {
     }
     return 0; // Guest level
   }
-}
-
-// --- 修改: CommandManager ---
-// 我们需要给 CommandManager 添加权限检查逻辑
-class CommandManager {
-  constructor(bot, permissions, prefix = '!') { // 注入 PermissionManager
-    this.bot = bot;
-    this.permissions = permissions; // 保存权限管理器实例
-    this.prefix = prefix;
-    this.commands = new Map();
-    this.bot.on('chat', (username, message) => this.handleMessage(username, message));
-  }
-
-  handleMessage(username, message) {
-    if (this.bot.username === username || !message.startsWith(this.prefix)) return;
-    
-    const args = message.slice(this.prefix.length).trim().split(/ +/);
-    const commandName = args.shift().toLowerCase();
-    const command = this.commands.get(commandName);
-
-    if (command) {
-      // --- 权限检查 ---
-      const userLevel = this.permissions.getLevel(username);
-      if (userLevel < command.permissionLevel) {
-        this.bot.chat(`> 指令错误：权限不足。需要等级 ${command.permissionLevel}，你的等级为 ${userLevel}。`);
-        return;
-      }
-      
-      try {
-        command.execute(username, args);
-      } catch (err) {
-        console.error(`执行命令 '${commandName}' 时出错:`, err);
-        this.bot.chat('> 系统异常：指令执行失败。');
-      }
-    } else {
-      this.bot.chat('> 指令错误：未知指令。');
-    }
-  }
 
   /**
-   * 注册一个新命令
-   * @param {object} options - 命令选项
-   * @param {string} options.name - 命令名称
-   * @param {number} [options.permissionLevel=0] - 所需最低权限等级
-   * @param {string} [options.description=''] - 命令描述
-   * @param {function(string, string[]): void} options.execute - 执行函数
+   * 将当前权限保存到文件（供网页管理端调用）
+   * @returns {boolean} 是否保存成功
    */
-  register(options) {
-    const { name, permissionLevel = 0, description = '', execute } = options;
-    if (this.commands.has(name)) {
-      console.warn(`[CommandManager] 警告: 命令 '${name}' 已被注册，将被覆盖。`);
+  save() {
+    try {
+      fs.writeFileSync(this.filePath, JSON.stringify(this.permissions, null, 2));
+      console.log('[PermissionManager] 权限文件已保存。');
+      return true;
+    } catch (err) {
+      console.error('[PermissionManager] 保存权限文件时出错:', err);
+      return false;
     }
-    this.commands.set(name, { name, permissionLevel, description, execute });
-    console.log(`[CommandManager] 已注册命令: ${this.prefix}${name} (权限等级: ${permissionLevel})`);
   }
 }
-
-
 
 // --- 1. 加载配置 ---
 const config = JSON.parse(fs.readFileSync('config.json', 'utf8'));
@@ -114,6 +73,54 @@ const context = {
 };
 context.permissions = new PermissionManager(path.join(__dirname, 'permissions.json'));
 
+// --- 新增: 预创建 Web 管理注册表 ---
+// 在插件加载前创建，保证任何插件（无论加载顺序）都能通过 context.webManager
+// 注册自己的磁贴和自定义 API 端点；web-manager 插件启动后统一挂载。
+context.webManager = {
+  tiles: new Map(),       // name -> {name, title, description, endpoints}
+  endpoints: new Map(),   // 'METHOD /path' -> {method, path, handler, pluginName}
+
+  registerTile({ name, title = name, description = '', endpoints = {} }) {
+    if (typeof name !== 'string' || !name) throw new Error('registerTile: name 必须是非空字符串');
+    if (typeof endpoints !== 'object' || endpoints === null) throw new Error('registerTile: endpoints 必须是对象');
+    // 立即挂载磁贴端点：GET /api/plugins/<name>/<rel>，与加载顺序无关。
+    // 端点值支持两种写法：直接给 handler 函数，或 { handler, label, dropdown } 对象
+    // （label = 磁贴上按钮的显示文字；dropdown = 调用前先选一个值的下拉框，网页端
+    //   自动从 dropdown.source 拉取选项，选中的值作为 ?<param>=<value> 拼到请求上）。
+    for (const [rel, spec] of Object.entries(endpoints)) {
+      const full = `/api/plugins/${name}${rel.startsWith('/') ? rel : '/' + rel}`;
+      const handler = typeof spec === 'function' ? spec : (spec && spec.handler);
+      if (typeof handler !== 'function') throw new Error(`registerTile: 端点 '${rel}' 必须是函数或 { handler, label, dropdown } 对象`);
+      this.registerEndpoint('GET', full, handler, name, {
+        label: (typeof spec === 'object' && spec && spec.label) || null,
+        dropdown: (typeof spec === 'object' && spec && spec.dropdown) || null,
+      });
+    }
+    this.tiles.set(name, { name, title, description });
+  },
+
+  registerEndpoint(method, path, handler, pluginName = '', meta = {}) {
+    method = String(method).toUpperCase();
+    if (!['GET', 'POST', 'PUT', 'DELETE'].includes(method)) throw new Error(`registerEndpoint: 不支持的方法 ${method}`);
+    if (typeof path !== 'string' || !path.startsWith('/api/')) throw new Error('registerEndpoint: path 必须以 /api/ 开头');
+    if (typeof handler !== 'function') throw new Error('registerEndpoint: handler 必须是函数');
+    this.endpoints.set(`${method} ${path}`, { method, path, handler, pluginName, label: meta.label || null, dropdown: meta.dropdown || null });
+  },
+
+  // 内部使用：重载插件前清理该插件的旧磁贴与端点
+  _clearForPlugin(pluginName) {
+    for (const [key, ep] of this.endpoints) {
+      if (ep.pluginName === pluginName) this.endpoints.delete(key);
+    }
+    this.tiles.delete(pluginName);
+  },
+
+  // 内部使用：返回某插件注册的端点列表
+  _endpointsFor(pluginName) {
+    return Array.from(this.endpoints.values()).filter(ep => ep.pluginName === pluginName);
+  },
+};
+
 // --- 3. 创建 Mineflayer Bot 实例 ---
 console.log('正在连接到服务器...');
 try {
@@ -126,7 +133,9 @@ const bot = context.bot;
 
 // --- 新增: 实例化并挂载命令管理器 ---
 // 在 bot 实例化后，插件加载前，创建 CommandManager
-context.commands = new CommandManager(bot, context.permissions, config.commandPrefix || '!');
+// 触发方式由 config.commandTrigger 控制: 'whisper'（私信，默认）/ 'chat'（公屏）
+const commandTrigger = config.commandTrigger === 'chat' ? 'chat' : 'whisper';
+context.commands = new CommandManager(bot, context.permissions, config.commandPrefix || '!', commandTrigger);
 
 // --- 4. 插件加载器 (新版本) ---
 const pluginsDir = path.join(__dirname, 'plugins');

@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BakaBot 管理界面</title>
+<style>
+  :root {
+    --bg: #0f1115; --card: #1a1d24; --border: #2a2e38;
+    --text: #e6e8ee; --muted: #8b90a0; --accent: #4f8cff;
+    --ok: #3fb96b; --warn: #e0a53c; --err: #e05c5c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: system-ui, "Microsoft YaHei", sans-serif; padding: 24px; }
+  h1 { font-size: 22px; }
+  h2 { font-size: 17px; margin-bottom: 12px; }
+  header { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 22px; }
+  .status { color: var(--muted); font-size: 13px; }
+  .badge { padding: 2px 9px; border-radius: 10px; font-size: 12px; }
+  .badge.ok { background: rgba(63,185,107,.15); color: var(--ok); }
+  .badge.warn { background: rgba(224,165,60,.15); color: var(--warn); }
+  .badge.muted { background: rgba(139,144,160,.15); color: var(--muted); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+  .tile { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+  .tile-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .tile-title { font-size: 15px; font-weight: 600; word-break: break-all; }
+  .tile-name { color: var(--muted); font-size: 12px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .tile-desc { color: var(--muted); font-size: 12px; flex: 1; word-break: break-all; }
+  .tile-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+  .ep-result { font-family: Consolas, monospace; font-size: 11px; color: var(--muted); background: #12141a; border: 1px solid var(--border); border-radius: 6px; padding: 6px; max-height: 120px; overflow: auto; white-space: pre-wrap; word-break: break-all; }
+  .terminal { background: #0b0d11; border: 1px solid var(--border); border-radius: 8px; padding: 10px; height: 280px; overflow-y: auto; font-family: Consolas, monospace; font-size: 12.5px; line-height: 1.7; }
+  .terminal .line { white-space: pre-wrap; word-break: break-all; }
+  .terminal .line .time { color: #565b68; margin-right: 8px; }
+  .terminal .line.in { color: #d8dce6; }
+  .terminal .line.out { color: var(--accent); }
+  .terminal .line.whisper { color: var(--warn); }
+  .terminal .line.system { color: var(--muted); font-style: italic; }
+  .terminal-input { display: flex; gap: 8px; margin-top: 8px; }
+  .terminal-input input { flex: 1; background: #12141a; color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; font-size: 13px; }
+  button { background: var(--accent); color: #fff; border: none; border-radius: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer; }
+  button:hover { filter: brightness(1.15); }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  button.secondary { background: #2a2e38; color: var(--text); }
+  button.danger { background: var(--err); }
+  .section { margin-top: 28px; }
+  .hint { color: var(--muted); font-size: 12px; margin: 4px 0 10px; }
+  textarea { width: 100%; background: #12141a; color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 10px; font-family: Consolas, monospace; font-size: 13px; resize: vertical; }
+  #permEditor { min-height: 160px; }
+  #configEditor { min-height: 420px; }
+  select.ep-select { background: #2a2e38; color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 5px 8px; font-size: 13px; max-width: 130px; }
+  .modal { position: fixed; inset: 0; background: rgba(0,0,0,.65); display: none; align-items: center; justify-content: center; z-index: 10; }
+  .modal.open { display: flex; }
+  .modal-box { background: var(--card); border: 1px solid var(--border); border-radius: 10px; width: min(860px, 94vw); padding: 18px; }
+  .modal-box h3 { margin-bottom: 6px; }
+  .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
+  #toast { position: fixed; bottom: 22px; right: 22px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; font-size: 13px; max-width: 70vw; display: none; z-index: 20; }
+  #toast.show { display: block; }
+  #toast.ok { border-color: var(--ok); color: var(--ok); }
+  #toast.err { border-color: var(--err); color: var(--err); }
+</style>
+</head>
+<body>
+  <header>
+    <h1>🧊 BakaBot 管理界面</h1>
+    <span class="status" id="statusLine">连接中...</span>
+    <span id="pm2Badge" class="badge ok" style="display:none">PM2 托管 · 重启后自动恢复</span>
+    <span id="noSupervisorBadge" class="badge warn" style="display:none">未检测到进程管理器 · 重启后需手动启动</span>
+    <div style="margin-left:auto; display:flex; gap:8px;">
+      <button onclick="refreshAll()">🔄 刷新</button>
+      <button class="secondary" onclick="reloadAll()">📦 全部重载</button>
+      <button class="danger" onclick="restartBot()">🔁 重启机器人</button>
+    </div>
+  </header>
+
+  <div class="section">
+    <h2>终端 · 聊天框</h2>
+    <div class="terminal" id="terminal"><p class="status">连接中...</p></div>
+    <div class="terminal-input">
+      <input id="terminalInput" type="text" placeholder="输入消息，回车发送（/ 开头可发送指令）" onkeydown="if(event.key==='Enter')terminalSend()">
+      <button onclick="terminalSend()">📤 发送</button>
+      <button class="secondary" onclick="terminalClear()">🧹 清空</button>
+    </div>
+  </div>
+
+  <div class="section">
+  <h2>插件磁贴</h2>
+  <div class="grid" id="grid"><p class="status">加载中...</p></div>
+  </div>
+
+  <div class="section">
+    <h2>权限管理</h2>
+    <p class="hint">格式：{"admins": ["玩家名"], "users": {"玩家名": {"level": 1}}}。admin = 等级 99；普通用户 1~98；未列出为 0（Guest）。</p>
+    <textarea id="permEditor"></textarea>
+    <div style="margin-top:10px"><button onclick="savePermissions()">💾 保存权限</button></div>
+  </div>
+
+  <!-- 配置编辑弹窗 -->
+  <div class="modal" id="configModal">
+    <div class="modal-box">
+      <h3 id="configModalTitle"></h3>
+      <p class="hint">保存后需点击该插件的「重载」使其生效。</p>
+      <textarea id="configEditor"></textarea>
+      <div class="modal-actions">
+        <button class="secondary" onclick="closeConfigModal()">取消</button>
+        <button onclick="saveConfig()">💾 保存</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+<script>
+  const TOKEN_KEY = 'webManagerToken';
+  let currentConfigName = null;
+
+  // ---- 基础请求封装（401 时提示输入 token 并重试一次） ----
+  async function api(path, opts = {}) {
+    let token = localStorage.getItem(TOKEN_KEY);
+    const headers = { ...(opts.headers || {}) };
+    if (token) headers['Authorization'] = 'Bearer ' + token;
+    let resp = await fetch(path, { ...opts, headers });
+    if (resp.status === 401) {
+      token = prompt('需要管理 token:');
+      if (token === null) throw new Error('未授权');
+      localStorage.setItem(TOKEN_KEY, token);
+      headers['Authorization'] = 'Bearer ' + token;
+      resp = await fetch(path, { ...opts, headers });
+    }
+    return resp;
+  }
+
+  async function apiJSON(path, opts = {}) {
+    const resp = await api(path, opts);
+    let data = null;
+    try { data = await resp.json(); } catch (e) {}
+    if (!resp.ok) throw new Error((data && data.error) || ('HTTP ' + resp.status));
+    return data;
+  }
+
+  // ---- 提示 ----
+  function toast(msg, type = 'ok') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'show ' + type;
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => { t.className = ''; }, 3500);
+  }
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  // ---- 状态栏 ----
+  async function refreshStatus() {
+    try {
+      const s = await apiJSON('/api/status');
+      const b = s.bot;
+      const pos = b.position ? ` · 位置 (${b.position.x}, ${b.position.y}, ${b.position.z})` : '';
+      document.getElementById('statusLine').textContent =
+        `${b.username || '未连接'} · ${b.spawned ? '在线' : '离线'} · 生命 ${b.health ?? '-'} · 饥饿 ${b.hunger ?? '-'} · 运行 ${s.uptime}s${pos}`;
+      document.getElementById('pm2Badge').style.display = s.pm2 ? '' : 'none';
+      document.getElementById('noSupervisorBadge').style.display = s.pm2 ? 'none' : '';
+    } catch (err) {
+      document.getElementById('statusLine').textContent = '状态获取失败: ' + err.message;
+    }
+  }
+
+  // ---- 磁贴 + 权限编辑区 ----
+  async function refreshPlugins() {
+    const grid = document.getElementById('grid');
+    try {
+      const data = await apiJSON('/api/plugins');
+      grid.innerHTML = '';
+      if (!data.plugins.length) { grid.innerHTML = '<p class="status">无插件</p>'; }
+      for (const p of data.plugins) {
+        const tile = document.createElement('div');
+        tile.className = 'tile';
+        const title = p.customTile ? p.customTile.title : p.name;
+        const desc = p.customTile ? p.customTile.description : '';
+        const badges = (p.hasConfig ? '<span class="badge ok">有配置</span>' : '<span class="badge muted">无配置</span>') +
+                       (p.loaded ? '' : '<span class="badge warn">未加载</span>');
+        const eps = (p.customTile && p.customTile.endpoints || []);
+        const btns = [
+          `<button onclick="reloadPlugin('${esc(p.name)}')" ${p.loaded ? '' : 'disabled'}>🔄 重载</button>`,
+          p.hasConfig ? `<button class="secondary" onclick="editConfig('${esc(p.name)}')">⚙️ 编辑配置</button>` : '',
+          ...eps.map((ep, i) => {
+            if (typeof ep === 'string') { // 旧格式兼容：只有路径
+              return `<button class="secondary" onclick="callEndpoint('${esc(ep)}')">📡 调用接口</button>`;
+            }
+            const label = ep.label || '📡 调用接口';
+            const path = esc(ep.path);
+            if (ep.dropdown) {
+              const ddId = `dd-${esc(p.name)}-${i}`;
+              const param = esc(ep.dropdown.param || 'v');
+              return `<select id="${ddId}" class="ep-select"><option>加载中...</option></select>` +
+                     `<button class="secondary" onclick="callEndpointDropdown('${path}', '${ddId}', '${param}')">${esc(label)}</button>`;
+            }
+            return `<button class="secondary" onclick="callEndpoint('${path}')">${esc(label)}</button>`;
+          }),
+        ].join('');
+        tile.innerHTML =
+          `<div class="tile-head"><span class="tile-title">${esc(title)}</span></div>` +
+          `<div class="tile-name">${esc(p.name)} ${badges}</div>` +
+          (desc ? `<div class="tile-desc">${esc(desc)}</div>` : '') +
+          `<div class="tile-btns">${btns}</div>` +
+          `<div class="ep-result" id="ep-${esc(p.name)}" style="display:none"></div>`;
+        grid.appendChild(tile);
+        // 填充下拉框选项：调用该端点的 dropdown.source（相对同插件前缀）拉取列表
+        eps.forEach((ep, i) => {
+          if (ep && typeof ep !== 'string' && ep.dropdown) {
+            const base = ep.path.split('/').slice(0, 4).join('/'); // /api/plugins/<name>
+            fillDropdown(`dd-${esc(p.name)}-${i}`, base + ep.dropdown.source);
+          }
+        });
+      }
+    } catch (err) {
+      grid.innerHTML = `<p class="status">加载失败: ${esc(err.message)}</p>`;
+    }
+    // 权限编辑区
+    try {
+      const perm = await apiJSON('/api/permissions');
+      document.getElementById('permEditor').value = JSON.stringify(perm, null, 2);
+    } catch (err) {
+      toast('权限加载失败: ' + err.message, 'err');
+    }
+  }
+
+  function refreshAll() {
+    refreshStatus();
+    refreshPlugins();
+    refreshTerminal();
+  }
+
+  // ---- 终端 ----
+  const MAX_TERMINAL_LINES = 200;
+
+  async function refreshTerminal() {
+    try {
+      const data = await apiJSON('/api/terminal/messages');
+      const box = document.getElementById('terminal');
+      const nearBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 30;
+      const msgs = data.messages.slice(-MAX_TERMINAL_LINES);
+      if (!msgs.length) {
+        box.innerHTML = '<p class="status">暂无消息</p>';
+        return;
+      }
+      box.innerHTML = msgs.map(m => {
+        const time = new Date(m.t).toLocaleTimeString('zh-CN', { hour12: false });
+        const cls = (m.type === 'system' || m.dir === 'system' ? 'system' : (m.dir === 'out' ? 'out' : 'in')) +
+                    (m.type === 'whisper' ? ' whisper' : '');
+        const who = (m.type === 'system' || m.dir === 'system') ? '' : (m.user ? (m.dir === 'out' ? '→ ' + esc(m.user) + ': ' : esc(m.user) + ': ') : '');
+        return `<div class="line ${cls}"><span class="time">${time}</span>${who}${esc(m.msg)}</div>`;
+      }).join('');
+      if (nearBottom) box.scrollTop = box.scrollHeight;
+    } catch (err) {
+      // 静默失败，等待下次轮询
+    }
+  }
+
+  async function terminalSend() {
+    const input = document.getElementById('terminalInput');
+    const message = input.value.trim();
+    if (!message) return;
+    input.value = '';
+    try {
+      await apiJSON('/api/terminal/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message }),
+      });
+    } catch (err) {
+      toast('发送失败: ' + err.message, 'err');
+    }
+    refreshTerminal();
+  }
+
+  async function terminalClear() {
+    try {
+      await apiJSON('/api/terminal/clear', { method: 'POST' });
+    } catch (err) {
+      toast('清空失败: ' + err.message, 'err');
+    }
+    refreshTerminal();
+  }
+
+  // ---- 插件操作 ----
+  async function reloadPlugin(name) {
+    try {
+      const r = await apiJSON('/api/plugins/' + encodeURIComponent(name) + '/reload', { method: 'POST' });
+      toast(r.message || '已重载');
+    } catch (err) {
+      toast('重载失败: ' + err.message, 'err');
+    }
+    refreshPlugins();
+  }
+
+  async function reloadAll() {
+    try {
+      const r = await apiJSON('/api/reload-all', { method: 'POST' });
+      const failed = Object.entries(r.results).filter(([n, v]) => !v.ok);
+      if (failed.length) toast('部分插件重载失败: ' + failed.map(([n]) => n).join(', '), 'err');
+      else toast('全部插件已重载');
+    } catch (err) {
+      toast('重载失败: ' + err.message, 'err');
+    }
+    refreshPlugins();
+  }
+
+  function restartBot() {
+    if (!confirm('确定重启机器人吗？进程退出后需要进程管理器（如 pm2）自动拉起。')) return;
+    apiJSON('/api/restart', { method: 'POST' })
+      .then(r => toast(r.message))
+      .catch(err => toast('重启失败: ' + err.message, 'err'));
+  }
+
+  // ---- 配置编辑 ----
+  async function editConfig(name) {
+    currentConfigName = name;
+    document.getElementById('configModalTitle').textContent = '编辑配置: ' + name;
+    document.getElementById('configEditor').value = '加载中...';
+    document.getElementById('configModal').classList.add('open');
+    try {
+      const r = await apiJSON('/api/plugins/' + encodeURIComponent(name) + '/config');
+      document.getElementById('configEditor').value = JSON.stringify(r.config, null, 2);
+    } catch (err) {
+      document.getElementById('configEditor').value = '';
+      toast('配置加载失败: ' + err.message, 'err');
+    }
+  }
+
+  function closeConfigModal() {
+    document.getElementById('configModal').classList.remove('open');
+    currentConfigName = null;
+  }
+
+  async function saveConfig() {
+    if (!currentConfigName) return;
+    const text = document.getElementById('configEditor').value;
+    try {
+      const resp = await api('/api/plugins/' + encodeURIComponent(currentConfigName) + '/config', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: text,
+      });
+      const data = await resp.json().catch(() => null);
+      if (!resp.ok) throw new Error((data && data.error) || ('HTTP ' + resp.status));
+      toast('配置已保存，请点击该插件的「重载」使其生效');
+      closeConfigModal();
+    } catch (err) {
+      toast('保存失败: ' + err.message, 'err');
+    }
+  }
+
+  // ---- 权限保存 ----
+  async function savePermissions() {
+    const text = document.getElementById('permEditor').value;
+    try {
+      const resp = await api('/api/permissions', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: text,
+      });
+      const data = await resp.json().catch(() => null);
+      if (!resp.ok) throw new Error((data && data.error) || ('HTTP ' + resp.status));
+      toast('权限已保存');
+    } catch (err) {
+      toast('保存失败: ' + err.message, 'err');
+    }
+  }
+
+  // ---- 自定义端点调用 ----
+  async function callEndpoint(ep, query = '') {
+    const name = ep.split('/')[3]; // /api/plugins/<name>/<rel>
+    const box = document.getElementById('ep-' + name);
+    if (!box) return;
+    try {
+      box.style.display = '';
+      box.textContent = '调用中...';
+      const resp = await api(ep + query);
+      const text = await resp.text();
+      box.textContent = resp.ok ? text : ('HTTP ' + resp.status + ': ' + text);
+    } catch (err) {
+      box.textContent = '调用失败: ' + err.message;
+    }
+  }
+
+  // 带下拉框的端点：把选中的值作为 ?<param>=<value> 拼到请求上再调用
+  function callEndpointDropdown(ep, ddId, param) {
+    const sel = document.getElementById(ddId);
+    const value = sel && sel.value ? sel.value : '';
+    callEndpoint(ep, '?' + encodeURIComponent(param) + '=' + encodeURIComponent(value));
+  }
+
+  // 拉取下拉框选项：source 返回 {songs: [...]}（元素为字符串或 {name}）或直接数组
+  async function fillDropdown(ddId, sourcePath) {
+    const sel = document.getElementById(ddId);
+    if (!sel) return;
+    try {
+      const data = await apiJSON(sourcePath);
+      const arr = Array.isArray(data) ? data : (data && data.songs);
+      const items = (arr || []).map(x => (typeof x === 'string' ? x : (x && (x.name || x.title)))).filter(Boolean);
+      sel.innerHTML = items.length
+        ? items.map(x => `<option value="${esc(x)}">${esc(x)}</option>`).join('')
+        : '<option value="">（无选项）</option>';
+    } catch (err) {
+      sel.innerHTML = '<option value="">（加载失败）</option>';
+    }
+  }
+
+  // ---- 初始化 ----
+  refreshAll();
+  setInterval(refreshStatus, 30000);
+  setInterval(refreshTerminal, 2000);
+</script>
+</body>
+</html>

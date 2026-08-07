@@ -55,6 +55,7 @@ npm install
     "auth": "offline"
   },
   "commandPrefix": "!",
+  "commandTrigger": "whisper",
   "plugins": [
     "core-commands",
     "navigator",
@@ -74,6 +75,9 @@ npm install
   - **对于离线(破解)服务器**:
     - 保持 `auth` 为 `"offline"`。
 - **`commandPrefix`**: 机器人响应的命令前缀，例如 `!`。
+- **`commandTrigger`**: 指令触发方式。
+  - `"whisper"`（默认）：**私信触发**，玩家通过 `/msg <机器人名> !ping` 私聊机器人来触发指令（公屏消息不响应）。
+  - `"chat"`：**公屏触发**，玩家直接在公屏发送 `!ping` 触发。
 - **`plugins`**: 一个数组，包含所有要加载的插件的**目录名**。你可以通过从这里移除插件名来禁用某个插件。
 
 #### b. 权限配置文件 (`permissions.json`)
@@ -146,7 +150,11 @@ npm start
 - `!loopclick <left|right> [间隔ms]`: 循环点击面向的方块。 (权限: 2)
 - `!loopclick stop`: 停止循环点击任务。 (权限: 2)
 
----
+### `chat` (聊天)
+- `!chat <内容>`: 让机器人在公屏说话。 (权限: 1)
+- `!w <玩家名> <内容>`: 让机器人私聊指定玩家。 (权限: 1)
+
+
 
 ## 🧩 开发你自己的插件
 
@@ -167,7 +175,7 @@ npm start
         permissionLevel: 0,
         description: '一个简单的问候命令。',
         execute: (username, args) => {
-          bot.chat(`> 你好, ${username}! 这是一个来自'${pluginName}'插件的问候。`);
+          bot.whisper(username, `> 你好, ${username}! 这是一个来自'${pluginName}'插件的问候。`);
         }
       });
 
@@ -182,6 +190,71 @@ npm start
     ```
 4.  如果你的插件需要配置，可以在 `plugins/my-plugin/` 目录下创建一个 `config.json` 文件。插件代码可以通过 `pluginConfig` 对象访问它。
 5.  最后，将你的插件文件夹名 `"my-plugin"` 添加到主 `config.json` 的 `plugins` 数组中，以启用它。
+
+---
+
+## 🖥️ Web 管理插件 (web-manager)
+
+零依赖的网页管理界面（基于 Node 内置 `http`），提供插件磁贴、在线重载、配置与权限管理。
+
+### 使用
+
+1. 确认 `config.json` 的 `plugins` 数组中包含 `"web-manager"`。
+2. 编辑 `plugins/web-manager/config.json`：
+   ```json
+   { "host": "127.0.0.1", "port": 8123, "token": "" }
+   ```
+   - `host`：监听地址，默认 `127.0.0.1`（仅本机可访问）；需要局域网/公网访问时改为 `0.0.0.0`。
+   - `token`：访问令牌。留空则不认证；设置后所有 `/api/*` 请求需携带 `Authorization: Bearer <token>` 或 `?token=<token>`。
+3. 启动机器人，浏览器打开 `http://127.0.0.1:8123/`。
+
+### 功能
+
+- **终端（聊天框）**：实时显示机器人收到的公屏/私聊消息、**服务器系统消息**（公告、欢迎语等）、发出的消息与系统事件（登录/进出世界/被踢/断线）；可直接输入让机器人公屏说话（`/` 开头可发指令）。数据每 2 秒刷新，最大保留 500 条。
+- **插件磁贴**：每个插件一张卡片，显示名称、有无配置文件、加载状态；支持单插件重载、全部重载。
+- **配置管理**：有 `config.json` 的插件可在网页端直接编辑，保存后需重载该插件生效。
+- **权限管理**：网页端编辑 `admins`/`users` 等级并保存到 `permissions.json`。
+- **机器人重启**：点击后进程退出，需配合进程管理器（如 pm2）自动拉起。
+- **接入接口**：其他插件可通过 `context.webManager` 注册自己的磁贴与自定义 API 端点：
+
+  ```javascript
+  const { webManager } = context;
+  webManager.registerTile({
+    name: 'my-plugin',          // 必须与插件名一致（重载时按此去重清理）
+    title: '我的插件',
+    description: '磁贴描述',
+    endpoints: {
+      '/status': async (req, res, url, body) => {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ ok: true }));
+      },
+    },
+  });
+  ```
+  端点自动挂载为 `GET /api/plugins/<name>/<rel>`，磁贴上会出现对应按钮。也可用 `webManager.registerEndpoint(method, path, handler, pluginName)` 注册任意 `GET/POST/PUT/DELETE` 路径（必须以 `/api/` 开头）。
+
+### API 摘要
+
+| 方法/路径 | 说明 |
+|---|---|
+| `GET /` | 管理页面 |
+| `GET /api/status` | 机器人状态（用户名/在线/生命/位置/运行时间） |
+| `GET /api/plugins` | 插件磁贴列表（含自定义磁贴信息） |
+| `GET/PUT /api/plugins/:name/config` | 读取/保存插件配置（PUT 校验 JSON） |
+| `POST /api/plugins/:name/reload` | 重载单个插件 |
+| `POST /api/reload-all` | 重载全部插件 |
+| `GET/PUT /api/permissions` | 读取/保存权限（`{admins, users}`） |
+| `POST /api/restart` | 重启机器人（需进程管理器自动拉起） |
+| `GET /api/terminal/messages` | 终端消息（公屏/私聊/系统，最多 200 条） |
+| `POST /api/terminal/send` | 以机器人身份发送公屏消息（body: `{"message": "..."}`） |
+| `POST /api/terminal/clear` | 清空终端消息 |
+
+### 重载注意事项
+
+- 重载会清空该插件的 `require` 缓存并重新执行初始化，`commands.register` 的重复注册会被覆盖，是安全的。
+- 旧运行期添加的 `bot.once('login'/'spawn')` 等监听器不会自动移除；interactor 的 `loopclick` 定时器为模块级状态，重载后旧循环仍在运行（可用 `!loopclick stop` 停止）。
+- 插件若在初始化时抛异常，重载会返回错误，机器人与网页不受影响，可再次重载恢复。
+- 修改 web-manager 自身的 `host`/`port` 需重启机器人；修改 `token` 重载后立即生效。
 
 ---
 
