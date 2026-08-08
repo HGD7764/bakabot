@@ -181,7 +181,8 @@
       <div class="card">
         <h2>新建任务</h2>
         <label for="itemInput">物品</label>
-        <input id="itemInput" placeholder="例如 dirt / 泥土 / cobblestone">
+        <input id="itemInput" list="itemPresetList" placeholder="例如 dirt / 泥土 / cobblestone">
+        <datalist id="itemPresetList"></datalist>
 
         <div class="row">
           <div>
@@ -388,6 +389,16 @@
     }).join('');
   }
 
+  function renderItemPresets(items) {
+    const list = document.getElementById('itemPresetList');
+    list.innerHTML = (items || []).map((item) => {
+      const label = item.displayName && item.displayName !== item.name
+        ? `${item.name} · ${item.displayName}`
+        : item.name;
+      return `<option value="${esc(item.name)}" label="${esc(label)}"></option>`;
+    }).join('');
+  }
+
   function applySettings(settings) {
     currentSettings = settings;
     document.getElementById('centerX').value = settings.warehouseCenter.x;
@@ -406,6 +417,7 @@
       const data = await api(base + '/status');
       renderPlayers(data.onlinePlayers || []);
       renderAliases(data.aliases || {});
+      renderItemPresets(data.itemPresets || []);
       renderStats(data.tasks || []);
       renderTasks(data.tasks || []);
       document.getElementById('lastUpdate').textContent = '刚刚同步';
