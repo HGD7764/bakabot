@@ -80,7 +80,7 @@ context.webManager = {
   tiles: new Map(),       // name -> {name, title, description, endpoints}
   endpoints: new Map(),   // 'METHOD /path' -> {method, path, handler, pluginName}
 
-  registerTile({ name, title = name, description = '', endpoints = {} }) {
+  registerTile({ name, title = name, description = '', panel = null, endpoints = {} }) {
     if (typeof name !== 'string' || !name) throw new Error('registerTile: name 必须是非空字符串');
     if (typeof endpoints !== 'object' || endpoints === null) throw new Error('registerTile: endpoints 必须是对象');
     // 立即挂载磁贴端点：GET /api/plugins/<name>/<rel>，与加载顺序无关。
@@ -96,7 +96,10 @@ context.webManager = {
         dropdown: (typeof spec === 'object' && spec && spec.dropdown) || null,
       });
     }
-    this.tiles.set(name, { name, title, description });
+    if (panel !== null && (typeof panel !== 'string' || !panel.startsWith('/api/'))) {
+      throw new Error('registerTile: panel 必须以 /api/ 开头的绝对路径');
+    }
+    this.tiles.set(name, { name, title, description, panel });
   },
 
   registerEndpoint(method, path, handler, pluginName = '', meta = {}) {

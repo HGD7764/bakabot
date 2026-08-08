@@ -1,16 +1,6 @@
 {
-  "name": "mcbaka",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
-    "mineflayer": "https://github.com/Complexity-ML/mineflayer-26.2/releases/download/complexity-26.2.3/mineflayer-complexity-26.2.3.tgz",
+    "mineflayer": "^4.37.1",
     "mineflayer-pathfinder": "^2.4.5"
   }
 }

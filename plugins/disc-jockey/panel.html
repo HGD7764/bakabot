@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Disc Jockey 面板</title>
+<style>
+  :root {
+    --bg:#0f1115; --card:#1a1d24; --border:#2a2e38;
+    --text:#e6e8ee; --muted:#8b90a0; --accent:#4f8cff;
+    --ok:#3fb96b; --warn:#e0a53c; --err:#e05c5c;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--text); font-family:system-ui,"Microsoft YaHei",sans-serif; padding:18px; }
+  h2 { font-size:16px; margin-bottom:10px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:14px; margin-bottom:14px; }
+  .row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .muted { color:var(--muted); font-size:12.5px; }
+  button { background:var(--accent); color:#fff; border:none; border-radius:6px; padding:6px 12px; font-size:13px; cursor:pointer; }
+  button:hover { filter:brightness(1.15); }
+  button:disabled { opacity:.4; cursor:not-allowed; }
+  button.secondary { background:#2a2e38; color:var(--text); }
+  button.danger { background:var(--err); }
+  button.small { padding:3px 8px; font-size:12px; }
+  input[type=text], input[type=number], select {
+    background:#12141a; color:var(--text); border:1px solid var(--border);
+    border-radius:6px; padding:6px 9px; font-size:13px;
+  }
+  input[type=range] { flex:1; accent-color:var(--accent); }
+  .progress-wrap { display:flex; align-items:center; gap:10px; margin-top:10px; }
+  .state-pill { padding:2px 10px; border-radius:10px; font-size:12px; background:rgba(139,144,160,.15); color:var(--muted); }
+  .state-pill.playing { background:rgba(63,185,107,.15); color:var(--ok); }
+  .state-pill.tuning { background:rgba(224,165,60,.15); color:var(--warn); }
+  .state-pill.err { background:rgba(224,92,92,.15); color:var(--err); }
+  .list { max-height:46vh; overflow-y:auto; border:1px solid var(--border); border-radius:8px; }
+  .song { display:flex; align-items:center; gap:8px; padding:7px 10px; border-bottom:1px solid var(--border); cursor:pointer; }
+  .song:hover { background:#21252f; }
+  .song.active { background:rgba(79,140,255,.12); }
+  .song .name { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .song .meta { color:var(--muted); font-size:11.5px; white-space:nowrap; }
+  .star { cursor:pointer; user-select:none; font-size:14px; }
+  .star.on { color:var(--warn); }
+  .err { color:var(--err); font-size:12.5px; }
+  .cfg-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:10px 14px; }
+  .cfg-item label { display:block; color:var(--muted); font-size:12px; margin-bottom:4px; }
+  .cfg-item select, .cfg-item input { width:100%; }
+  .cfg-item.check { display:flex; align-items:center; gap:8px; }
+  .cfg-item.check label { margin:0; color:var(--text); }
+  .missing-chip { display:inline-block; margin:2px 4px 2px 0; padding:2px 8px; border-radius:8px; font-size:12px; background:rgba(224,165,60,.15); color:var(--warn); }
+  #toast { position:fixed; bottom:16px; right:16px; background:var(--card); border:1px solid var(--border); border-radius:8px; padding:9px 14px; font-size:13px; max-width:70vw; display:none; z-index:20; }
+  #toast.show { display:block; }
+  #toast.ok { border-color:var(--ok); color:var(--ok); }
+  #toast.err { border-color:var(--err); color:var(--err); }
+  .inst-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:6px; }
+  .inst-item select { width:100%; }
+</style>
+</head>
+<body>
+
+  <div class="card">
+    <div class="row">
+      <h2 style="margin:0">🎵 Disc Jockey</h2>
+      <span class="state-pill" id="statePill">—</span>
+      <span class="muted" id="songCount"></span>
+      <span class="muted" id="modeInfo"></span>
+      <span style="flex:1"></span>
+      <button onclick="refreshAll()">🔄 刷新</button>
+    </div>
+    <div class="muted" id="lastError" style="margin-top:6px"></div>
+    <div id="missingBox" style="margin-top:6px"></div>
+    <div class="progress-wrap">
+      <span class="muted" id="elapsed">00:00</span>
+      <input type="range" id="seek" min="0" max="0" step="0.1" value="0" oninput="seekDrag()">
+      <span class="muted" id="length">00:00</span>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <button id="btnPlayPause" onclick="togglePause()">▶ 播放</button>
+      <button class="secondary" onclick="cmd('stop')">⏹ 停止</button>
+      <button class="secondary" onclick="cmd('random')">🎲 随机</button>
+      <button class="secondary" id="btnLoop" onclick="toggleLoop()">🔁 循环: 关</button>
+      <span class="muted">速度</span>
+      <input type="number" id="speed" value="1" min="0.0001" max="15" step="0.1" style="width:80px" onchange="setSpeed()">
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <h2 style="margin:0">歌曲</h2>
+      <input type="text" id="search" placeholder="筛选..." style="width:150px" oninput="loadSongs()">
+      <select id="songSelect" style="flex:1;min-width:220px"></select>
+      <button onclick="playSelected()">▶ 播放</button>
+      <button class="secondary" id="btnFav" onclick="toggleFavSel()" title="收藏">☆</button>
+      <button class="secondary danger" onclick="deleteSelected()">🗑 删除</button>
+      <button class="secondary" onclick="document.getElementById('fileInput').click()">📤 上传 .nbs</button>
+      <input type="file" id="fileInput" accept=".nbs" style="display:none" onchange="uploadFile()">
+      <button class="secondary" onclick="cmd('reload')">🔄 重载</button>
+    </div>
+    <p class="muted" style="margin-top:8px" id="songInfo"></p>
+  </div>
+
+  <div class="card">
+    <h2>⚙️ 配置(与模组一致,保存后立即生效,无需重载)</h2>
+    <div class="cfg-grid">
+      <div class="cfg-item">
+        <label>expectedServerVersion(服务器版本)</label>
+        <select id="cfgExpected">
+          <option value="All">All(自动)</option>
+          <option value="v1_20_4_Or_Earlier">v1_20_4_Or_Earlier</option>
+          <option value="v1_20_5_Or_Later">v1_20_5_Or_Later</option>
+        </select>
+      </div>
+      <div class="cfg-item">
+        <label>tuningSpeed(调音速度)</label>
+        <select id="cfgTuning">
+          <option value="Snail">Snail(最稳)</option>
+          <option value="Safe">Safe</option>
+          <option value="Spigot">Spigot(默认)</option>
+          <option value="Flash">Flash(最快)</option>
+        </select>
+      </div>
+      <div class="cfg-item">
+        <label>playbackPacketRatelimit(播放数据包限速)</label>
+        <select id="cfgRate">
+          <option value="Limit100">Limit100</option>
+          <option value="Limit200">Limit200</option>
+          <option value="Limit300">Limit300</option>
+          <option value="Limit500">Limit500(默认)</option>
+          <option value="NoLimit">NoLimit</option>
+        </select>
+      </div>
+      <div class="cfg-item">
+        <label>delayPlaybackStartBySecs(调音完成后延迟播放,秒)</label>
+        <input type="number" id="cfgDelay" min="0" step="1" value="0">
+      </div>
+      <div class="cfg-item check">
+        <input type="checkbox" id="cfgWorkaround">
+        <label for="cfgWorkaround">instrumentDetectionWorkaround(乐器识别变通)</label>
+      </div>
+      <div class="cfg-item check">
+        <input type="checkbox" id="cfgHideWarn">
+        <label for="cfgHideWarn">hideWarning(隐藏警告)</label>
+      </div>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <button onclick="saveConfig()">💾 保存配置</button>
+      <span class="muted">注:网页面板会忽略客户端专属选项(omnidirectionalNoteBlockSounds / disableAsyncPlayback / Previewer)。</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🎹 乐器映射(remapInstruments,仅内存,与模组一致)</h2>
+    <p class="muted" style="margin-bottom:8px">把某种乐器的音符交给另一种乐器的音符盒播放;选 nothing 表示静音跳过。</p>
+    <div class="inst-grid" id="instGrid"></div>
+    <div class="row" style="margin-top:10px">
+      <button onclick="saveInstMap()">💾 保存映射</button>
+      <button class="secondary" onclick="clearInstMap()">🗑 清除全部</button>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+<script>
+  // token 优先级:URL ?token=(iframe 注入)→ localStorage(直开页面时)
+  const TOKEN_KEY = 'webManagerToken';
+  let token = new URLSearchParams(location.search).get('token') || localStorage.getItem(TOKEN_KEY) || '';
+
+  const BASE = location.pathname.replace(/\/panel$/, ''); // /api/plugins/disc-jockey
+
+  function toast(msg, type) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.className = 'show ' + (type || 'ok');
+    clearTimeout(t._t); t._t = setTimeout(() => { t.className = ''; }, 3500);
+  }
+  function fmt(sec) {
+    if (sec < 0) return '-' + fmt(-sec);
+    const s = Math.floor(sec % 60), m = Math.floor(sec / 60);
+    return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+  }
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+  }
+
+  async function api(path, opts = {}) {
+    const headers = { ...(opts.headers || {}) };
+    if (token) headers['Authorization'] = 'Bearer ' + token;
+    const sep = path.includes('?') ? '&' : '?';
+    const url = BASE + path + (token ? sep + 'token=' + encodeURIComponent(token) : '');
+    const resp = await fetch(url, { ...opts, headers });
+    if (resp.status === 401) {
+      token = prompt('需要管理 token:');
+      if (token === null) throw new Error('未授权');
+      localStorage.setItem(TOKEN_KEY, token);
+      return api(path, opts);
+    }
+    return resp;
+  }
+  async function apiJSON(path, opts = {}) {
+    const resp = await api(path, opts);
+    let data = null;
+    try { data = await resp.json(); } catch (e) {}
+    if (!resp.ok) throw new Error((data && data.error) || ('HTTP ' + resp.status));
+    return data;
+  }
+
+  // ---- 播放状态(1s 轮询) ----
+  const STATE_TEXT = { playing: '▶ 播放中', tuning: '🎛 调音中…', paused: '⏸ 已暂停', stopped: '⏹ 已停止', finished: '✓ 播放完毕' };
+  let status = null;
+
+  async function refreshStatus() {
+    try {
+      status = await apiJSON('/status');
+      const pill = document.getElementById('statePill');
+      pill.textContent = STATE_TEXT[status.state] || status.state;
+      pill.className = 'state-pill ' + (status.state === 'playing' ? 'playing' : (status.state === 'tuning' ? 'tuning' : (status.lastError ? 'err' : '')));
+      document.getElementById('songCount').textContent = status.songCount + ' 首歌曲';
+      document.getElementById('modeInfo').textContent = status.gameMode ? ('模式: ' + status.gameMode) : '';
+      const errEl = document.getElementById('lastError');
+      errEl.textContent = status.lastError || '';
+      errEl.className = 'muted' + (status.lastError ? ' err' : '');
+      // 缺失音符盒
+      const mb = document.getElementById('missingBox');
+      mb.innerHTML = status.missing && status.missing.length
+        ? '附近缺少音符盒: ' + status.missing.map(m => '<span class="missing-chip">' + esc(m.block) + ' ×' + m.count + '</span>').join('')
+        : '';
+      // 进度条(拖拽中不覆盖)
+      if (!document.getElementById('seek').dataset.dragging) {
+        document.getElementById('seek').max = Math.max(1, status.length);
+        document.getElementById('seek').value = status.elapsed;
+        document.getElementById('elapsed').textContent = fmt(status.elapsed);
+        document.getElementById('length').textContent = fmt(status.length);
+      }
+      document.getElementById('btnLoop').textContent = '🔁 循环: ' + (status.loop ? '开' : '关');
+      document.getElementById('btnPlayPause').textContent = status.running ? '⏸ 暂停' : '▶ 播放';
+    } catch (err) {
+      document.getElementById('statePill').textContent = '⚠ 连接失败';
+      document.getElementById('statePill').className = 'state-pill err';
+    }
+  }
+
+  function seekDrag() {
+    document.getElementById('seek').dataset.dragging = '1';
+  }
+  async function seekCommit() {
+    const s = document.getElementById('seek');
+    delete s.dataset.dragging;
+    if (!status || !status.length) return;
+    const v = Math.min(parseFloat(s.value), status.length);
+    s.value = v;
+    document.getElementById('elapsed').textContent = fmt(v);
+    try { await apiJSON('/seek', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ seconds: v }) }); }
+    catch (err) { toast(err.message, 'err'); }
+  }
+
+  async function togglePause() {
+    if (!status) return;
+    try {
+      await apiJSON('/pause', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ running: !status.running }) });
+      refreshStatus();
+    } catch (err) { toast(err.message, 'err'); }
+  }
+  async function toggleLoop() {
+    if (!status) return;
+    try {
+      await apiJSON('/loop', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ loop: !status.loop }) });
+      refreshStatus();
+    } catch (err) { toast(err.message, 'err'); }
+  }
+  async function setSpeed() {
+    const v = parseFloat(document.getElementById('speed').value);
+    if (isNaN(v) || v < 0.0001 || v > 15) return toast('速度必须在 0.0001 ~ 15 之间', 'err');
+    try { await apiJSON('/speed', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ speed: v }) }); }
+    catch (err) { toast(err.message, 'err'); }
+  }
+
+  // ---- 歌曲下拉框 ----
+  let songs = [];
+  const fmtLen = (sec) => {
+    const m = Math.floor(sec / 60), s = Math.round(sec % 60);
+    return m + ':' + String(s).padStart(2, '0');
+  };
+  async function loadSongs() {
+    const q = document.getElementById('search').value.trim();
+    try {
+      const data = await apiJSON('/songs' + (q ? '?q=' + encodeURIComponent(q) : ''));
+      songs = data.songs;
+      const sel = document.getElementById('songSelect');
+      const prev = sel.value;
+      if (!songs.length) { sel.innerHTML = '<option value="">(无歌曲,点右上角「上传 .nbs」)</option>'; document.getElementById('songInfo').textContent = ''; return; }
+      sel.innerHTML = songs.map(s =>
+        '<option value="' + esc(s.fileName) + '">' + (s.favorite ? '★ ' : '☆ ') + esc(s.displayName) + ' — ' + fmtLen(s.seconds) + ' · ' + s.noteCount + ' 音符</option>'
+      ).join('');
+      // 保持原选择(若筛选后仍存在),否则选第一首
+      if (prev && songs.some(s => s.fileName === prev)) sel.value = prev;
+      else sel.value = songs[0].fileName;
+      updateSongInfo();
+    } catch (err) {
+      document.getElementById('songInfo').textContent = '加载失败: ' + err.message;
+    }
+  }
+
+  function selectedSong() { return songs.find(s => s.fileName === document.getElementById('songSelect').value); }
+
+  function updateSongInfo() {
+    const s = selectedSong();
+    const info = document.getElementById('songInfo');
+    if (!s) { info.textContent = ''; return; }
+    document.getElementById('btnFav').textContent = s.favorite ? '★' : '☆';
+    const need = (s.needsBlocks || []).map(b => '<span class="missing-chip">' + esc(b.block) + ' ×' + b.count + '</span>').join('');
+    info.innerHTML = esc(s.displayName) + ' — ' + fmtLen(s.seconds) + ' · ' + s.noteCount + ' 音符 · 作者 ' + esc(s.author || '-') +
+      (need ? ' · 所需音符盒: ' + need : '');
+  }
+
+  async function playSelected() {
+    const s = selectedSong();
+    if (!s) return;
+    try {
+      const r = await apiJSON('/play?name=' + encodeURIComponent(s.fileName));
+      toast('开始播放: ' + r.displayName);
+      refreshStatus();
+    } catch (err) { toast(err.message, 'err'); }
+  }
+  async function toggleFavSel() {
+    const s = selectedSong();
+    if (!s) return;
+    try {
+      await apiJSON('/favorite', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fileName: s.fileName, favorite: !s.favorite }) });
+      loadSongs();
+    } catch (err) { toast(err.message, 'err'); }
+  }
+  async function deleteSelected() {
+    const s = selectedSong();
+    if (!s) return;
+    if (!confirm('确定删除歌曲 ' + s.fileName + ' ?')) return;
+    try {
+      await apiJSON('/delete', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fileName: s.fileName }) });
+      toast('已删除 ' + s.fileName);
+      loadSongs();
+    } catch (err) { toast(err.message, 'err'); }
+  }
+  async function uploadFile() {
+    const f = document.getElementById('fileInput').files[0];
+    if (!f) return;
+    const name = f.name.replace(/[\\/]/g, '');
+    try {
+      const buf = await f.arrayBuffer();
+      const resp = await api('/upload?name=' + encodeURIComponent(name), { method: 'POST', body: new Uint8Array(buf) });
+      const data = await resp.json().catch(() => null);
+      if (!resp.ok) throw new Error((data && data.error) || ('HTTP ' + resp.status));
+      toast('已上传 ' + name);
+      document.getElementById('fileInput').value = '';
+      loadSongs();
+    } catch (err) { toast('上传失败: ' + err.message, 'err'); }
+  }
+
+  // ---- 通用指令 ----
+  async function cmd(action) {
+    try { await apiJSON('/' + action); refreshStatus(); loadSongs(); }
+    catch (err) { toast(err.message, 'err'); }
+  }
+
+  // ---- 配置 ----
+  async function loadConfig() {
+    try {
+      const { config } = await apiJSON('/config');
+      document.getElementById('cfgExpected').value = config.expectedServerVersion;
+      document.getElementById('cfgTuning').value = config.tuningSpeed;
+      document.getElementById('cfgRate').value = config.playbackPacketRatelimit;
+      document.getElementById('cfgDelay').value = config.delayPlaybackStartBySecs;
+      document.getElementById('cfgWorkaround').checked = !!config.instrumentDetectionWorkaround;
+      document.getElementById('cfgHideWarn').checked = !!config.hideWarning;
+    } catch (err) { toast('配置加载失败: ' + err.message, 'err'); }
+  }
+  async function saveConfig() {
+    try {
+      await apiJSON('/config', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          expectedServerVersion: document.getElementById('cfgExpected').value,
+          tuningSpeed: document.getElementById('cfgTuning').value,
+          playbackPacketRatelimit: document.getElementById('cfgRate').value,
+          delayPlaybackStartBySecs: parseInt(document.getElementById('cfgDelay').value) || 0,
+          instrumentDetectionWorkaround: document.getElementById('cfgWorkaround').checked,
+          hideWarning: document.getElementById('cfgHideWarn').checked,
+        }),
+      });
+      toast('配置已保存,立即生效');
+      refreshStatus();
+    } catch (err) { toast('保存失败: ' + err.message, 'err'); }
+  }
+
+  // ---- 乐器映射 ----
+  const INSTS = ['harp','bass','basedrum','snare','hat','guitar','flute','bell','chime','xylophone','iron_xylophone','cow_bell','didgeridoo','bit','banjo','pling'];
+  let instMap = {};
+  async function loadInstMap() {
+    try {
+      const r = await apiJSON('/instruments');
+      instMap = r.map || {};
+    } catch (err) { instMap = {}; }
+    renderInstMap();
+  }
+  function renderInstMap() {
+    document.getElementById('instGrid').innerHTML = INSTS.map(inst => {
+      const cur = instMap[inst] || inst;
+      return '<div class="inst-item"><span class="muted" style="font-size:12px">' + inst + '</span><select onchange="instMap[\'' + inst + '\']=this.value">' +
+        '<option value="' + inst + '"' + (cur === inst ? ' selected' : '') + '>' + inst + '(原样)</option>' +
+        INSTS.filter(i => i !== inst).map(i => '<option value="' + i + '"' + (cur === i ? ' selected' : '') + '>' + i + '</option>').join('') +
+        '<option value="nothing"' + (cur === 'nothing' ? ' selected' : '') + '>nothing(静音)</option>' +
+        '</select></div>';
+    }).join('');
+  }
+  async function saveInstMap() {
+    try {
+      await apiJSON('/instruments', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ map: instMap }) });
+      toast('映射已保存(仅内存)');
+      refreshStatus();
+    } catch (err) { toast('保存失败: ' + err.message, 'err'); }
+  }
+  async function clearInstMap() {
+    instMap = {};
+    await saveInstMap();
+    renderInstMap();
+  }
+
+  // ---- 轮询 ----
+  function refreshAll() { refreshStatus(); loadSongs(); }
+  refreshAll();
+  loadConfig();
+  loadInstMap();
+  setInterval(refreshStatus, 1000);
+  setInterval(loadSongs, 10000);
+  document.getElementById('seek').addEventListener('mouseup', seekCommit);
+  document.getElementById('seek').addEventListener('touchend', seekCommit);
+  document.getElementById('seek').addEventListener('keyup', seekCommit);
+</script>
+</body>
+</html>

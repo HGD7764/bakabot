@@ -1,10 +1,11 @@
 {
   "admins": [
-    "hgd_7764"
+    "hgd_7764",
+    "ZhuFenY"
   ],
   "users": {
     "AnotherPlayer": {
-      "level": 1 
+      "level": 1
     }
   }
 }

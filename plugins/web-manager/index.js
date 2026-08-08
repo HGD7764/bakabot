@@ -3,9 +3,10 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const { resolveTex } = require('./texture-map'); // 物品 → 纹理文件名映射（1.21.11 仓库验证）
 
 module.exports = (context) => {
-  const { bot, config, state, permissions, pluginConfig, webManager } = context;
+  const { bot, config, state, permissions, pluginConfig, webManager, commands } = context;
 
   const pluginsDir = path.join(__dirname, '..');
   const cfg = { host: '127.0.0.1', port: 8123, token: '', ...(pluginConfig || {}) };
@@ -214,16 +215,18 @@ module.exports = (context) => {
       const tile = webManager.tiles.get(name);
       // 端点信息：path 全路径，label 为磁贴按钮文字（未设置时前端显示「📡 调用接口」），
       // dropdown 为 {source, param} —— 前端先从 source 拉选项，选中值作为 ?param= 拼上。
-      const endpoints = webManager._endpointsFor(name).map(ep => ({
+      // 带 panel 的插件：面板就是控制界面，磁贴上不再把每个 API 端点渲染成「调用接口」按钮。
+      const endpoints = tile && tile.panel ? [] : webManager._endpointsFor(name).map(ep => ({
         path: ep.path,
         label: ep.label,
         dropdown: ep.dropdown,
       }));
+      const panel = tile && tile.panel;
       return {
         name,
         loaded: pluginLoaded(name),
         hasConfig: fs.existsSync(path.join(pluginsDir, name, 'config.json')),
-        customTile: tile ? { title: tile.title, description: tile.description, endpoints } : null,
+        customTile: tile ? { title: tile.title, description: tile.description, panel, endpoints: endpoints.filter(ep => ep.path !== panel) } : null,
       };
     }).sort((a, b) => a.name.localeCompare(b.name));
     sendJSON(res, 200, { plugins });
@@ -334,6 +337,220 @@ module.exports = (context) => {
     wm.terminal.length = 0;
     sendJSON(res, 200, { ok: true });
   });
+
+  // ---- 背包管理（网页 UI + 聊天指令）----
+  // 玩家背包窗口槽位布局（与 mineflayer bot.inventory.slots 一致，QUICK_BAR_START=36）：
+  // 0=合成输出, 1-4=合成网格, 5-8=盔甲(头胸腿脚), 9-35=主背包, 36-44=快捷栏, 45=副手
+  // 重命名物品的自定义名:1.21 存于 custom_name 组件,旧版存 nbt display.Name,
+  // 且 displayName 只是构造时的基础名,自定义名只能从 item.customName 读取。
+  // 可能形态: JSON 文本组件字符串 / 已解析对象 / 纯字符串(旧版),统一转纯文本。
+  const textComponentToText = (comp) => {
+    if (typeof comp === 'string') return comp;
+    if (Array.isArray(comp)) return comp.map(textComponentToText).join('');
+    if (comp && typeof comp === 'object') {
+      if (typeof comp.text === 'string') return comp.text;
+      if (typeof comp.translate === 'string') return comp.translate;
+      if (Array.isArray(comp.extra)) return comp.extra.map(textComponentToText).join('');
+    }
+    return '';
+  };
+  const customItemName = (item) => {
+    try {
+      const raw = item && item.customName;
+      if (raw === null || raw === undefined || raw === '') return null;
+      // prismarine-nbt 包装对象 { type:'string', value:'{"text":"..."}' }（1.21 anonymousNbt 解析结果）
+      const src = (raw && typeof raw === 'object' && typeof raw.value === 'string') ? raw.value : raw;
+      let text;
+      if (typeof src === 'string') {
+        const t = src.trim();
+        text = (t.startsWith('{') || t.startsWith('[')) ? textComponentToText(JSON.parse(t)) : t;
+      } else {
+        text = textComponentToText(src);
+      }
+      return text.replace(/§./g, '') || null;
+    } catch (err) { return null; }
+  };
+  const itemLabel = (item) => customItemName(item) || item.displayName || item.name;
+
+  // 装备栏(槽 5-8:头/胸/腿/脚)原版规则:只接受对应部位的装备
+  const armorSlotMatches = (item, to) => {
+    if (to < 5 || to > 8) return true;
+    if (!item) return true;
+    const n = item.name || '';
+    const head = n.endsWith('_helmet') ||
+      ['carved_pumpkin', 'player_head', 'zombie_head', 'skeleton_skull', 'wither_skeleton_skull', 'creeper_head', 'dragon_head', 'piglin_head'].includes(n);
+    const chest = n.endsWith('_chestplate') || n === 'elytra';
+    const legs = n.endsWith('_leggings');
+    const feet = n.endsWith('_boots');
+    return [head, chest, legs, feet][to - 5] === true;
+  };
+
+  const itemInfo = (item) => item ? (() => {
+    const isBlock = !!(bot.registry && bot.registry.blocksByName && bot.registry.blocksByName[item.name]);
+    const tex = resolveTex(item.name);
+    return {
+      slot: item.slot,
+      name: item.name,
+      displayName: item.displayName,
+      customName: customItemName(item),
+      count: item.count,
+      maxStackSize: item.stackSize,
+      enchanted: !!(item.enchants && item.enchants.length),
+      block: isBlock, // 方块纹理在 block/ 目录
+      texDir: tex ? tex.dir : null,   // 纹理目录: block / item / entity/<子目录>(已验证存在)
+      texName: tex ? tex.file : null, // 纹理文件名(不含 .png), null 时前端用 item.name
+    };
+  })() : null;
+
+  const invAvailable = () => !!(bot.inventory && bot.inventory.slots);
+
+  // 槽位编号按玩家窗口布局；若正打开着其他容器（如箱子），先关闭，否则点击会落到容器窗口的槽位上
+  const ensurePlayerWindow = () => {
+    if (bot.currentWindow) bot.closeWindow(bot.currentWindow);
+  };
+
+  addRoute('GET', '/api/inventory', (req, res) => {
+    if (!invAvailable()) return sendJSON(res, 200, { available: false });
+    sendJSON(res, 200, {
+      available: true,
+      quickBarSlot: bot.quickBarSlot || 0,
+      gameMode: bot.game && bot.game.gameMode,
+      slots: Array.from({ length: 46 }, (_, i) => itemInfo(bot.inventory.slots[i])),
+    });
+  });
+
+  addRoute('POST', '/api/inventory/drop', async (req, res, params, body) => {
+    let obj;
+    try { obj = JSON.parse(body || 'null'); } catch (err) { return sendJSON(res, 400, { error: '无效的 JSON' }); }
+    const slot = obj && obj.slot;
+    if (!Number.isInteger(slot) || slot < 5 || slot > 45) {
+      return sendJSON(res, 400, { error: '无效的槽位（仅支持 5-45）' });
+    }
+    if (!invAvailable()) return sendJSON(res, 400, { error: '背包尚未同步（未登录？）' });
+    if (bot.game && bot.game.gameMode === 'creative') return sendJSON(res, 400, { error: '创造模式无法丢出物品' });
+    const item = bot.inventory.slots[slot];
+    if (!item) return sendJSON(res, 400, { error: '该槽位为空' });
+    const count = obj.count;
+    const wantAll = count === 'all' || (typeof count === 'number' && count >= item.count);
+    const n = Math.floor(Number(count));
+    if (!wantAll && !(typeof count === 'number' && n >= 1)) {
+      return sendJSON(res, 400, { error: 'count 必须是 1 或 "all"' });
+    }
+    try {
+      ensurePlayerWindow();
+      if (wantAll) {
+        await bot.tossStack(item);
+      } else {
+        // 丢指定数量：transfer 支持任意槽位区间（5..46 覆盖盔甲/主背包/快捷栏/副手）
+        await bot.transfer({
+          window: bot.inventory,
+          itemType: item.type,
+          metadata: item.metadata,
+          count: Math.min(n, item.count),
+          sourceStart: 5,
+          sourceEnd: 46,
+          destStart: -999,
+        });
+      }
+      sendJSON(res, 200, { ok: true, dropped: { name: itemLabel(item), count: wantAll ? item.count : Math.min(n, item.count) } });
+    } catch (err) {
+      sendJSON(res, 500, { error: `丢出失败: ${err.message}` });
+    }
+  });
+
+  addRoute('POST', '/api/inventory/select', (req, res, params, body) => {
+    let obj;
+    try { obj = JSON.parse(body || 'null'); } catch (err) { return sendJSON(res, 400, { error: '无效的 JSON' }); }
+    const slot = obj && obj.slot;
+    if (!Number.isInteger(slot) || slot < 0 || slot > 8) return sendJSON(res, 400, { error: '快捷栏槽位必须是 0-8' });
+    try {
+      bot.setQuickBarSlot(slot);
+      sendJSON(res, 200, { ok: true, quickBarSlot: slot });
+    } catch (err) {
+      sendJSON(res, 500, { error: `切换失败: ${err.message}` });
+    }
+  });
+
+  addRoute('POST', '/api/inventory/move', async (req, res, params, body) => {
+    let obj;
+    try { obj = JSON.parse(body || 'null'); } catch (err) { return sendJSON(res, 400, { error: '无效的 JSON' }); }
+    const from = obj && obj.from, to = obj && obj.to;
+    if (!Number.isInteger(from) || !Number.isInteger(to) || from < 5 || from > 45 || to < 5 || to > 45) {
+      return sendJSON(res, 400, { error: '无效的槽位（仅支持 5-45）' });
+    }
+    if (from === to) return sendJSON(res, 400, { error: '不能移动到同一槽位' });
+    if (!invAvailable()) return sendJSON(res, 400, { error: '背包尚未同步（未登录？）' });
+    if (bot.game && bot.game.gameMode === 'creative') return sendJSON(res, 400, { error: '创造模式无法移动物品' });
+    const src = bot.inventory.slots[from];
+    if (!src) return sendJSON(res, 400, { error: '源槽位为空' });
+    if (!armorSlotMatches(src, to)) return sendJSON(res, 400, { error: '装备栏只能放入对应部位的装备' });
+    const dst = bot.inventory.slots[to];
+    const sameStack = !!dst && dst.type === src.type && dst.metadata === src.metadata &&
+      JSON.stringify(dst.nbt || null) === JSON.stringify(src.nbt || null) &&
+      customItemName(dst) === customItemName(src);
+    try {
+      ensurePlayerWindow();
+      if (!dst) {
+        // 目标为空:整组移动
+        await bot.transfer({
+          window: bot.inventory, itemType: src.type, metadata: src.metadata,
+          count: src.count, sourceStart: from, sourceEnd: from + 1, destStart: to, destEnd: to + 1,
+        });
+      } else if (sameStack && dst.count < dst.stackSize) {
+        // 同类可叠:移入 min(数量, 空位),多余放回源槽
+        await bot.transfer({
+          window: bot.inventory, itemType: src.type, metadata: src.metadata,
+          count: Math.min(src.count, dst.stackSize - dst.count),
+          sourceStart: from, sourceEnd: from + 1, destStart: to, destEnd: to + 1,
+        });
+      } else if (sameStack) {
+        return sendJSON(res, 400, { error: '目标槽位已满' });
+      } else {
+        // 不同类型:三连击互换(结束时光标为空)
+        await bot.clickWindow(from, 0, 0);
+        await bot.clickWindow(to, 0, 0);
+        await bot.clickWindow(from, 0, 0);
+      }
+      sendJSON(res, 200, { ok: true });
+    } catch (err) {
+      sendJSON(res, 500, { error: `移动失败: ${err.message}` });
+    }
+  });
+
+  // 聊天指令: !drop 丢出当前手持物品, !cginv <1-9> 切换快捷栏
+  if (commands) {
+    commands.register({
+      name: 'drop',
+      permissionLevel: 1,
+      description: '丢出当前手持物品',
+      execute: (username) => {
+        if (!invAvailable()) return bot.whisper(username, '> 背包尚未同步（未登录？）');
+        if (bot.game && bot.game.gameMode === 'creative') return bot.whisper(username, '> 创造模式无法丢出物品。');
+        const item = bot.inventory.slots[36 + (bot.quickBarSlot || 0)];
+        if (!item) return bot.whisper(username, '> 当前没有手持物品。');
+        bot.tossStack(item)
+          .then(() => bot.whisper(username, `> 已丢出 ${itemLabel(item)} × ${item.count}。`))
+          .catch((err) => bot.whisper(username, `> 丢出失败: ${err.message}`));
+      },
+    });
+    commands.register({
+      name: 'cginv',
+      permissionLevel: 1,
+      description: '切换快捷栏: !cginv <1-9>（1-9 对应第 1-9 格,0 为第 1 格）',
+      execute: (username, args) => {
+        const n = parseInt(args[0], 10);
+        if (isNaN(n) || n < 0 || n > 9) return bot.whisper(username, '> 用法: !cginv <1-9>');
+        const slot = n === 0 ? 0 : n - 1;
+        try {
+          bot.setQuickBarSlot(slot);
+        } catch (err) {
+          return bot.whisper(username, `> 切换失败: ${err.message}`);
+        }
+        const item = bot.inventory && bot.inventory.slots[36 + slot];
+        bot.whisper(username, `> 已切换到快捷栏第 ${slot + 1} 格${item ? `: ${itemLabel(item)} × ${item.count}` : '（空）'}`);
+      },
+    });
+  }
 
   addRoute('POST', '/api/restart', (req, res) => {
     sendJSON(res, 200, { ok: true, message: '机器人正在重启...' });

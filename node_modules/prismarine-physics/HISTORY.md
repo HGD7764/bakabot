@@ -1,5 +1,10 @@
 ## History
 
+### 1.11.1
+* [Add 26.1 to feature sets (#133)](https://github.com/PrismarineJS/prismarine-physics/commit/f195208783171878b7da7ffd4855fcc5ca9253c7) (thanks @Mikulasz12)
+* [Merge pull request #131 from PrismarineJS/dependabot/npm_and_yarn/vec3-0.2.0](https://github.com/PrismarineJS/prismarine-physics/commit/72b4c78278b4c3a6c9ecea2fef8fce6b27aee2b4) (thanks @rom1504)
+* [Bump vec3 from 0.1.10 to 0.2.0](https://github.com/PrismarineJS/prismarine-physics/commit/6beb8ce90e284620322c86f2928ca8418cc478de) (thanks @dependabot[bot])
+
 ### 1.11.0
 * [Update CI to Node 24 (#129)](https://github.com/PrismarineJS/prismarine-physics/commit/7be0b38f547f186d41fc9cda8841cacf8f2fd80a) (thanks @rom1504)
 * [Fix incorrect elytra physics (#123)](https://github.com/PrismarineJS/prismarine-physics/commit/be7f91bb4ec85e1b1f4ccfa1a33607e9cdfdf92c) (thanks @BossFlea)

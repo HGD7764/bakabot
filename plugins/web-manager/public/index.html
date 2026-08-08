@@ -48,6 +48,42 @@
   #permEditor { min-height: 160px; }
   #configEditor { min-height: 420px; }
   select.ep-select { background: #2a2e38; color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 5px 8px; font-size: 13px; max-width: 130px; }
+  /* ---- 背包(仿原版界面) ---- */
+  .inv-panel { display: flex; gap: 12px; padding: 10px; background: #c6c6c6; border-radius: 2px; width: fit-content; box-shadow: 0 2px 8px rgba(0,0,0,.45); }
+  .inv-armor { display: flex; flex-direction: column; gap: 2px; }
+  .inv-center { display: flex; flex-direction: column; gap: 8px; }
+  .inv-grid { display: grid; grid-template-columns: repeat(9, 40px); gap: 2px; }
+  .inv-bottom { display: flex; gap: 12px; align-items: center; }
+  .inv-slot {
+    width: 40px; height: 40px; background: #8b8b8b; cursor: pointer; user-select: none;
+    border: 2px solid; border-color: #373737 #ffffff #ffffff #373737;
+    position: relative; image-rendering: pixelated;
+  }
+  .inv-slot:hover { filter: brightness(1.12); }
+  .inv-slot.selected { box-shadow: inset 0 0 0 2px #ffffff; }
+  .inv-slot img { width: 32px; height: 32px; position: absolute; left: 2px; top: 2px; image-rendering: pixelated; }
+  .inv-slot .inv-count { position: absolute; right: 2px; bottom: 1px; font-size: 12px; font-weight: 700; color: #fff; text-shadow: 1px 1px 0 #3f3f3f; line-height: 1; }
+  .inv-slot.noicon::after { content: attr(data-label); position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; color: #3f3f3f; }
+  .inv-slot.ench::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,.45) 50%, transparent 60%);
+    background-size: 250% 100%;
+    animation: inv-glint 1.6s linear infinite;
+  }
+  @keyframes inv-glint { 0% { background-position: 130% 0; } 100% { background-position: -30% 0; } }
+  .inv-tooltip {
+    position: fixed; z-index: 50; display: none; pointer-events: none;
+    background: rgba(16, 0, 16, .94); color: #fff; border: 1px solid #2a2a2a;
+    padding: 5px 9px; font-size: 12px; max-width: 320px; white-space: nowrap;
+  }
+  .inv-tooltip.show { display: block; }
+  .inv-ghost {
+    position: fixed; width: 40px; height: 40px; pointer-events: none; z-index: 55;
+    opacity: .92; filter: brightness(1.15);
+    background: rgba(139, 139, 139, .85);
+    border: 2px solid; border-color: #373737 #ffffff #ffffff #373737;
+  }
+  .inv-ghost img { width: 32px; height: 32px; margin: 2px; image-rendering: pixelated; }
   .modal { position: fixed; inset: 0; background: rgba(0,0,0,.65); display: none; align-items: center; justify-content: center; z-index: 10; }
   .modal.open { display: flex; }
   .modal-box { background: var(--card); border: 1px solid var(--border); border-radius: 10px; width: min(860px, 94vw); padding: 18px; }
@@ -71,6 +107,27 @@
       <button class="danger" onclick="restartBot()">🔁 重启机器人</button>
     </div>
   </header>
+
+  <div class="section" id="inventory">
+    <h2>🎒 背包</h2>
+    <p class="hint">悬停物品按 Q 丢出 1 个 · Shift+Q 丢出整组 · 左键拖动移动物品 · 左键快捷栏切换手持格 · 装备栏只能放入对应部位的装备</p>
+    <div class="inv-panel" id="invPanel" style="display:none">
+      <div class="inv-armor">
+        <div class="inv-slot" data-slot="5"></div>
+        <div class="inv-slot" data-slot="6"></div>
+        <div class="inv-slot" data-slot="7"></div>
+        <div class="inv-slot" data-slot="8"></div>
+      </div>
+      <div class="inv-center">
+        <div class="inv-grid" id="invMain"></div>
+        <div class="inv-bottom">
+          <div class="inv-grid" id="invHotbar"></div>
+          <div class="inv-slot" data-slot="45"></div>
+        </div>
+      </div>
+    </div>
+    <p class="status" id="invStatus">连接中...</p>
+  </div>
 
   <div class="section">
     <h2>终端 · 聊天框</h2>
@@ -104,6 +161,16 @@
         <button class="secondary" onclick="closeConfigModal()">取消</button>
         <button onclick="saveConfig()">💾 保存</button>
       </div>
+    </div>
+  </div>
+
+  <!-- 插件面板弹窗(iframe,src 带 token 以便面板内请求鉴权) -->
+  <div class="modal" id="panelModal">
+    <div class="modal-box" style="width:min(1180px,96vw);height:92vh;display:flex;flex-direction:column;">
+      <div style="display:flex;justify-content:flex-end;">
+        <button class="secondary" onclick="closePanelModal()">✖ 关闭</button>
+      </div>
+      <iframe id="panelFrame" style="flex:1;width:100%;min-height:0;border:0;border-radius:8px;background:#111"></iframe>
     </div>
   </div>
 
@@ -181,6 +248,7 @@
                        (p.loaded ? '' : '<span class="badge warn">未加载</span>');
         const eps = (p.customTile && p.customTile.endpoints || []);
         const btns = [
+          (p.customTile && p.customTile.panel) ? `<button onclick="openPanel('${esc(p.customTile.panel)}')">🔍 打开面板</button>` : '',
           `<button onclick="reloadPlugin('${esc(p.name)}')" ${p.loaded ? '' : 'disabled'}>🔄 重载</button>`,
           p.hasConfig ? `<button class="secondary" onclick="editConfig('${esc(p.name)}')">⚙️ 编辑配置</button>` : '',
           ...eps.map((ep, i) => {
@@ -229,6 +297,7 @@
     refreshStatus();
     refreshPlugins();
     refreshTerminal();
+    refreshInventory();
   }
 
   // ---- 终端 ----
@@ -283,6 +352,237 @@
     refreshTerminal();
   }
 
+  // ---- 背包（仿原版界面）----
+  const ICON_VERSIONS = ['1.21.11', '1.21.5', '1.20.4'];
+  const ICON_BASE = 'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/';
+  const HOTBAR_START = 36;
+  let invJson = '';
+  let lastInvData = null;
+  let hoveredSlot = null;  // 鼠标悬停的槽位(供 Q 键丢出)
+  let dragFrom = null;     // 左键拖动源槽位
+  let dragGhost = null;    // 拖动时跟随鼠标的图标
+  let dragMoved = false;   // 本次按下是否真的拖动过(用于区分点击)
+
+  // 方块物品(石头/圆石/泥土...)的纹理在 block/ 目录,真物品(工具/食物...)在 item/ 目录
+  function iconUrl(name, version, dir) {
+    return ICON_BASE + version + '/assets/minecraft/textures/' + dir + '/' + String(name).replace(/^minecraft:/, '') + '.png';
+  }
+
+  // 主背包 9-35(3行×9)、快捷栏 36-44 的槽位骨架（盔甲/副手已在 HTML 中）
+  function buildInvSlots() {
+    const main = document.getElementById('invMain');
+    const hotbar = document.getElementById('invHotbar');
+    main.innerHTML = '';
+    hotbar.innerHTML = '';
+    for (let i = 9; i <= 35; i++) {
+      const s = document.createElement('div');
+      s.className = 'inv-slot';
+      s.dataset.slot = i;
+      main.appendChild(s);
+    }
+    for (let i = 36; i <= 44; i++) {
+      const s = document.createElement('div');
+      s.className = 'inv-slot';
+      s.dataset.slot = i;
+      hotbar.appendChild(s);
+    }
+  }
+
+  // 图标: 依次尝试 [首选目录(服务端映射 texDir 或按方块/物品推断), 另一目录] × 各版本,
+  // 全部失败则显示占位符(物品名前两字符)
+  function makeItemImg(name, isBlock, texDir, texName) {
+    const img = document.createElement('img');
+    const primary = texDir || (isBlock ? 'block' : 'item');
+    const fallback = isBlock ? ['block', 'item'] : ['item', 'block'];
+    const dirs = [primary, ...fallback.filter(d => d !== primary)];
+    const fname = texName || name;
+    let tryIdx = 0;
+    const candidates = [];
+    for (const v of ICON_VERSIONS) for (const d of dirs) candidates.push([v, d]);
+    img.onerror = () => {
+      tryIdx++;
+      if (tryIdx < candidates.length) {
+        img.src = iconUrl(fname, candidates[tryIdx][0], candidates[tryIdx][1]);
+      } else if (img._slotEl) {
+        const n = String(name).replace(/^minecraft:/, '');
+        img._slotEl.classList.add('noicon');
+        img._slotEl.dataset.label = n.slice(0, 2).toUpperCase();
+        img.remove();
+      }
+    };
+    img.src = iconUrl(fname, candidates[0][0], candidates[0][1]);
+    return img;
+  }
+
+  function setItemIcon(slotEl, item) {
+    const img = makeItemImg(item.name, item.block, item.texDir, item.texName);
+    img._slotEl = slotEl;
+    slotEl.appendChild(img);
+    return img;
+  }
+
+  function renderInventory(data) {
+    const key = JSON.stringify(data);
+    if (key === invJson) return; // 数据没变就不重建，避免右键菜单/悬停被打断
+    invJson = key;
+    const slots = document.querySelectorAll('.inv-slot');
+    for (const el of slots) {
+      const idx = parseInt(el.dataset.slot, 10);
+      const item = data.slots[idx];
+      el.className = 'inv-slot';
+      el.innerHTML = '';
+      delete el.dataset.label;
+      if (!item) continue;
+      setItemIcon(el, item);
+      if (item.enchanted) el.classList.add('ench');
+      if (item.count > 1) {
+        const c = document.createElement('span');
+        c.className = 'inv-count';
+        c.textContent = item.count;
+        el.appendChild(c);
+      }
+    }
+    // 当前手持格高亮
+    for (let i = 0; i < 9; i++) {
+      const el = document.querySelector('#invHotbar .inv-slot[data-slot="' + (HOTBAR_START + i) + '"]');
+      if (el) el.classList.toggle('selected', i === data.quickBarSlot);
+    }
+  }
+
+  async function refreshInventory() {
+    try {
+      const data = await apiJSON('/api/inventory');
+      lastInvData = data;
+      const st = document.getElementById('invStatus');
+      st.style.display = data.available ? 'none' : '';
+      st.textContent = data.available ? '' : '背包尚未同步（等待登录...）';
+      document.getElementById('invPanel').style.display = data.available ? '' : 'none';
+      if (data.available) renderInventory(data);
+    } catch (err) {
+      // 静默失败，等待下次轮询
+    }
+  }
+
+  // ---- 背包交互：Q 键丢出 / 左键拖动移动 / 悬停提示 ----
+  const tooltip = document.createElement('div');
+  tooltip.className = 'inv-tooltip';
+  document.body.appendChild(tooltip);
+  const invBox = document.getElementById('inventory');
+
+  function showTooltip(x, y, text) {
+    tooltip.textContent = text;
+    tooltip.classList.add('show');
+    tooltip.style.left = (x + 12) + 'px';
+    tooltip.style.top = (y + 16) + 'px';
+  }
+  function hideTooltip() { tooltip.classList.remove('show'); }
+
+  // 悬停:记录当前槽位 + 显示物品名
+  invBox.addEventListener('mouseover', (e) => {
+    const el = e.target.closest('.inv-slot');
+    if (!el) { hoveredSlot = null; return hideTooltip(); }
+    hoveredSlot = parseInt(el.dataset.slot, 10);
+    const item = lastInvData && lastInvData.slots[hoveredSlot];
+    if (!item) return hideTooltip();
+    showTooltip(e.clientX, e.clientY, (item.customName || item.displayName) + (item.count > 1 ? ' × ' + item.count : ''));
+  });
+  invBox.addEventListener('mousemove', (e) => {
+    if (tooltip.classList.contains('show')) {
+      tooltip.style.left = (e.clientX + 12) + 'px';
+      tooltip.style.top = (e.clientY + 16) + 'px';
+    }
+    if (dragGhost) {
+      dragGhost.style.left = (e.clientX - 20) + 'px';
+      dragGhost.style.top = (e.clientY - 20) + 'px';
+    }
+  });
+  invBox.addEventListener('mouseout', (e) => {
+    if (!e.relatedTarget || !e.relatedTarget.closest || !e.relatedTarget.closest('.inv-slot')) {
+      hoveredSlot = null;
+      hideTooltip();
+    }
+  });
+
+  // 左键:按下记录拖动源,松开落到其他槽位则移动;同槽位松开算点击(快捷栏切换)
+  invBox.addEventListener('mousedown', (e) => {
+    if (e.button !== 0) return;
+    const el = e.target.closest('.inv-slot');
+    if (!el) return;
+    const item = lastInvData && lastInvData.slots[parseInt(el.dataset.slot, 10)];
+    if (!item) return;
+    dragFrom = parseInt(el.dataset.slot, 10);
+    dragMoved = false;
+    dragGhost = document.createElement('div');
+    dragGhost.className = 'inv-ghost';
+    dragGhost.appendChild(makeItemImg(item.name, item.block, item.texDir, item.texName));
+    document.body.appendChild(dragGhost);
+  });
+
+  invBox.addEventListener('mouseup', (e) => {
+    if (e.button !== 0) return;
+    const el = e.target.closest('.inv-slot');
+    const target = el ? parseInt(el.dataset.slot, 10) : null;
+    if (dragFrom !== null && target !== null && target !== dragFrom) {
+      dragMoved = true;
+      moveItem(dragFrom, target);
+    }
+    dragFrom = null;
+    if (dragGhost) { dragGhost.remove(); dragGhost = null; }
+  });
+
+  invBox.addEventListener('click', (e) => {
+    if (dragMoved) return; // 刚拖动过,不是点击
+    const el = e.target.closest('.inv-slot');
+    if (!el) return;
+    const idx = parseInt(el.dataset.slot, 10);
+    if (idx >= HOTBAR_START && idx <= HOTBAR_START + 8) {
+      // 左键快捷栏 → 切换手持格
+      apiJSON('/api/inventory/select', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slot: idx - HOTBAR_START }),
+      }).then(() => refreshInventory()).catch(err => toast('切换失败: ' + err.message, 'err'));
+    }
+  });
+
+  // Q 键丢出鼠标所指物品(Q=1 个, Shift+Q=整组);输入框聚焦或拖拽中忽略
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'q' && e.key !== 'Q') return;
+    const t = e.target;
+    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+    if (hoveredSlot === null || dragFrom !== null) return;
+    if (!lastInvData || !lastInvData.slots[hoveredSlot]) return;
+    e.preventDefault();
+    dropSlot(hoveredSlot, e.shiftKey ? 'all' : 1);
+  });
+
+  async function dropSlot(slot, count) {
+    try {
+      const r = await apiJSON('/api/inventory/drop', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slot, count }),
+      });
+      toast('已丢出 ' + r.dropped.name + (r.dropped.count > 1 ? ' × ' + r.dropped.count : ''));
+    } catch (err) {
+      toast('丢出失败: ' + err.message, 'err');
+    }
+    refreshInventory();
+  }
+
+  async function moveItem(from, to) {
+    try {
+      await apiJSON('/api/inventory/move', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ from, to }),
+      });
+    } catch (err) {
+      toast('移动失败: ' + err.message, 'err');
+    }
+    refreshInventory();
+  }
+
   // ---- 插件操作 ----
   async function reloadPlugin(name) {
     try {
@@ -331,6 +631,18 @@
   function closeConfigModal() {
     document.getElementById('configModal').classList.remove('open');
     currentConfigName = null;
+  }
+
+  // ---- 插件面板 ----
+  function openPanel(panelPath) {
+    const token = localStorage.getItem(TOKEN_KEY) || '';
+    document.getElementById('panelFrame').src = panelPath + (token ? '?token=' + encodeURIComponent(token) : '');
+    document.getElementById('panelModal').classList.add('open');
+  }
+
+  function closePanelModal() {
+    document.getElementById('panelModal').classList.remove('open');
+    document.getElementById('panelFrame').src = 'about:blank';
   }
 
   async function saveConfig() {
@@ -408,9 +720,11 @@
   }
 
   // ---- 初始化 ----
+  buildInvSlots();
   refreshAll();
   setInterval(refreshStatus, 30000);
   setInterval(refreshTerminal, 2000);
+  setInterval(refreshInventory, 2000);
 </script>
 </body>
 </html>

@@ -1,0 +1,85 @@
+{
+  "sha": "706e92e22bf60845bc8616f3d41afd8803fc65df",
+  "node_id": "C_kwDOTlUYu9oAKDcwNmU5MmUyMmJmNjA4NDViYzg2MTZmM2Q0MWFmZDg4MDNmYzY1ZGY",
+  "commit": {
+    "author": {
+      "name": "Boris Peyriguere",
+      "email": "boris@mac.home",
+      "date": "2026-07-27T21:20:23Z"
+    },
+    "committer": {
+      "name": "Boris Peyriguere",
+      "email": "boris@mac.home",
+      "date": "2026-07-27T21:20:23Z"
+    },
+    "message": "fix Minecraft 26.2 particle registry ids",
+    "tree": {
+      "sha": "71a7c9e662c927df3c73d8ec50892512e84e7ca5",
+      "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-data-26.2/git/trees/71a7c9e662c927df3c73d8ec50892512e84e7ca5"
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-data-26.2/git/commits/706e92e22bf60845bc8616f3d41afd8803fc65df",
+    "comment_count": 0,
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-data-26.2/commits/706e92e22bf60845bc8616f3d41afd8803fc65df",
+  "html_url": "https://github.com/Complexity-ML/node-minecraft-data-26.2/commit/706e92e22bf60845bc8616f3d41afd8803fc65df",
+  "comments_url": "https://api.github.com/repos/Complexity-ML/node-minecraft-data-26.2/commits/706e92e22bf60845bc8616f3d41afd8803fc65df/comments",
+  "author": null,
+  "committer": null,
+  "parents": [
+    {
+      "sha": "f430713fea7fb026a14765730b47775feb798130",
+      "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-data-26.2/commits/f430713fea7fb026a14765730b47775feb798130",
+      "html_url": "https://github.com/Complexity-ML/node-minecraft-data-26.2/commit/f430713fea7fb026a14765730b47775feb798130"
+    }
+  ],
+  "stats": {
+    "total": 8,
+    "additions": 4,
+    "deletions": 4
+  },
+  "files": [
+    {
+      "sha": "380a179ea4c355cd591bb6849c66a121bf9dde2c",
+      "filename": "README.md",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 2,
+      "changes": 4,
+      "blob_url": "https://github.com/Complexity-ML/node-minecraft-data-26.2/blob/706e92e22bf60845bc8616f3d41afd8803fc65df/README.md",
+      "raw_url": "https://github.com/Complexity-ML/node-minecraft-data-26.2/raw/706e92e22bf60845bc8616f3d41afd8803fc65df/README.md",
+      "contents_url": "https://api.github.com/repos/Complexity-ML/node-minecraft-data-26.2/contents/README.md?ref=706e92e22bf60845bc8616f3d41afd8803fc65df",
+      "patch": "@@ -6,14 +6,14 @@ It is the data layer used by GAME LAB's protocol and Mineflayer distributions.\n \n | Package | Minecraft Java | Protocol | Data version |\n | --- | --- | --- | --- |\n-| `minecraft-data@3.111.0+complexity.26.2.4` | 26.2 | 776 | 4903 |\n+| `minecraft-data@3.111.0+complexity.26.2.5` | 26.2 | 776 | 4903 |\n \n ## Install\n \n The standalone package is distributed as an immutable GitHub Release asset:\n \n ```bash\n-npm install \"https://github.com/Complexity-ML/node-minecraft-data-26.2/releases/download/complexity-26.2.4/minecraft-data-complexity-26.2.4.tgz\"\n+npm install \"https://github.com/Complexity-ML/node-minecraft-data-26.2/releases/download/complexity-26.2.5/minecraft-data-complexity-26.2.5.tgz\"\n ```\n \n Pin this exact URL in applications that must reproduce the GAME LAB 26.2"
+    },
+    {
+      "sha": "2a6a5fd9ebb0d964a73312d11beef596b7ec029b",
+      "filename": "minecraft-data",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": null,
+      "raw_url": null,
+      "contents_url": "https://api.github.com/repos/Complexity-ML/node-minecraft-data-26.2/contents/minecraft-data?ref=706e92e22bf60845bc8616f3d41afd8803fc65df",
+      "patch": "@@ -1 +1 @@\n-Subproject commit 20a9344502a17be58ccf74b969a8bec0c44921a7\n+Subproject commit 2a6a5fd9ebb0d964a73312d11beef596b7ec029b"
+    },
+    {
+      "sha": "241fe3e761e763c5c5dc972ce9aeb94b406252e8",
+      "filename": "package.json",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/Complexity-ML/node-minecraft-data-26.2/blob/706e92e22bf60845bc8616f3d41afd8803fc65df/package.json",
+      "raw_url": "https://github.com/Complexity-ML/node-minecraft-data-26.2/raw/706e92e22bf60845bc8616f3d41afd8803fc65df/package.json",
+      "contents_url": "https://api.github.com/repos/Complexity-ML/node-minecraft-data-26.2/contents/package.json?ref=706e92e22bf60845bc8616f3d41afd8803fc65df",
+      "patch": "@@ -1,6 +1,6 @@\n {\n   \"name\": \"minecraft-data\",\n-  \"version\": \"3.111.0+complexity.26.2.4\",\n+  \"version\": \"3.111.0+complexity.26.2.5\",\n   \"description\": \"Provide easy access to minecraft data in node.js\",\n   \"main\": \"index.js\",\n   \"tonicExampleFilename\": \"example.js\","
+    }
+  ]
+}

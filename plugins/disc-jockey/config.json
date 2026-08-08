@@ -1,0 +1,9 @@
+{
+  "expectedServerVersion": "v1_20_5_Or_Later",
+  "tuningSpeed": "Spigot",
+  "playbackPacketRatelimit": "Limit500",
+  "delayPlaybackStartBySecs": 0,
+  "instrumentDetectionWorkaround": true,
+  "hideWarning": false,
+  "favorites": []
+}

@@ -1,0 +1,1402 @@
+[
+  {
+    "sha": "b474ebe04dda69f3939e7103925fceb610fd504c",
+    "node_id": "C_kwDOTlUYfdoAKGI0NzRlYmUwNGRkYTY5ZjM5MzllNzEwMzkyNWZjZWI2MTBmZDUwNGM",
+    "commit": {
+      "author": {
+        "name": "Boris Peyriguere",
+        "email": "boris@mac.home",
+        "date": "2026-07-27T21:20:23Z"
+      },
+      "committer": {
+        "name": "Boris Peyriguere",
+        "email": "boris@mac.home",
+        "date": "2026-07-27T21:20:23Z"
+      },
+      "message": "fix Minecraft 26.2 explosion particle decoding",
+      "tree": {
+        "sha": "2a7043978eaf436cff368b58da3cd20d0f65e89b",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/trees/2a7043978eaf436cff368b58da3cd20d0f65e89b"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/commits/b474ebe04dda69f3939e7103925fceb610fd504c",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/b474ebe04dda69f3939e7103925fceb610fd504c",
+    "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/b474ebe04dda69f3939e7103925fceb610fd504c",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/b474ebe04dda69f3939e7103925fceb610fd504c/comments",
+    "author": null,
+    "committer": null,
+    "parents": [
+      {
+        "sha": "8846bd7f4bded1c32d6eb892cccad2d857c7b8d2",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/8846bd7f4bded1c32d6eb892cccad2d857c7b8d2",
+        "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/8846bd7f4bded1c32d6eb892cccad2d857c7b8d2"
+      }
+    ]
+  },
+  {
+    "sha": "8846bd7f4bded1c32d6eb892cccad2d857c7b8d2",
+    "node_id": "C_kwDOTlUYfdoAKDg4NDZiZDdmNGJkZWQxYzMyZDZlYjg5MmNjY2FkMmQ4NTdjN2I4ZDI",
+    "commit": {
+      "author": {
+        "name": "Boris Peyriguere",
+        "email": "boris@mac.home",
+        "date": "2026-07-27T21:01:25Z"
+      },
+      "committer": {
+        "name": "Boris Peyriguere",
+        "email": "boris@mac.home",
+        "date": "2026-07-27T21:01:25Z"
+      },
+      "message": "fix 26.2 item component registry decoding",
+      "tree": {
+        "sha": "bf4f03a197aba9313e4d082f54790a4e4416e0b9",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/trees/bf4f03a197aba9313e4d082f54790a4e4416e0b9"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/commits/8846bd7f4bded1c32d6eb892cccad2d857c7b8d2",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/8846bd7f4bded1c32d6eb892cccad2d857c7b8d2",
+    "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/8846bd7f4bded1c32d6eb892cccad2d857c7b8d2",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/8846bd7f4bded1c32d6eb892cccad2d857c7b8d2/comments",
+    "author": null,
+    "committer": null,
+    "parents": [
+      {
+        "sha": "a2b7acf8e7e78965fac4d1b95421093c94d89d5e",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/a2b7acf8e7e78965fac4d1b95421093c94d89d5e",
+        "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/a2b7acf8e7e78965fac4d1b95421093c94d89d5e"
+      }
+    ]
+  },
+  {
+    "sha": "a2b7acf8e7e78965fac4d1b95421093c94d89d5e",
+    "node_id": "C_kwDOTlUYfdoAKGEyYjdhY2Y4ZTdlNzg5NjVmYWM0ZDFiOTU0MjEwOTNjOTRkODlkNWU",
+    "commit": {
+      "author": {
+        "name": "Boris Peyriguere",
+        "email": "boris@mac.home",
+        "date": "2026-07-27T20:46:41Z"
+      },
+      "committer": {
+        "name": "Boris Peyriguere",
+        "email": "boris@mac.home",
+        "date": "2026-07-27T20:46:41Z"
+      },
+      "message": "fix 26.2 advancement packet decoding",
+      "tree": {
+        "sha": "8c3bb80f09a0a448efd13b1ed5bd39c7c5120445",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/trees/8c3bb80f09a0a448efd13b1ed5bd39c7c5120445"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/commits/a2b7acf8e7e78965fac4d1b95421093c94d89d5e",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/a2b7acf8e7e78965fac4d1b95421093c94d89d5e",
+    "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/a2b7acf8e7e78965fac4d1b95421093c94d89d5e",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/a2b7acf8e7e78965fac4d1b95421093c94d89d5e/comments",
+    "author": null,
+    "committer": null,
+    "parents": [
+      {
+        "sha": "1241f3fbd94635f352f07a6ecdc1976b53049351",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/1241f3fbd94635f352f07a6ecdc1976b53049351",
+        "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/1241f3fbd94635f352f07a6ecdc1976b53049351"
+      }
+    ]
+  },
+  {
+    "sha": "1241f3fbd94635f352f07a6ecdc1976b53049351",
+    "node_id": "C_kwDOTlUYfdoAKDEyNDFmM2ZiZDk0NjM1ZjM1MmYwN2E2ZWNkYzE5NzZiNTMwNDkzNTE",
+    "commit": {
+      "author": {
+        "name": "Boris Peyriguere",
+        "email": "boris@mac.home",
+        "date": "2026-07-27T19:53:18Z"
+      },
+      "committer": {
+        "name": "Boris Peyriguere",
+        "email": "boris@mac.home",
+        "date": "2026-07-27T19:53:18Z"
+      },
+      "message": "docs: document standalone Minecraft 26.2 distribution",
+      "tree": {
+        "sha": "5e61250ed21d77c2b670b4b4b5f8efa6356a4cf6",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/trees/5e61250ed21d77c2b670b4b4b5f8efa6356a4cf6"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/commits/1241f3fbd94635f352f07a6ecdc1976b53049351",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/1241f3fbd94635f352f07a6ecdc1976b53049351",
+    "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/1241f3fbd94635f352f07a6ecdc1976b53049351",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/1241f3fbd94635f352f07a6ecdc1976b53049351/comments",
+    "author": null,
+    "committer": null,
+    "parents": [
+      {
+        "sha": "085cea24bf4f3afd4907a6e2808b7b0c88380439",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/085cea24bf4f3afd4907a6e2808b7b0c88380439",
+        "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/085cea24bf4f3afd4907a6e2808b7b0c88380439"
+      }
+    ]
+  },
+  {
+    "sha": "085cea24bf4f3afd4907a6e2808b7b0c88380439",
+    "node_id": "C_kwDOTlUYfdoAKDA4NWNlYTI0YmY0ZjNhZmQ0OTA3YTZlMjgwOGI3YjBjODgzODA0Mzk",
+    "commit": {
+      "author": {
+        "name": "Boris Peyriguere",
+        "email": "boris@mac.home",
+        "date": "2026-07-27T19:34:39Z"
+      },
+      "committer": {
+        "name": "Boris Peyriguere",
+        "email": "boris@mac.home",
+        "date": "2026-07-27T19:34:39Z"
+      },
+      "message": "use Minecraft 26.2 world clock fields in test",
+      "tree": {
+        "sha": "ed7cbcc99d7f46ac76b31d536254b1ecaaebc6c5",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/trees/ed7cbcc99d7f46ac76b31d536254b1ecaaebc6c5"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/commits/085cea24bf4f3afd4907a6e2808b7b0c88380439",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/085cea24bf4f3afd4907a6e2808b7b0c88380439",
+    "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/085cea24bf4f3afd4907a6e2808b7b0c88380439",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/085cea24bf4f3afd4907a6e2808b7b0c88380439/comments",
+    "author": null,
+    "committer": null,
+    "parents": [
+      {
+        "sha": "e03bcc8d86aec275a0f76a7a6cd60faee2c616ab",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/e03bcc8d86aec275a0f76a7a6cd60faee2c616ab",
+        "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/e03bcc8d86aec275a0f76a7a6cd60faee2c616ab"
+      }
+    ]
+  },
+  {
+    "sha": "e03bcc8d86aec275a0f76a7a6cd60faee2c616ab",
+    "node_id": "C_kwDOTlUYfdoAKGUwM2JjYzhkODZhZWMyNzVhMGY3NmE3YTZjZDYwZmFlZTJjNjE2YWI",
+    "commit": {
+      "author": {
+        "name": "Boris Peyriguere",
+        "email": "boris@mac.home",
+        "date": "2026-07-27T19:31:46Z"
+      },
+      "committer": {
+        "name": "Boris Peyriguere",
+        "email": "boris@mac.home",
+        "date": "2026-07-27T19:31:46Z"
+      },
+      "message": "support Minecraft Java 26.2 protocol",
+      "tree": {
+        "sha": "285f562a235a8a7ac5dd4bdd524b7cf89e9dadcf",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/trees/285f562a235a8a7ac5dd4bdd524b7cf89e9dadcf"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/commits/e03bcc8d86aec275a0f76a7a6cd60faee2c616ab",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/e03bcc8d86aec275a0f76a7a6cd60faee2c616ab",
+    "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/e03bcc8d86aec275a0f76a7a6cd60faee2c616ab",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/e03bcc8d86aec275a0f76a7a6cd60faee2c616ab/comments",
+    "author": null,
+    "committer": null,
+    "parents": [
+      {
+        "sha": "aa23a03964bf84e2f7fe813818a4ec5b7b2a1270",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/aa23a03964bf84e2f7fe813818a4ec5b7b2a1270",
+        "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/aa23a03964bf84e2f7fe813818a4ec5b7b2a1270"
+      }
+    ]
+  },
+  {
+    "sha": "aa23a03964bf84e2f7fe813818a4ec5b7b2a1270",
+    "node_id": "C_kwDOTlUYfdoAKGFhMjNhMDM5NjRiZjg0ZTJmN2ZlODEzODE4YTRlYzViN2IyYTEyNzA",
+    "commit": {
+      "author": {
+        "name": "AChompSitsIn",
+        "email": "114684575+AChompSitsIn@users.noreply.github.com",
+        "date": "2026-07-26T21:02:55Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-07-26T21:02:55Z"
+      },
+      "message": "Send interim Client Information (settings) packet during configuration phase (#1499)\n\n* Send client settings during configuration phase (fixes mineflayer#3623)\n\n* Make configuration-phase client settings configurable via clientSettings option\n\n---------\n\nCo-authored-by: extremeheat <extreme@protonmail.ch>",
+      "tree": {
+        "sha": "4b5445381d6331929c390501cfacccaa32457de3",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/trees/4b5445381d6331929c390501cfacccaa32457de3"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/commits/aa23a03964bf84e2f7fe813818a4ec5b7b2a1270",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJqZnX/CRC1aQ7uu5UhlAAAPbkQABcctAxAqQbnWMGPtfaPBfJt\nUou4+sAZICOalVMYK5tA/1XORxM2/R0XfmLfwV5tv7iHCvwmz6XjbVtdbuCAd8l9\nelcKxovzj+jJ+f9QA4eFzf+8BGhGYn1SJhU1m3kCM7QWDmhRvRBBu7MsczrLCYmD\ndO6qNt0R/jM2eczg5vg9ohM40S+q8GmuczuR5vhzoifksuuBA3h+hjZJtwLAEd6R\nev2lc10w3dm7/01EqY9JYf84nh6UqENTQND3a1HWHK1QNQFCCL+vCvyWz4tkXAdW\ncljgXg7aRls1S+EsTnCIpuBfjoAUtdk7OWuuXWqtwVq/YeZI0Phl5Ln+w7xzM8eW\ncS9hxfU5hFTcnt3h6PAUFQxrHqvvp7tG7vPTrNnIhOjezUc0Og3DondYC5mweb2K\npcBhGB3l+V0Kqbibgns7J10GA9Avef5IX564ewgreu9RSRl6279ChWPwfQ2EuYM4\nyIO4sxAGknwNBZ6vqIbbkbHRdFQ3LgJ9pG0q/lmIdPKEjirVFESP00Yj/Qn6WNSx\nooz87AuNx+Eh+at01f30ZJGfudG4tZWsqlhJPaR4eb/Uo6TQrW4H4c8x6LW4CuWo\nPkFGxvA9Hw/4fcSDEFvu3IzaM8Or705ayJR7xjQfrnZwr51KYQJvn8dQqtKf/hdJ\nRrKtlS877jA0rkbdZtds\n=V+b5\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree 4b5445381d6331929c390501cfacccaa32457de3\nparent 73dc5bcde5c03a3e95d5a69e5c945ecc2bc766ae\nauthor AChompSitsIn <114684575+AChompSitsIn@users.noreply.github.com> 1785099775 -0700\ncommitter GitHub <noreply@github.com> 1785099775 -0400\n\nSend interim Client Information (settings) packet during configuration phase (#1499)\n\n* Send client settings during configuration phase (fixes mineflayer#3623)\n\n* Make configuration-phase client settings configurable via clientSettings option\n\n---------\n\nCo-authored-by: extremeheat <extreme@protonmail.ch>",
+        "verified_at": "2026-07-27T19:21:47Z"
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/aa23a03964bf84e2f7fe813818a4ec5b7b2a1270",
+    "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/aa23a03964bf84e2f7fe813818a4ec5b7b2a1270",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/aa23a03964bf84e2f7fe813818a4ec5b7b2a1270/comments",
+    "author": {
+      "login": "AChompSitsIn",
+      "id": 114684575,
+      "node_id": "U_kgDOBtXynw",
+      "avatar_url": "https://avatars.githubusercontent.com/u/114684575?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/AChompSitsIn",
+      "html_url": "https://github.com/AChompSitsIn",
+      "followers_url": "https://api.github.com/users/AChompSitsIn/followers",
+      "following_url": "https://api.github.com/users/AChompSitsIn/following{/other_user}",
+      "gists_url": "https://api.github.com/users/AChompSitsIn/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/AChompSitsIn/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/AChompSitsIn/subscriptions",
+      "organizations_url": "https://api.github.com/users/AChompSitsIn/orgs",
+      "repos_url": "https://api.github.com/users/AChompSitsIn/repos",
+      "events_url": "https://api.github.com/users/AChompSitsIn/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/AChompSitsIn/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "73dc5bcde5c03a3e95d5a69e5c945ecc2bc766ae",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/73dc5bcde5c03a3e95d5a69e5c945ecc2bc766ae",
+        "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/73dc5bcde5c03a3e95d5a69e5c945ecc2bc766ae"
+      }
+    ]
+  },
+  {
+    "sha": "73dc5bcde5c03a3e95d5a69e5c945ecc2bc766ae",
+    "node_id": "C_kwDOTlUYfdoAKDczZGM1YmNkZTVjMDNhM2U5NWQ1YTY5ZTVjOTQ1ZWNjMmJjNzY2YWU",
+    "commit": {
+      "author": {
+        "name": "mliem2k",
+        "email": "michael.liem2k@gmail.com",
+        "date": "2026-07-26T20:29:57Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-07-26T20:29:57Z"
+      },
+      "message": "Add client_transfer example (#1507)\n\nDemonstrates correctly following a server-initiated Transfer packet:\nend the old connection and wait for it to fully close (plus a short\ngrace period) before reconnecting with the same username, since an\nimmediate reconnect can race the server's own session cleanup and get\nrejected as \"already playing on the server.\"\n\nThere was no existing example or doc mention of the Transfer packet\nin this repo despite the protocol data already supporting it, and\nmineflayer has an open bug specifically around this scenario\n(PrismarineJS/mineflayer#3776, sending physics packets during the\nconfiguration phase a transfer triggers). Tested against a real\nPaper/Purpur 1.21.10 server doing a live catcher-to-relay handoff.",
+      "tree": {
+        "sha": "bcc5923e0caf14251631a2319d8e5e999ef8d7d8",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/trees/bcc5923e0caf14251631a2319d8e5e999ef8d7d8"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/commits/73dc5bcde5c03a3e95d5a69e5c945ecc2bc766ae",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJqZm5FCRC1aQ7uu5UhlAAAqvoQAHCZk2E7vXu43gAhfx8q+/aK\nb4myhMknzQlSBI2xvKTCZeZ8/5K9UtRlnMOB6+RzyWokUQTK225/tpUZjJBn44fs\nXq1j9KNXCzAa6Jop4BCIiOm8oCDcM5HtuX0dQkuLPL4NkX3n4IDVS9mv8if8XPEL\n8AoHAauFB+jn2kyTu+1gi8akjPiEZ1VUU3IAsWXMF+dkLAEVEqbQdy+4zEMywxdQ\n6mi5bbtMt/al0i/dnX1Bnz+edq9kU3fEj3oigC/DpuWr0EiuUN0vhHm9NKqLHtiD\nKZamfCxUvY1IFc4Y13akI+fQxmLQHMPfeFIdLtaSzs2l8p/OJIFB/m4HpiFevvqw\nUElC4GHAWTEq84Go/qN0dywjQj5Yp2mhCu6NHMfkkfbVsaTpPbWun68I9m2YjidM\n/MlVvL97DjFBaGDnXG83H3I7UrZbl5g2Ih7d+x0NyBI5aVTUxJ/DO/PchiFJO5SQ\n2ql8Sv8XX/tUucWdC+VTtnY39y9JI3R6f5JOKkfzNyR0ZS9uRmjFb3L/vxncTXNj\n0vOY4+SeLspEryy0mUZjsfbGKCyrrvQEHKz52hd6Zu9HiEQG5y84OUyVQzmEHt8C\n1UGZzGygU/7OGuf1VL1TXNqlEWk63mbNaKUemIhLW1Fsf11wzU3toItxuqknuFsM\npVn9SsmIgx72CswVbR2W\n=S93G\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree bcc5923e0caf14251631a2319d8e5e999ef8d7d8\nparent e8bf2323039faec2d8bdf5b5b5fbf5aa14722cb9\nauthor mliem2k <michael.liem2k@gmail.com> 1785097797 +0800\ncommitter GitHub <noreply@github.com> 1785097797 -0400\n\nAdd client_transfer example (#1507)\n\nDemonstrates correctly following a server-initiated Transfer packet:\nend the old connection and wait for it to fully close (plus a short\ngrace period) before reconnecting with the same username, since an\nimmediate reconnect can race the server's own session cleanup and get\nrejected as \"already playing on the server.\"\n\nThere was no existing example or doc mention of the Transfer packet\nin this repo despite the protocol data already supporting it, and\nmineflayer has an open bug specifically around this scenario\n(PrismarineJS/mineflayer#3776, sending physics packets during the\nconfiguration phase a transfer triggers). Tested against a real\nPaper/Purpur 1.21.10 server doing a live catcher-to-relay handoff.",
+        "verified_at": "2026-07-27T19:21:47Z"
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/73dc5bcde5c03a3e95d5a69e5c945ecc2bc766ae",
+    "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/73dc5bcde5c03a3e95d5a69e5c945ecc2bc766ae",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/73dc5bcde5c03a3e95d5a69e5c945ecc2bc766ae/comments",
+    "author": {
+      "login": "mliem2k",
+      "id": 57231635,
+      "node_id": "MDQ6VXNlcjU3MjMxNjM1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/57231635?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/mliem2k",
+      "html_url": "https://github.com/mliem2k",
+      "followers_url": "https://api.github.com/users/mliem2k/followers",
+      "following_url": "https://api.github.com/users/mliem2k/following{/other_user}",
+      "gists_url": "https://api.github.com/users/mliem2k/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/mliem2k/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/mliem2k/subscriptions",
+      "organizations_url": "https://api.github.com/users/mliem2k/orgs",
+      "repos_url": "https://api.github.com/users/mliem2k/repos",
+      "events_url": "https://api.github.com/users/mliem2k/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/mliem2k/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "e8bf2323039faec2d8bdf5b5b5fbf5aa14722cb9",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/e8bf2323039faec2d8bdf5b5b5fbf5aa14722cb9",
+        "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/e8bf2323039faec2d8bdf5b5b5fbf5aa14722cb9"
+      }
+    ]
+  },
+  {
+    "sha": "e8bf2323039faec2d8bdf5b5b5fbf5aa14722cb9",
+    "node_id": "C_kwDOTlUYfdoAKGU4YmYyMzIzMDM5ZmFlYzJkOGJkZjViNWI1ZmJmNWFhMTQ3MjJjYjk",
+    "commit": {
+      "author": {
+        "name": "dependabot[bot]",
+        "email": "49699333+dependabot[bot]@users.noreply.github.com",
+        "date": "2026-07-26T20:25:54Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-07-26T20:25:54Z"
+      },
+      "message": "Bump @types/node from 25.9.5 to 26.1.1 (#1505)\n\nBumps [@types/node](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/HEAD/types/node) from 25.9.5 to 26.1.1.\n- [Release notes](https://github.com/DefinitelyTyped/DefinitelyTyped/releases)\n- [Commits](https://github.com/DefinitelyTyped/DefinitelyTyped/commits/HEAD/types/node)\n\n---\nupdated-dependencies:\n- dependency-name: \"@types/node\"\n  dependency-version: 26.1.1\n  dependency-type: direct:development\n  update-type: version-update:semver-major\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+      "tree": {
+        "sha": "23eb150f6aa182ac2b364402a2295378f414f476",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/trees/23eb150f6aa182ac2b364402a2295378f414f476"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/commits/e8bf2323039faec2d8bdf5b5b5fbf5aa14722cb9",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJqZm1SCRC1aQ7uu5UhlAAAoOUQAJPykdeVXjcwFQC2FbUaY9he\nS3PWCvp/BE80Ia9AaX56KBWMFjRZkYg1qx8/qAB/IbwtNP+cgLBkkvoUK7yUwg6t\nDhwuMWtA14XEsbfacx836josx5NBW6A6oSLSjINXU0c70hN74fWqYSMKs3OOyo2J\nen1zT/lWxhGbqzFBHQTp1fZ94qwvf9Ewh5bUEKMIlZnf3mMkZPDL6cldT4uQQrwV\nOko4jo/NG1fAGg5DN0Ok6okwVhdzflc7tZOScDsqFQPAa4Jefo+A+nhQJ4cTBH0y\ntvfVhJ49eYPsAdh11/U/iVP045g7H7ewuXGBZ3yrfvPmjndndHukv2aejg+ObU/+\nbNbs5RAgie+5gu8L6FpaPRfemD6NYzadlNmsmHmRcCkQa5KUDM3soyGkyZuE7A2d\nGCvu/GilXqyKbYxrYvVDPiesMw4EE43Jjc5s2GbFMT2TOGA0ArbiCKnPW26jY2BT\n81S4r2NcFRoQ4Drh/dGzN8Ujz8c7dlojN7L6xQY0LQJb826AF/dl6RdVOFhx5OZ3\nhZvhV3hE9rKpeIXHCxch3lYR52qblZ6VFJ6Og/dfXoqHgR/c8UZ5GPAEiiCtkCfR\n0k8sUZrA79QJ58AxYto8UJl3tb5STm7WObZA+cHTXhcr+llHhySE726GuFG8iABD\nYi7FuiHNVdcY1kg9MscF\n=T+kC\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree 23eb150f6aa182ac2b364402a2295378f414f476\nparent d0c522d0f9b37dfe2c83bcd62d1d005a13642b1f\nauthor dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com> 1785097554 -0400\ncommitter GitHub <noreply@github.com> 1785097554 -0400\n\nBump @types/node from 25.9.5 to 26.1.1 (#1505)\n\nBumps [@types/node](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/HEAD/types/node) from 25.9.5 to 26.1.1.\n- [Release notes](https://github.com/DefinitelyTyped/DefinitelyTyped/releases)\n- [Commits](https://github.com/DefinitelyTyped/DefinitelyTyped/commits/HEAD/types/node)\n\n---\nupdated-dependencies:\n- dependency-name: \"@types/node\"\n  dependency-version: 26.1.1\n  dependency-type: direct:development\n  update-type: version-update:semver-major\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+        "verified_at": "2026-07-27T19:21:47Z"
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/e8bf2323039faec2d8bdf5b5b5fbf5aa14722cb9",
+    "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/e8bf2323039faec2d8bdf5b5b5fbf5aa14722cb9",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/e8bf2323039faec2d8bdf5b5b5fbf5aa14722cb9/comments",
+    "author": {
+      "login": "dependabot[bot]",
+      "id": 49699333,
+      "node_id": "MDM6Qm90NDk2OTkzMzM=",
+      "avatar_url": "https://avatars.githubusercontent.com/in/29110?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dependabot%5Bbot%5D",
+      "html_url": "https://github.com/apps/dependabot",
+      "followers_url": "https://api.github.com/users/dependabot%5Bbot%5D/followers",
+      "following_url": "https://api.github.com/users/dependabot%5Bbot%5D/following{/other_user}",
+      "gists_url": "https://api.github.com/users/dependabot%5Bbot%5D/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/dependabot%5Bbot%5D/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/dependabot%5Bbot%5D/subscriptions",
+      "organizations_url": "https://api.github.com/users/dependabot%5Bbot%5D/orgs",
+      "repos_url": "https://api.github.com/users/dependabot%5Bbot%5D/repos",
+      "events_url": "https://api.github.com/users/dependabot%5Bbot%5D/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/dependabot%5Bbot%5D/received_events",
+      "type": "Bot",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "d0c522d0f9b37dfe2c83bcd62d1d005a13642b1f",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/d0c522d0f9b37dfe2c83bcd62d1d005a13642b1f",
+        "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/d0c522d0f9b37dfe2c83bcd62d1d005a13642b1f"
+      }
+    ]
+  },
+  {
+    "sha": "d0c522d0f9b37dfe2c83bcd62d1d005a13642b1f",
+    "node_id": "C_kwDOTlUYfdoAKGQwYzUyMmQwZjliMzdkZmUyYzgzYmNkNjJkMWQwMDVhMTM2NDJiMWY",
+    "commit": {
+      "author": {
+        "name": "Rocco A",
+        "email": "xXSG.KingXx@gmail.com",
+        "date": "2026-07-26T20:25:40Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-07-26T20:25:40Z"
+      },
+      "message": "Fix lpVec3 packet endianness (#1506)\n\n* Fix lpVec3 packet endianness\n\n* Keep lpVec3 sizing consistent with writes",
+      "tree": {
+        "sha": "135b3609042fd5f5625735eb84a2765bd0ea8cef",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/trees/135b3609042fd5f5625735eb84a2765bd0ea8cef"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/commits/d0c522d0f9b37dfe2c83bcd62d1d005a13642b1f",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJqZm1ECRC1aQ7uu5UhlAAAHkYQAITIu3pnE7fl2+Pd9OlozJyo\n9XQjJqvKb3IWLAPczI6hL3w63wlBG7Tjy5ZoaZOy9uY3e2Bv+T8O86uXm6BYuEvC\nXurOOAbMjV86n93WfUEQidVwAzZ1OVdqwaf/oollvMtjWuI/nhrbU57AQuXjFJQG\nW/5ckwDAofeVEiD6zE8twiZopZgi0rrqvPEKrfyRor0U4xtqhHbPbm8rwJRK0/pG\nbcyRWsTCOrkgqW7OfD+KEQNmGxHQYN2qsc9ie7OLkWcP6FZssbQlPskikXe7r6Ot\nt55kXMxgib0g+wTzdmeMif2M0ThE64XhoaRf+0Y4SHfj449gzb5oO5Q2/PGs2CLk\nhQbXQFTLhKcgh5UP+S1ISoHrEZ+N0QBM+U73Df7EyDaLWqLOHtl02Egue9VPQDXG\nLg3USZJIfsIls59bc69ERUaiylOVRqal9HUU5kjpwKT0oqCV3enfEVSif5cSNXN0\nWkkXrBilA0Qkz0FWwpfRPIvL+hJVEtDlSNQRgeLSSy4SlBXgDYAoGrRxHNVYE7h5\nBZQQt3wRmn2vrn/ousUDKwTAG2GLPIEfcqBDjW/GttID4OTg/feKIZSBDKyWZZW9\n+Apijs9004r6tDZLriaQQBX3H+8tEW8CQ7ogcz+SSAvRhVFbX5nZlSDOmiWuk3jQ\n53dYN+GFJFcZqxJA5c1N\n=jej+\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree 135b3609042fd5f5625735eb84a2765bd0ea8cef\nparent ee40987dde124cd2f560bb944cfffb29946fef81\nauthor Rocco A <xXSG.KingXx@gmail.com> 1785097540 -0400\ncommitter GitHub <noreply@github.com> 1785097540 -0400\n\nFix lpVec3 packet endianness (#1506)\n\n* Fix lpVec3 packet endianness\n\n* Keep lpVec3 sizing consistent with writes",
+        "verified_at": "2026-07-27T19:21:47Z"
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/d0c522d0f9b37dfe2c83bcd62d1d005a13642b1f",
+    "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/d0c522d0f9b37dfe2c83bcd62d1d005a13642b1f",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/d0c522d0f9b37dfe2c83bcd62d1d005a13642b1f/comments",
+    "author": {
+      "login": "GenerelSchwerz",
+      "id": 43506958,
+      "node_id": "MDQ6VXNlcjQzNTA2OTU4",
+      "avatar_url": "https://avatars.githubusercontent.com/u/43506958?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/GenerelSchwerz",
+      "html_url": "https://github.com/GenerelSchwerz",
+      "followers_url": "https://api.github.com/users/GenerelSchwerz/followers",
+      "following_url": "https://api.github.com/users/GenerelSchwerz/following{/other_user}",
+      "gists_url": "https://api.github.com/users/GenerelSchwerz/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/GenerelSchwerz/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/GenerelSchwerz/subscriptions",
+      "organizations_url": "https://api.github.com/users/GenerelSchwerz/orgs",
+      "repos_url": "https://api.github.com/users/GenerelSchwerz/repos",
+      "events_url": "https://api.github.com/users/GenerelSchwerz/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/GenerelSchwerz/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "ee40987dde124cd2f560bb944cfffb29946fef81",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/ee40987dde124cd2f560bb944cfffb29946fef81",
+        "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/ee40987dde124cd2f560bb944cfffb29946fef81"
+      }
+    ]
+  },
+  {
+    "sha": "ee40987dde124cd2f560bb944cfffb29946fef81",
+    "node_id": "C_kwDOTlUYfdoAKGVlNDA5ODdkZGUxMjRjZDJmNTYwYmI5NDRjZmZmYjI5OTQ2ZmVmODE",
+    "commit": {
+      "author": {
+        "name": "rom1504bot",
+        "email": "romain.beaumont.rb@gmail.com",
+        "date": "2026-05-13T06:47:23Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-05-13T06:47:23Z"
+      },
+      "message": "Release 1.66.2 (#1490)\n\nCo-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>",
+      "tree": {
+        "sha": "0a82c27c4b7d28a4918a803c78ac219f4d62581d",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/trees/0a82c27c4b7d28a4918a803c78ac219f4d62581d"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/commits/ee40987dde124cd2f560bb944cfffb29946fef81",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJqBB57CRC1aQ7uu5UhlAAAEGEQAGrfpO6cE+nzo2KrGqapdX3u\nol2KhQT6FLXySjnOB/r/ndSbjv3NtBjA/h/a9gspHdcDT52k2IClsdEXvN8anzkZ\nvsrT0CG49xuzc0dc8Q6k72b4XRdNyd6UGKG3507w0ZztNmv56WlWw2dTJ39F03Ix\n85RM5p6Hs2r1mYdFFJKVmRv7MoRS5MYR7y4gyK+XOGfU2iUQEeBI6aNjyq9xCCd2\n/vdaFHOsyy7PaozfPxyDl53vepvNg1DjLcIqXOMxsdJkB7K6CRtKRn12z49OiEkF\n07OZMMgkpKFLigLiBwxb+mMFV0UiPRl8g3pNZ+suYzJ7DP/SRgYuAm7ktmjs4Sgi\nIegMFtmtPqFGiJdLuDr2f5yvOqa0x+Ncne1fUKLYkwiBj189USIl4aGPuZNcWJV7\nfE6EtoxpYQ6ILo1JLQuzjhYoY4LxnOhihUGM12uZbZq2OdwnOz+xsj/S7Fx+rmNk\nFQ6E2MsBm+gmLNV+J7lmNwqq/2qG01oB0Lh6KegNxshdqZTAroO5Q/UFURjBYUQS\nPYFF+Yvt5H6AIn6PfjHq/6LrwYWg2GjnOP+pHNcYKwDLEGLLk45L0zKp03HTXgJp\nhSr4iX6PuXY8oHTZC2tkNHgpey+cUjNMMZ30BwlKasxhoTr+whej635GK7pOsjyd\n7yui2KlPPR3NQ0fvdnev\n=aFar\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree 0a82c27c4b7d28a4918a803c78ac219f4d62581d\nparent db39bcbfa6d2419b17217da7f4eea6b689a5ac49\nauthor rom1504bot <romain.beaumont.rb@gmail.com> 1778654843 +0200\ncommitter GitHub <noreply@github.com> 1778654843 -0400\n\nRelease 1.66.2 (#1490)\n\nCo-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>",
+        "verified_at": "2026-07-27T19:21:47Z"
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/ee40987dde124cd2f560bb944cfffb29946fef81",
+    "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/ee40987dde124cd2f560bb944cfffb29946fef81",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/ee40987dde124cd2f560bb944cfffb29946fef81/comments",
+    "author": {
+      "login": "rom1504bot",
+      "id": 15970751,
+      "node_id": "MDQ6VXNlcjE1OTcwNzUx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/15970751?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/rom1504bot",
+      "html_url": "https://github.com/rom1504bot",
+      "followers_url": "https://api.github.com/users/rom1504bot/followers",
+      "following_url": "https://api.github.com/users/rom1504bot/following{/other_user}",
+      "gists_url": "https://api.github.com/users/rom1504bot/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/rom1504bot/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/rom1504bot/subscriptions",
+      "organizations_url": "https://api.github.com/users/rom1504bot/orgs",
+      "repos_url": "https://api.github.com/users/rom1504bot/repos",
+      "events_url": "https://api.github.com/users/rom1504bot/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/rom1504bot/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "db39bcbfa6d2419b17217da7f4eea6b689a5ac49",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/db39bcbfa6d2419b17217da7f4eea6b689a5ac49",
+        "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/db39bcbfa6d2419b17217da7f4eea6b689a5ac49"
+      }
+    ]
+  },
+  {
+    "sha": "db39bcbfa6d2419b17217da7f4eea6b689a5ac49",
+    "node_id": "C_kwDOTlUYfdoAKGRiMzliY2JmYTZkMjQxOWIxNzIxN2RhN2Y0ZWVhNmI2ODlhNWFjNDk",
+    "commit": {
+      "author": {
+        "name": "extremeheat",
+        "email": "extreme@protonmail.ch",
+        "date": "2026-05-13T06:31:27Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-05-13T06:31:27Z"
+      },
+      "message": "Revert \"Fix computeChatChecksum returning unsigned byte for i8 schema (#1485)\" (#1489)\n\nThis reverts commit a263bb92338c009701cc5d1eaa8fba597dde3946.",
+      "tree": {
+        "sha": "31efa677c44c1ab9590cbf28d3fab991e682e4bc",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/trees/31efa677c44c1ab9590cbf28d3fab991e682e4bc"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/commits/db39bcbfa6d2419b17217da7f4eea6b689a5ac49",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJqBBq/CRC1aQ7uu5UhlAAA/dgQAKyduaWU5YnVsVv63GFDgSic\nlezp+2iPVTvlR2pajpUOYiqQorjNsKJV0fGJZ9oe3MjZmJeATD2vrUiqlidA2Zvu\n3BhlzFc4on1FBmuaq2bA/VJpnRE/K0IyuTxhknkjhi8bREn5Hx3f4lIci6qrJ3xA\nlclZ5R6ozAAf3TNJHxHcKXdI6BbuFMJpUUnMlF15QNriryctMxriec/AfnxYLooo\nQ9pb/bOZPkvKDolcOfZ8PgKZvyW7gkYhgAMqAlRZEhxzh5YUd0VSKeAf2HYAOb8L\ngFpnqNaKUj4HNQSpLgOmaPZ+tKtqt7uXUdAFTTJ1ziAC4ShCBNIHFHTpjEDmeH0r\nv1shXWq6ESrr8og3wsopTRID9kOqcqxsIqMdW/JV2SVpzUCE5J1iGHu+pSzGHKkR\n7nQCNrIXzgT8QPM8K1hOMPdSGAzvyJXcQoy9GcgfHPGQj/Wq8Dh6N2LRkAwzX4sC\nZSBGCosfz3YhFeuzDIEmYkhY1fqFVAq6otyW4WDzug1vwQRQ6RmGYx5xBYKbDcG2\nuG6SrWym5Gef9J/kB68xQIrCby6Ro30K7RiljRyPn3iLzYIZiTBUZZRQ6yyxvqMz\nYSDTbDCpxM8qehRRN430UmSEAIol+YsX5RPIr2IX6Uygg4+Gq9MK4xMQGlRHeXlW\noJFl3NsYqfP9T+q/qv9m\n=PWhN\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree 31efa677c44c1ab9590cbf28d3fab991e682e4bc\nparent 1cb735a2b38edbd97e5f778a72275008a59276f1\nauthor extremeheat <extreme@protonmail.ch> 1778653887 -0400\ncommitter GitHub <noreply@github.com> 1778653887 -0400\n\nRevert \"Fix computeChatChecksum returning unsigned byte for i8 schema (#1485)\" (#1489)\n\nThis reverts commit a263bb92338c009701cc5d1eaa8fba597dde3946.",
+        "verified_at": "2026-07-27T19:21:47Z"
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/db39bcbfa6d2419b17217da7f4eea6b689a5ac49",
+    "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/db39bcbfa6d2419b17217da7f4eea6b689a5ac49",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/db39bcbfa6d2419b17217da7f4eea6b689a5ac49/comments",
+    "author": {
+      "login": "extremeheat",
+      "id": 13713600,
+      "node_id": "MDQ6VXNlcjEzNzEzNjAw",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13713600?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/extremeheat",
+      "html_url": "https://github.com/extremeheat",
+      "followers_url": "https://api.github.com/users/extremeheat/followers",
+      "following_url": "https://api.github.com/users/extremeheat/following{/other_user}",
+      "gists_url": "https://api.github.com/users/extremeheat/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/extremeheat/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/extremeheat/subscriptions",
+      "organizations_url": "https://api.github.com/users/extremeheat/orgs",
+      "repos_url": "https://api.github.com/users/extremeheat/repos",
+      "events_url": "https://api.github.com/users/extremeheat/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/extremeheat/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "1cb735a2b38edbd97e5f778a72275008a59276f1",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/1cb735a2b38edbd97e5f778a72275008a59276f1",
+        "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/1cb735a2b38edbd97e5f778a72275008a59276f1"
+      }
+    ]
+  },
+  {
+    "sha": "1cb735a2b38edbd97e5f778a72275008a59276f1",
+    "node_id": "C_kwDOTlUYfdoAKDFjYjczNWEyYjM4ZWRiZDk3ZTVmNzc4YTcyMjc1MDA4YTU5Mjc2ZjE",
+    "commit": {
+      "author": {
+        "name": "rom1504bot",
+        "email": "romain.beaumont.rb@gmail.com",
+        "date": "2026-05-04T04:23:04Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-05-04T04:23:04Z"
+      },
+      "message": "Release 1.66.1 (#1486)\n\nCo-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>",
+      "tree": {
+        "sha": "2263750603f4b048a6451e4ce397d97929b15d3e",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/trees/2263750603f4b048a6451e4ce397d97929b15d3e"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/commits/1cb735a2b38edbd97e5f778a72275008a59276f1",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJp+B8oCRC1aQ7uu5UhlAAAeD8QABvVq4Uy4vcV7Aj/MXHoIM16\n2Tljhui30EDKj1Snh8L/zOJZ0Chhq5Jpa3O72fBMGQf2qb7KUZ9upBmjbFUM9zun\nv8cYaqnOfSVYoQ4nHx1i3/14vzcoBqyLqvALKt10+ya8VXC7Xz66XcLa2/UJWKhr\nu4+q84cwRJlliB16a7DBWoiA8YPzse2Tf5cIwyBKhqOsdiUfEG4ObQWBk5BhsUXQ\n4enkrwC2U8wUq3Kxry0MjnkrAoJV18PA03zpmLKAgQqHz4yrZCa57htM87771R4s\nadOH/NfLnbJStUSQ5Iq6e4BDRL8lhDelx06Z06s2+GU5tXUtuVF4T7gKvL05CkF7\n58mYZcVrwrHMzgX6B39qtc8+HEiU4K5IcUNd2MsReFXO/wjQHb5yJwOn9XXmuNnA\n1MnhEhOlZgXaIe3XQYVxF2Bl25KPM4N/6NLisZUHmC7eQFCvgpjKsLPn0vuS74Ns\nOgA8ZoCZo3/cg9RaXZBY0ybDo/MOajYu30ujYaSA92lfy8clnWPU7HTONvwvmsOf\nU7ffmTseK2yIw1+sNMbvAexWejTrfw7JIrwDg+uT+1byErTsrOwCMGOuNQNraEIF\naBGAqQNVZ6o/2iUrR1CEAoYM+XXYMpUkyXhQJ7WQrWCJG2MbxZ1NY1TaWcrcRTi9\no4B4it2YcHiYNtMAy8b5\n=kAEj\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree 2263750603f4b048a6451e4ce397d97929b15d3e\nparent 12f9a34fe259b2b96fa154f61f93a034d1d24120\nauthor rom1504bot <romain.beaumont.rb@gmail.com> 1777868584 +0200\ncommitter GitHub <noreply@github.com> 1777868584 -0400\n\nRelease 1.66.1 (#1486)\n\nCo-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>",
+        "verified_at": "2026-07-27T19:21:47Z"
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/1cb735a2b38edbd97e5f778a72275008a59276f1",
+    "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/1cb735a2b38edbd97e5f778a72275008a59276f1",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/1cb735a2b38edbd97e5f778a72275008a59276f1/comments",
+    "author": {
+      "login": "rom1504bot",
+      "id": 15970751,
+      "node_id": "MDQ6VXNlcjE1OTcwNzUx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/15970751?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/rom1504bot",
+      "html_url": "https://github.com/rom1504bot",
+      "followers_url": "https://api.github.com/users/rom1504bot/followers",
+      "following_url": "https://api.github.com/users/rom1504bot/following{/other_user}",
+      "gists_url": "https://api.github.com/users/rom1504bot/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/rom1504bot/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/rom1504bot/subscriptions",
+      "organizations_url": "https://api.github.com/users/rom1504bot/orgs",
+      "repos_url": "https://api.github.com/users/rom1504bot/repos",
+      "events_url": "https://api.github.com/users/rom1504bot/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/rom1504bot/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "12f9a34fe259b2b96fa154f61f93a034d1d24120",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/12f9a34fe259b2b96fa154f61f93a034d1d24120",
+        "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/12f9a34fe259b2b96fa154f61f93a034d1d24120"
+      }
+    ]
+  },
+  {
+    "sha": "12f9a34fe259b2b96fa154f61f93a034d1d24120",
+    "node_id": "C_kwDOTlUYfdoAKDEyZjlhMzRmZTI1OWIyYjk2ZmExNTRmNjFmOTNhMDM0ZDFkMjQxMjA",
+    "commit": {
+      "author": {
+        "name": "dependabot[bot]",
+        "email": "49699333+dependabot[bot]@users.noreply.github.com",
+        "date": "2026-05-04T03:50:51Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-05-04T03:50:51Z"
+      },
+      "message": "Bump prismarine-auth from 2.7.0 to 3.1.1 (#1477)\n\nBumps [prismarine-auth](https://github.com/PrismarineJS/prismarine-auth) from 2.7.0 to 3.1.1.\n- [Release notes](https://github.com/PrismarineJS/prismarine-auth/releases)\n- [Changelog](https://github.com/PrismarineJS/prismarine-auth/blob/master/HISTORY.md)\n- [Commits](https://github.com/PrismarineJS/prismarine-auth/compare/2.7.0...3.1.1)\n\n---\nupdated-dependencies:\n- dependency-name: prismarine-auth\n  dependency-version: 3.1.1\n  dependency-type: direct:production\n  update-type: version-update:semver-major\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>\nCo-authored-by: extremeheat <extreme@protonmail.ch>",
+      "tree": {
+        "sha": "87547471b16a31a28a1efbec7db276abf6b4ffe6",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/trees/87547471b16a31a28a1efbec7db276abf6b4ffe6"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/commits/12f9a34fe259b2b96fa154f61f93a034d1d24120",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJp+BebCRC1aQ7uu5UhlAAAuZ4QAHKQlfp4wOE5zmM/UPfgq7om\nRI1DjRrrg4m40BMPTNP/6fP+SQ62px923jGLLTQPIfSuOadeWR54Y+uJ5k0LNOBU\nmYL9wo69jPdtLPjNhc+q88p1SNJMFnWN7AUDBa8P6zE5C8xyD7JFtLNm0E23wcB6\nFl6fQ7UmtJKt4lvZYVBpcRvxkpLQXb66cGPMYyxmZC3kpd+bAEFgzSPKMJq7MSkW\n51yvRR5ljyRHSupt4HnWf5zuBq/DRTknRn8m19H1l396/jNvUNDxxVNrZ9C+zfkC\nPOSXSdl+ZXjtOybDcrRFM6tZ1o9YQNWM7aIxuYkzl/oPJ7xfmz3Re1NGCtr3qqII\n4EODPyoDwg34IYgpRh7oV+e7hpL9FOYojXWGekLGqps/6FGdJqkjLGKilDqJ28G1\nZodRBkJ4ng2+ETWCPuM1ayvr7pntKOTTXgns/YNrlh5a8s7u8yO1SGqP3Bm+MMjq\nW3Z+AHMQPCIfB4Re72Xk4CbsXVrQE9QTyVbTvc+KlR1zediB25bNFhBx72+nHJOY\nsGhlrwdGwR5Eotexz9ADp7sN6ML1u5CFdMsDNv5dx8GR3Bms+lkaPj7PkdGDgbXF\nEIGwYKSCu5pmkaXEP8YYjepHnSFFBuXJPZY3hCRp4PF9spgK5dYHgTPWxrePSHE8\nWo7+0szKRfp2isOvUDZK\n=baWo\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree 87547471b16a31a28a1efbec7db276abf6b4ffe6\nparent 3162e72c232fb5b7b05fc035de2692e2199250a3\nauthor dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com> 1777866651 -0400\ncommitter GitHub <noreply@github.com> 1777866651 -0400\n\nBump prismarine-auth from 2.7.0 to 3.1.1 (#1477)\n\nBumps [prismarine-auth](https://github.com/PrismarineJS/prismarine-auth) from 2.7.0 to 3.1.1.\n- [Release notes](https://github.com/PrismarineJS/prismarine-auth/releases)\n- [Changelog](https://github.com/PrismarineJS/prismarine-auth/blob/master/HISTORY.md)\n- [Commits](https://github.com/PrismarineJS/prismarine-auth/compare/2.7.0...3.1.1)\n\n---\nupdated-dependencies:\n- dependency-name: prismarine-auth\n  dependency-version: 3.1.1\n  dependency-type: direct:production\n  update-type: version-update:semver-major\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>\nCo-authored-by: extremeheat <extreme@protonmail.ch>",
+        "verified_at": "2026-07-27T19:21:47Z"
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/12f9a34fe259b2b96fa154f61f93a034d1d24120",
+    "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/12f9a34fe259b2b96fa154f61f93a034d1d24120",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/12f9a34fe259b2b96fa154f61f93a034d1d24120/comments",
+    "author": {
+      "login": "dependabot[bot]",
+      "id": 49699333,
+      "node_id": "MDM6Qm90NDk2OTkzMzM=",
+      "avatar_url": "https://avatars.githubusercontent.com/in/29110?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dependabot%5Bbot%5D",
+      "html_url": "https://github.com/apps/dependabot",
+      "followers_url": "https://api.github.com/users/dependabot%5Bbot%5D/followers",
+      "following_url": "https://api.github.com/users/dependabot%5Bbot%5D/following{/other_user}",
+      "gists_url": "https://api.github.com/users/dependabot%5Bbot%5D/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/dependabot%5Bbot%5D/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/dependabot%5Bbot%5D/subscriptions",
+      "organizations_url": "https://api.github.com/users/dependabot%5Bbot%5D/orgs",
+      "repos_url": "https://api.github.com/users/dependabot%5Bbot%5D/repos",
+      "events_url": "https://api.github.com/users/dependabot%5Bbot%5D/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/dependabot%5Bbot%5D/received_events",
+      "type": "Bot",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "3162e72c232fb5b7b05fc035de2692e2199250a3",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/3162e72c232fb5b7b05fc035de2692e2199250a3",
+        "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/3162e72c232fb5b7b05fc035de2692e2199250a3"
+      }
+    ]
+  },
+  {
+    "sha": "3162e72c232fb5b7b05fc035de2692e2199250a3",
+    "node_id": "C_kwDOTlUYfdoAKDMxNjJlNzJjMjMyZmI1YjdiMDVmYzAzNWRlMjY5MmUyMTk5MjUwYTM",
+    "commit": {
+      "author": {
+        "name": "AnotherPillow",
+        "email": "85362273+AnotherPillow@users.noreply.github.com",
+        "date": "2026-05-04T03:30:09Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-05-04T03:30:09Z"
+      },
+      "message": "readme: fix aresrpg repo link (#1483)\n\nCo-authored-by: extremeheat <extreme@protonmail.ch>",
+      "tree": {
+        "sha": "a0e2d39db2449813c781644ed20f1f0ed436ff66",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/trees/a0e2d39db2449813c781644ed20f1f0ed436ff66"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/commits/3162e72c232fb5b7b05fc035de2692e2199250a3",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJp+BLBCRC1aQ7uu5UhlAAAatkQAJ+qA4xSZXeq4Yn5GwBeXVCP\nrWINxGDHTWiIEsLTvROctlPtc8bbpZu7ZhoolArGFX6Q84qQnNw/lr3CAFyNe/Ff\nsn8iP7EoT59+kK8YCFD0Kr6bjKLKjtp7uWxKtWhfE1Mst1uvlCqObX80NVVNNIbv\nIW6hsATlf5A428GqhSXieqyGO5Me7HirAE97WkX5v/WUzc5f6mummfh1fIhfyjYe\nJ1Eh0UYFBXeUQFl7VHlf3EgnIHz7NHByztItQEXZiEUyieHoWQkK4A6tPXVW/ZJW\nDVTg1pbZOcOtvC2fT3wsVxqgbm4GC9XBjxPL+/OptqaJdczC8SfkBw+TYbF2EYXF\nbAjIPs0LYrzIpLP7GhTTbTULBEkjNLDxT6Ue+z+NPrrOlVVqXuvDB1z9lCbBJurv\nQKw1kZet1g3m6OPtKLG+EjeuQ8WOrh1J1s0FAAj8qTvFxk2bOuXRseTK9ZSw8nPa\nOrKqdR1lss/2iKFdV5mzCAm3yPJobXyS5ZA9DNn1yuqb5Z1hbqpQT4QZONiB4k+A\nBJTLqQEBpbe5az+GsEMfqZywhE93ZsrhlQaE7LOADSCkLltaJCE4VL9tZqj2AAzu\nUFtT9HH7uxRAAWC7l31YY8mRi9OICVNKcBAl0O2qlMTtdQ99O21VF8ncVsQPYq4i\ntoujRjOCfRrc2p6/84qD\n=/eTp\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree a0e2d39db2449813c781644ed20f1f0ed436ff66\nparent a263bb92338c009701cc5d1eaa8fba597dde3946\nauthor AnotherPillow <85362273+AnotherPillow@users.noreply.github.com> 1777865409 +0100\ncommitter GitHub <noreply@github.com> 1777865409 -0400\n\nreadme: fix aresrpg repo link (#1483)\n\nCo-authored-by: extremeheat <extreme@protonmail.ch>",
+        "verified_at": "2026-07-27T19:21:47Z"
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/3162e72c232fb5b7b05fc035de2692e2199250a3",
+    "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/3162e72c232fb5b7b05fc035de2692e2199250a3",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/3162e72c232fb5b7b05fc035de2692e2199250a3/comments",
+    "author": {
+      "login": "AnotherPillow",
+      "id": 85362273,
+      "node_id": "MDQ6VXNlcjg1MzYyMjcz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/85362273?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/AnotherPillow",
+      "html_url": "https://github.com/AnotherPillow",
+      "followers_url": "https://api.github.com/users/AnotherPillow/followers",
+      "following_url": "https://api.github.com/users/AnotherPillow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/AnotherPillow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/AnotherPillow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/AnotherPillow/subscriptions",
+      "organizations_url": "https://api.github.com/users/AnotherPillow/orgs",
+      "repos_url": "https://api.github.com/users/AnotherPillow/repos",
+      "events_url": "https://api.github.com/users/AnotherPillow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/AnotherPillow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "a263bb92338c009701cc5d1eaa8fba597dde3946",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/a263bb92338c009701cc5d1eaa8fba597dde3946",
+        "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/a263bb92338c009701cc5d1eaa8fba597dde3946"
+      }
+    ]
+  },
+  {
+    "sha": "a263bb92338c009701cc5d1eaa8fba597dde3946",
+    "node_id": "C_kwDOTlUYfdoAKGEyNjNiYjkyMzM4YzAwOTcwMWNjNWQxZWFhOGZiYTU5N2RkZTM5NDY",
+    "commit": {
+      "author": {
+        "name": "mio-rei",
+        "email": "mio.rei.0411@gmail.com",
+        "date": "2026-05-04T03:29:27Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-05-04T03:29:27Z"
+      },
+      "message": "Fix computeChatChecksum returning unsigned byte for i8 schema (#1485)\n\nThe chat_command_signed packet schema defines the checksum as i8 (-128..127),\nbut computeChatChecksum was returning the result of '& 0xff' (0..255). When\nthe masked value exceeded 127, sending any signed chat command crashed with\nRangeError on MC 1.21.11.\n\nConvert the unsigned byte to signed range before returning. Closes #1482.",
+      "tree": {
+        "sha": "c6137a826c0887fa7502d80cab67730ace4da319",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/trees/c6137a826c0887fa7502d80cab67730ace4da319"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/commits/a263bb92338c009701cc5d1eaa8fba597dde3946",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJp+BKXCRC1aQ7uu5UhlAAAGUwQAA1XagDHX0GmP5YN9xFqbFK3\n09dKxhVX5jYITpZB+ePq7Rt59pt1okBVEZ7mMYeBnYFEAvqKj8VfAXCA80d/5juY\nXOlUVmlq5/keEqYrP+EYPkkxScrFPJYbrrSGKA2C/Rs54fQYRKfRAiAn5Up71nAd\nh+Q85nXZUbCm6D056SUfe2oUwOEavIPlqj52IVolpmShio8EDnBaxir/LGR1X7Pn\nslN0Ty+sLx3lCRRrd7IepYtdwl3ULWD6a7Wu6ptJFDlCLwjOyB6VbFgFQGqR/tpu\nam9oTDmqd4Q+kUAfTQe7cJbEWgC4xcwx33pLp1RXawF02mbqB6qtVvK9i3FAoGxr\n5gViB7Z/dsGVNuboLp/NDFCNRl4/Em/Taoy85ew2qCkMULLRC5leK8VrddBC7VO0\n16KX6WUF6xMQQq3+aD8FYVgoVxAF+h6puenI3ttzQmv1Ybawf1ALbAgp5TaYMboa\ne0WwuI6f3+hehqT6coKrAEjv3FslFWbjcUkXIApw0SL6ZFo9mNssoGk+oi+bN7jx\nItYQBja4PmZgzBYDCZDHuIXJYkOzexDzF0YfHZy80kVQ8SkxuBvMef+493PXsEvK\nBtFrL4/+B5fv/cY5KZN3+GDrCZrIICFaD2xBv3drZZhHNb4L9C3HJiuqv11HEo5C\nUA9eF5+xgZfKY4ih22d+\n=xZqo\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree c6137a826c0887fa7502d80cab67730ace4da319\nparent 3fabf16c61995b7a2c6d4d2902f7af99d0fe0a77\nauthor mio-rei <mio.rei.0411@gmail.com> 1777865367 +0800\ncommitter GitHub <noreply@github.com> 1777865367 -0400\n\nFix computeChatChecksum returning unsigned byte for i8 schema (#1485)\n\nThe chat_command_signed packet schema defines the checksum as i8 (-128..127),\nbut computeChatChecksum was returning the result of '& 0xff' (0..255). When\nthe masked value exceeded 127, sending any signed chat command crashed with\nRangeError on MC 1.21.11.\n\nConvert the unsigned byte to signed range before returning. Closes #1482.",
+        "verified_at": "2026-07-27T19:21:47Z"
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/a263bb92338c009701cc5d1eaa8fba597dde3946",
+    "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/a263bb92338c009701cc5d1eaa8fba597dde3946",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/a263bb92338c009701cc5d1eaa8fba597dde3946/comments",
+    "author": {
+      "login": "mio-rei",
+      "id": 277171473,
+      "node_id": "U_kgDOEIVNEQ",
+      "avatar_url": "https://avatars.githubusercontent.com/u/277171473?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/mio-rei",
+      "html_url": "https://github.com/mio-rei",
+      "followers_url": "https://api.github.com/users/mio-rei/followers",
+      "following_url": "https://api.github.com/users/mio-rei/following{/other_user}",
+      "gists_url": "https://api.github.com/users/mio-rei/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/mio-rei/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/mio-rei/subscriptions",
+      "organizations_url": "https://api.github.com/users/mio-rei/orgs",
+      "repos_url": "https://api.github.com/users/mio-rei/repos",
+      "events_url": "https://api.github.com/users/mio-rei/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/mio-rei/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "3fabf16c61995b7a2c6d4d2902f7af99d0fe0a77",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/3fabf16c61995b7a2c6d4d2902f7af99d0fe0a77",
+        "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/3fabf16c61995b7a2c6d4d2902f7af99d0fe0a77"
+      }
+    ]
+  },
+  {
+    "sha": "3fabf16c61995b7a2c6d4d2902f7af99d0fe0a77",
+    "node_id": "C_kwDOTlUYfdoAKDNmYWJmMTZjNjE5OTViN2EyYzZkNGQyOTAyZjdhZjk5ZDBmZTBhNzc",
+    "commit": {
+      "author": {
+        "name": "rom1504bot",
+        "email": "romain.beaumont.rb@gmail.com",
+        "date": "2026-04-01T04:28:52Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-04-01T04:28:52Z"
+      },
+      "message": "Release 1.66.0 (#1479)\n\nCo-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>",
+      "tree": {
+        "sha": "8739ce6ef5abb5c7be7f4e9c6479a243e8d5014b",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/trees/8739ce6ef5abb5c7be7f4e9c6479a243e8d5014b"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/commits/3fabf16c61995b7a2c6d4d2902f7af99d0fe0a77",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJpzJ8ECRC1aQ7uu5UhlAAA4uAQAABd6vxEILTvRvTyd7KxKVvS\n5B9NnokvUr/wxbnN+Ri8lqf7l+PnCxnB4mdQQizpNUgCgV9nSgt7RUgOcN2ZZcTz\nirvbF15DURNeapweeAroJyBqsYcmky1cAFOqUNuTicZXnJjpIF3iKqQPrjYfzCcf\naWf4g1clz5pqDShI/QS96Cdo8zjfqj+rl8nMGIKnou1cDmlz7qnm3+IWsjexs0U7\njaWM1XGMAkxMCHOR+WpKNc9qH4HvDxzbFJQFZ6wDIT4BdI1gh8+4go5Q9j6tAqen\nfY+vWL7MFUGujYvDa8Hr7IrjNO9TecuNe61ItdOBk3PIbf5CcFvOB+tpN11XJDe0\nh5/wGuENHzA7eYZbeDfgVrcyQwv1zgz60IlhQ/Mz5+RZbt4g1lFqWRUWH8+5TIcP\nRCugAxWoT2Ibzb9cJ+jhRgAuC7QMWHnAdFcw3fVzZjqIEwEOm2EqP842RavoBkpN\niKXGpl0larh7c+DHohaiSqZKvMYVPfnmh83fQ16J3WK7KaPmt44wYO99YSi2cUrW\njTSXuxoO9r2K0A/mMAX9qxC5R3dGmEgNMbzgnPyN8/fYaAHa01NfxUUTDXNyNi60\nQYPhOmQKmqOMbASVdDkf27Q2N8PmXoiNl4jTSe7R/+BjgtkUU43jmbNCmHGaslD5\ngI8z7an0eiSqZaT4YQ9d\n=Vdmt\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree 8739ce6ef5abb5c7be7f4e9c6479a243e8d5014b\nparent b23a31bf6754634dd7be1bd70d493f85e2da7bfa\nauthor rom1504bot <romain.beaumont.rb@gmail.com> 1775017732 +0200\ncommitter GitHub <noreply@github.com> 1775017732 -0700\n\nRelease 1.66.0 (#1479)\n\nCo-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>",
+        "verified_at": "2026-07-27T19:21:47Z"
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/3fabf16c61995b7a2c6d4d2902f7af99d0fe0a77",
+    "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/3fabf16c61995b7a2c6d4d2902f7af99d0fe0a77",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/3fabf16c61995b7a2c6d4d2902f7af99d0fe0a77/comments",
+    "author": {
+      "login": "rom1504bot",
+      "id": 15970751,
+      "node_id": "MDQ6VXNlcjE1OTcwNzUx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/15970751?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/rom1504bot",
+      "html_url": "https://github.com/rom1504bot",
+      "followers_url": "https://api.github.com/users/rom1504bot/followers",
+      "following_url": "https://api.github.com/users/rom1504bot/following{/other_user}",
+      "gists_url": "https://api.github.com/users/rom1504bot/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/rom1504bot/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/rom1504bot/subscriptions",
+      "organizations_url": "https://api.github.com/users/rom1504bot/orgs",
+      "repos_url": "https://api.github.com/users/rom1504bot/repos",
+      "events_url": "https://api.github.com/users/rom1504bot/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/rom1504bot/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "b23a31bf6754634dd7be1bd70d493f85e2da7bfa",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/b23a31bf6754634dd7be1bd70d493f85e2da7bfa",
+        "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/b23a31bf6754634dd7be1bd70d493f85e2da7bfa"
+      }
+    ]
+  },
+  {
+    "sha": "b23a31bf6754634dd7be1bd70d493f85e2da7bfa",
+    "node_id": "C_kwDOTlUYfdoAKGIyM2EzMWJmNjc1NDYzNGRkN2JlMWJkNzBkNDkzZjg1ZTJkYTdiZmE",
+    "commit": {
+      "author": {
+        "name": "Romain Beaumont",
+        "email": "romain.rom1@gmail.com",
+        "date": "2026-04-01T04:27:59Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-04-01T04:27:59Z"
+      },
+      "message": "Use sync zlib in packet compression to avoid uncaught errors (#1476)\n\nNode's async zlib (deflate/unzip) creates internal C++ Zlib handles\nthat run on the libuv thread pool. When a client disconnects while\ndecompression is in progress, the C++ callback fires after the JS\nerror listener is removed, causing an uncaught exception:\n\n  Uncaught Error: unexpected end of file\n    at Zlib.zlibOnError [as onerror]\n\nThis is a known Node.js issue — see:\n- nodejs/node#62325 (use-after-free fix for reset during write)\n- nodejs/node#61202 (zlib stream corruption with multiple instances)\n- nodejs/node#43868 (uncaught zlib exception in fetch)\n\nSwitch to deflateSync/unzipSync which complete synchronously with no\nlingering C++ handles. Each call processes one MC packet (~few KB),\nso event loop impact is negligible.\n\nAlso wrap gunzipSync in minecraft.js NBT parsing with try/catch.\n\nCo-authored-by: rom1504 <rom1504@users.noreply.github.com>\nCo-authored-by: Claude Opus 4.6 (1M context) <noreply@anthropic.com>",
+      "tree": {
+        "sha": "a790d035075529b6288a8347497ca7608d08c6d4",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/trees/a790d035075529b6288a8347497ca7608d08c6d4"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/commits/b23a31bf6754634dd7be1bd70d493f85e2da7bfa",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJpzJ7PCRC1aQ7uu5UhlAAAWIwQAHZ2sXHpCyRz5oC25iOqDBKY\nuumibg27cJ9gBzw4L/8TUtzqHy4TKkPQ+/1satm8xtzFrcvREzY5fL96sKYShNiF\naWZv92aXk8CP1+LpJIyf2/OAhG2Fvdt9IiB/UHfmDcsE2SQc1UqZijxuszSRAKjP\nl0PZCXep9Q3+AxfcO02zVyntDSOqM2MfYYF2heruuGSF4UoWGK9vIL2uLaMBud4Y\nrLnmlSfLwmU+b0RmwK+7l4ld31GvlqgrVc4XS4cRl20Wcjn2Co542/sJC9m2j+mh\nkPCEqs4l4AcS1PK2Mq92vdKKP2971b7na2kRmKjNsKmVfE5miRspweXCpkxdox8h\nBWbERkxcIGtPRHoiWWWxMg+4A8IR3fpODke6+8xEgjUo78n5NZnR7dQ+F8ilwO00\nlD2IZG1M3VL081X3NpcAIL5fYPOj/NpwMNlfXlfqst7x7fNosNw/TI9cqxxvgL9a\nUtjh1jg92sf0ZIJfN6zN0j8swx8RgzmsxVtrbvz+sscfbpywUqH/Q3bs8DJ34QRO\nFv1Uge46LtDB6uW3tLBZz2Q35KsGNDaDVsesWSjAMzoW8/i+UafRieb2udRmMLlf\ncgOQq32HM6uJJohrhw5EYnOYWK7RSdH5PoTHWvOQ8boqEoJc/OIKocGK5hKcfmP6\nV8s9GciX4voLKfAEMJ+e\n=x3xP\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree a790d035075529b6288a8347497ca7608d08c6d4\nparent dfecf1e9e449ed1d75d14f7fd146257edf0a207e\nauthor Romain Beaumont <romain.rom1@gmail.com> 1775017679 -0700\ncommitter GitHub <noreply@github.com> 1775017679 -0700\n\nUse sync zlib in packet compression to avoid uncaught errors (#1476)\n\nNode's async zlib (deflate/unzip) creates internal C++ Zlib handles\nthat run on the libuv thread pool. When a client disconnects while\ndecompression is in progress, the C++ callback fires after the JS\nerror listener is removed, causing an uncaught exception:\n\n  Uncaught Error: unexpected end of file\n    at Zlib.zlibOnError [as onerror]\n\nThis is a known Node.js issue — see:\n- nodejs/node#62325 (use-after-free fix for reset during write)\n- nodejs/node#61202 (zlib stream corruption with multiple instances)\n- nodejs/node#43868 (uncaught zlib exception in fetch)\n\nSwitch to deflateSync/unzipSync which complete synchronously with no\nlingering C++ handles. Each call processes one MC packet (~few KB),\nso event loop impact is negligible.\n\nAlso wrap gunzipSync in minecraft.js NBT parsing with try/catch.\n\nCo-authored-by: rom1504 <rom1504@users.noreply.github.com>\nCo-authored-by: Claude Opus 4.6 (1M context) <noreply@anthropic.com>",
+        "verified_at": "2026-07-27T19:21:47Z"
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/b23a31bf6754634dd7be1bd70d493f85e2da7bfa",
+    "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/b23a31bf6754634dd7be1bd70d493f85e2da7bfa",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/b23a31bf6754634dd7be1bd70d493f85e2da7bfa/comments",
+    "author": {
+      "login": "rom1504",
+      "id": 2346494,
+      "node_id": "MDQ6VXNlcjIzNDY0OTQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2346494?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/rom1504",
+      "html_url": "https://github.com/rom1504",
+      "followers_url": "https://api.github.com/users/rom1504/followers",
+      "following_url": "https://api.github.com/users/rom1504/following{/other_user}",
+      "gists_url": "https://api.github.com/users/rom1504/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/rom1504/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/rom1504/subscriptions",
+      "organizations_url": "https://api.github.com/users/rom1504/orgs",
+      "repos_url": "https://api.github.com/users/rom1504/repos",
+      "events_url": "https://api.github.com/users/rom1504/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/rom1504/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "dfecf1e9e449ed1d75d14f7fd146257edf0a207e",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/dfecf1e9e449ed1d75d14f7fd146257edf0a207e",
+        "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/dfecf1e9e449ed1d75d14f7fd146257edf0a207e"
+      }
+    ]
+  },
+  {
+    "sha": "dfecf1e9e449ed1d75d14f7fd146257edf0a207e",
+    "node_id": "C_kwDOTlUYfdoAKGRmZWNmMWU5ZTQ0OWVkMWQ3NWQxNGY3ZmQxNDYyNTdlZGYwYTIwN2U",
+    "commit": {
+      "author": {
+        "name": "rom1504bot",
+        "email": "romain.beaumont.rb@gmail.com",
+        "date": "2026-03-30T01:01:41Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-03-30T01:01:41Z"
+      },
+      "message": "Release 1.65.0 (#1474)\n\nCo-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>",
+      "tree": {
+        "sha": "9ddc6a7604ded99e734d39fb62f9ff69abb5f6e0",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/trees/9ddc6a7604ded99e734d39fb62f9ff69abb5f6e0"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/commits/dfecf1e9e449ed1d75d14f7fd146257edf0a207e",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJpyct1CRC1aQ7uu5UhlAAANBQQAIKKSVJONEUBH+OhBpq5zC3V\nSefkM9wOQECqsJcPaZRhqVz26O79WDRXXW0ywJ4Z7B5PJLWROSdy0jdd519GCZ1l\nY/jLva7twetfx3GYrm/S5txkJ2+i0w8u0Adu0937/NeQqcEpDG515zSRErGqPRVH\nZuRe9cxL66FDuZm1M4o9ck4oEH5fRsIRpZsawZEsZVi2VDUjnX4vv7HLwRFr2R94\ngvS8j27nLhEi7IXgx+USZg5MO8Dga8PbPbB1mvDSsufXo4z4PQtboLu/NkgWcA6K\nfBKvizWPFrrBri8KEJ1tA/guLcm3qAabXe/xogLmfM4dtMs/3iq5RP8CxH1b+617\nMmRDosqlnsokugVG+6wxBTZkHBBVSY43l6rBe7m1H4ee+26SAJhcNP+5s+iHuMPx\nza87/wmk+WiaIQ89tSTtI5AKWsNPjJOUpTHk9uuX/SFCUA1KfQ8XCVe0jiS5i8So\nC3eCn9GL/mTf4MeI7ya0QYGL1IQ98Qd7ROjwg1m7KHkLmjgqvl+AGNrV9/5OavCU\nzkCthSRCQltL+dpw1o0oHysLrxmT32FDwDdE2Opm/AvlT9pIi206HE3+qU2DWVBl\nXWSv7Gd8noCz76ZXE85Hny7ZyJ2gKrxuYSnGUpP1KG6z5jH0FAX1HUnANwJsG8oC\n/BJ3Kh+eC0FZ9DCjyamO\n=+idq\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree 9ddc6a7604ded99e734d39fb62f9ff69abb5f6e0\nparent 8008fe065787d50c7ab490cb0a503cb9200043fe\nauthor rom1504bot <romain.beaumont.rb@gmail.com> 1774832501 +0200\ncommitter GitHub <noreply@github.com> 1774832501 -0700\n\nRelease 1.65.0 (#1474)\n\nCo-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>",
+        "verified_at": "2026-07-27T19:21:47Z"
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/dfecf1e9e449ed1d75d14f7fd146257edf0a207e",
+    "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/dfecf1e9e449ed1d75d14f7fd146257edf0a207e",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/dfecf1e9e449ed1d75d14f7fd146257edf0a207e/comments",
+    "author": {
+      "login": "rom1504bot",
+      "id": 15970751,
+      "node_id": "MDQ6VXNlcjE1OTcwNzUx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/15970751?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/rom1504bot",
+      "html_url": "https://github.com/rom1504bot",
+      "followers_url": "https://api.github.com/users/rom1504bot/followers",
+      "following_url": "https://api.github.com/users/rom1504bot/following{/other_user}",
+      "gists_url": "https://api.github.com/users/rom1504bot/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/rom1504bot/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/rom1504bot/subscriptions",
+      "organizations_url": "https://api.github.com/users/rom1504bot/orgs",
+      "repos_url": "https://api.github.com/users/rom1504bot/repos",
+      "events_url": "https://api.github.com/users/rom1504bot/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/rom1504bot/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "8008fe065787d50c7ab490cb0a503cb9200043fe",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/8008fe065787d50c7ab490cb0a503cb9200043fe",
+        "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/8008fe065787d50c7ab490cb0a503cb9200043fe"
+      }
+    ]
+  },
+  {
+    "sha": "8008fe065787d50c7ab490cb0a503cb9200043fe",
+    "node_id": "C_kwDOTlUYfdoAKDgwMDhmZTA2NTc4N2Q1MGM3YWI0OTBjYjBhNTAzY2I5MjAwMDQzZmU",
+    "commit": {
+      "author": {
+        "name": "Romain Beaumont",
+        "email": "romain.rom1@gmail.com",
+        "date": "2026-03-30T00:42:28Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-03-30T00:42:28Z"
+      },
+      "message": "Update CI to Node 24 (#1473)\n\nCo-authored-by: rom1504 <rom1504@users.noreply.github.com>\nCo-authored-by: Claude Opus 4.6 (1M context) <noreply@anthropic.com>",
+      "tree": {
+        "sha": "d527dfce20e6a5ad08121d1c305e38384395fb3c",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/trees/d527dfce20e6a5ad08121d1c305e38384395fb3c"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/git/commits/8008fe065787d50c7ab490cb0a503cb9200043fe",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJpycb0CRC1aQ7uu5UhlAAA4O8QABNFIE5G6i/xYjJWlA06GjcL\nIOAy03viucWtGTDxFD+M/H0Qc3MnSCoyUd29OnHJUPIifdhbpTr+M6J03lv3Zo4W\nu3UqR1+P3G/OT9Yr0GZVaatpixsNZfNSq7ZBAhIX5ekapZZkSd4VmUZ0FwC/G8fQ\nFneCH/+Jp2Grdi9vGmzHwEsgQ7c0fVnsyQMSMXwvCpRmp6sANxlvuSdV68M2kE3s\nfZefJMUZNunBhvFrm+f45gqWFpemfEw0PGZ9+F7Vywx7wqVP9UAf9n42j9Cn4AlE\nsitXWsTGWjNwhLzJ/YOD19Ozfgcrqm7S7izR3UqcVbkmV2SByM4d0xumF40t6LO8\n0doMVEUCd0Og0Tpif+RMaAn0LwI6Pi4mx6HU3IFNLDHLeDhpkQNlVJ41Ps9uMzE+\nlcixuBk1t/zMctHtDMzm67EITVGRTvMpgo2FyZYA/bzKkF3s/9WwnL+bKmDcnY5k\nqAokDgZ1EKQ/KF3HgJAnlc5uWe4l1vT4lxYuCwZsoEGZnRg552TvR9BN+y+Ebsfs\nItiDBQ63+ZNZutr/Wwzfzooh3qhlJ52zz5qfnT4bhXSn0/GDEeBP8aJLbROphUwj\nCK580un1MGLLEHjIQvaLtD4Gc2kR3ZIBNsKMvgLifIErFjAqn2ZqvubkAtHfSM/m\ngaAhwS+XF/BRRoLDq9zF\n=ZRf1\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree d527dfce20e6a5ad08121d1c305e38384395fb3c\nparent 9bc871da00a82058ad68f7fb6fd661c268f6a7a9\nauthor Romain Beaumont <romain.rom1@gmail.com> 1774831348 -0700\ncommitter GitHub <noreply@github.com> 1774831348 -0700\n\nUpdate CI to Node 24 (#1473)\n\nCo-authored-by: rom1504 <rom1504@users.noreply.github.com>\nCo-authored-by: Claude Opus 4.6 (1M context) <noreply@anthropic.com>",
+        "verified_at": "2026-07-27T19:21:47Z"
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/8008fe065787d50c7ab490cb0a503cb9200043fe",
+    "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/8008fe065787d50c7ab490cb0a503cb9200043fe",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/8008fe065787d50c7ab490cb0a503cb9200043fe/comments",
+    "author": {
+      "login": "rom1504",
+      "id": 2346494,
+      "node_id": "MDQ6VXNlcjIzNDY0OTQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2346494?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/rom1504",
+      "html_url": "https://github.com/rom1504",
+      "followers_url": "https://api.github.com/users/rom1504/followers",
+      "following_url": "https://api.github.com/users/rom1504/following{/other_user}",
+      "gists_url": "https://api.github.com/users/rom1504/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/rom1504/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/rom1504/subscriptions",
+      "organizations_url": "https://api.github.com/users/rom1504/orgs",
+      "repos_url": "https://api.github.com/users/rom1504/repos",
+      "events_url": "https://api.github.com/users/rom1504/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/rom1504/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "9bc871da00a82058ad68f7fb6fd661c268f6a7a9",
+        "url": "https://api.github.com/repos/Complexity-ML/node-minecraft-protocol-26.2/commits/9bc871da00a82058ad68f7fb6fd661c268f6a7a9",
+        "html_url": "https://github.com/Complexity-ML/node-minecraft-protocol-26.2/commit/9bc871da00a82058ad68f7fb6fd661c268f6a7a9"
+      }
+    ]
+  }
+]

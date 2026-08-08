@@ -1,0 +1,1032 @@
+[
+  {
+    "sha": "5662305a63c1f60df869a95c19b4715d11c38497",
+    "node_id": "C_kwDOTlUYm9oAKDU2NjIzMDVhNjNjMWY2MGRmODY5YTk1YzE5YjQ3MTVkMTFjMzg0OTc",
+    "commit": {
+      "author": {
+        "name": "Boris Peyriguere",
+        "email": "boris@mac.home",
+        "date": "2026-07-27T21:20:23Z"
+      },
+      "committer": {
+        "name": "Boris Peyriguere",
+        "email": "boris@mac.home",
+        "date": "2026-07-27T21:20:23Z"
+      },
+      "message": "update Minecraft 26.2 particle protocol stack",
+      "tree": {
+        "sha": "b2d51e1ba397b0d3aacc030c7e784122258023fd",
+        "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/git/trees/b2d51e1ba397b0d3aacc030c7e784122258023fd"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/git/commits/5662305a63c1f60df869a95c19b4715d11c38497",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/5662305a63c1f60df869a95c19b4715d11c38497",
+    "html_url": "https://github.com/Complexity-ML/mineflayer-26.2/commit/5662305a63c1f60df869a95c19b4715d11c38497",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/5662305a63c1f60df869a95c19b4715d11c38497/comments",
+    "author": null,
+    "committer": null,
+    "parents": [
+      {
+        "sha": "0838df8f6b1e7cce6645ab118a924d20085049f4",
+        "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/0838df8f6b1e7cce6645ab118a924d20085049f4",
+        "html_url": "https://github.com/Complexity-ML/mineflayer-26.2/commit/0838df8f6b1e7cce6645ab118a924d20085049f4"
+      }
+    ]
+  },
+  {
+    "sha": "0838df8f6b1e7cce6645ab118a924d20085049f4",
+    "node_id": "C_kwDOTlUYm9oAKDA4MzhkZjhmNmIxZTdjY2U2NjQ1YWIxMThhOTI0ZDIwMDg1MDQ5ZjQ",
+    "commit": {
+      "author": {
+        "name": "Boris Peyriguere",
+        "email": "boris@mac.home",
+        "date": "2026-07-27T21:01:25Z"
+      },
+      "committer": {
+        "name": "Boris Peyriguere",
+        "email": "boris@mac.home",
+        "date": "2026-07-27T21:01:25Z"
+      },
+      "message": "update corrected 26.2 item component stack",
+      "tree": {
+        "sha": "893fea24988d174071270f4f7535555cef25ba9b",
+        "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/git/trees/893fea24988d174071270f4f7535555cef25ba9b"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/git/commits/0838df8f6b1e7cce6645ab118a924d20085049f4",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/0838df8f6b1e7cce6645ab118a924d20085049f4",
+    "html_url": "https://github.com/Complexity-ML/mineflayer-26.2/commit/0838df8f6b1e7cce6645ab118a924d20085049f4",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/0838df8f6b1e7cce6645ab118a924d20085049f4/comments",
+    "author": null,
+    "committer": null,
+    "parents": [
+      {
+        "sha": "0e35eb5f4cc96fb432cb363b3675f0c782655ba2",
+        "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/0e35eb5f4cc96fb432cb363b3675f0c782655ba2",
+        "html_url": "https://github.com/Complexity-ML/mineflayer-26.2/commit/0e35eb5f4cc96fb432cb363b3675f0c782655ba2"
+      }
+    ]
+  },
+  {
+    "sha": "0e35eb5f4cc96fb432cb363b3675f0c782655ba2",
+    "node_id": "C_kwDOTlUYm9oAKDBlMzVlYjVmNGNjOTZmYjQzMmNiMzYzYjM2NzVmMGM3ODI2NTViYTI",
+    "commit": {
+      "author": {
+        "name": "Boris Peyriguere",
+        "email": "boris@mac.home",
+        "date": "2026-07-27T20:46:41Z"
+      },
+      "committer": {
+        "name": "Boris Peyriguere",
+        "email": "boris@mac.home",
+        "date": "2026-07-27T20:46:41Z"
+      },
+      "message": "update 26.2 advancement protocol stack",
+      "tree": {
+        "sha": "328f678224c69ac2e09fd12f51dd8fb7cd087dc9",
+        "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/git/trees/328f678224c69ac2e09fd12f51dd8fb7cd087dc9"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/git/commits/0e35eb5f4cc96fb432cb363b3675f0c782655ba2",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/0e35eb5f4cc96fb432cb363b3675f0c782655ba2",
+    "html_url": "https://github.com/Complexity-ML/mineflayer-26.2/commit/0e35eb5f4cc96fb432cb363b3675f0c782655ba2",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/0e35eb5f4cc96fb432cb363b3675f0c782655ba2/comments",
+    "author": null,
+    "committer": null,
+    "parents": [
+      {
+        "sha": "d2fc6d5c2873397c69ceef3bac660a6ea8fe3dd1",
+        "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/d2fc6d5c2873397c69ceef3bac660a6ea8fe3dd1",
+        "html_url": "https://github.com/Complexity-ML/mineflayer-26.2/commit/d2fc6d5c2873397c69ceef3bac660a6ea8fe3dd1"
+      }
+    ]
+  },
+  {
+    "sha": "d2fc6d5c2873397c69ceef3bac660a6ea8fe3dd1",
+    "node_id": "C_kwDOTlUYm9oAKGQyZmM2ZDVjMjg3MzM5N2M2OWNlZWYzYmFjNjYwYTZlYThmZTNkZDE",
+    "commit": {
+      "author": {
+        "name": "Boris Peyriguere",
+        "email": "boris@mac.home",
+        "date": "2026-07-27T19:53:18Z"
+      },
+      "committer": {
+        "name": "Boris Peyriguere",
+        "email": "boris@mac.home",
+        "date": "2026-07-27T19:53:27Z"
+      },
+      "message": "docs: document standalone Minecraft 26.2 distribution",
+      "tree": {
+        "sha": "9bdb52085c95053df05ea278be029f0818e378d8",
+        "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/git/trees/9bdb52085c95053df05ea278be029f0818e378d8"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/git/commits/d2fc6d5c2873397c69ceef3bac660a6ea8fe3dd1",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/d2fc6d5c2873397c69ceef3bac660a6ea8fe3dd1",
+    "html_url": "https://github.com/Complexity-ML/mineflayer-26.2/commit/d2fc6d5c2873397c69ceef3bac660a6ea8fe3dd1",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/d2fc6d5c2873397c69ceef3bac660a6ea8fe3dd1/comments",
+    "author": null,
+    "committer": null,
+    "parents": [
+      {
+        "sha": "331114278297c6692cf846f095462295185a8747",
+        "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/331114278297c6692cf846f095462295185a8747",
+        "html_url": "https://github.com/Complexity-ML/mineflayer-26.2/commit/331114278297c6692cf846f095462295185a8747"
+      }
+    ]
+  },
+  {
+    "sha": "331114278297c6692cf846f095462295185a8747",
+    "node_id": "C_kwDOTlUYm9oAKDMzMTExNDI3ODI5N2M2NjkyY2Y4NDZmMDk1NDYyMjk1MTg1YTg3NDc",
+    "commit": {
+      "author": {
+        "name": "Boris Peyriguere",
+        "email": "boris@mac.home",
+        "date": "2026-07-27T19:34:14Z"
+      },
+      "committer": {
+        "name": "Boris Peyriguere",
+        "email": "boris@mac.home",
+        "date": "2026-07-27T19:34:14Z"
+      },
+      "message": "support Minecraft Java 26.2 bots",
+      "tree": {
+        "sha": "cbf10c56b491c60db37ca2a7af041e77ab1aa6de",
+        "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/git/trees/cbf10c56b491c60db37ca2a7af041e77ab1aa6de"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/git/commits/331114278297c6692cf846f095462295185a8747",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/331114278297c6692cf846f095462295185a8747",
+    "html_url": "https://github.com/Complexity-ML/mineflayer-26.2/commit/331114278297c6692cf846f095462295185a8747",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/331114278297c6692cf846f095462295185a8747/comments",
+    "author": null,
+    "committer": null,
+    "parents": [
+      {
+        "sha": "7368ac8e9cc8dc9800d611bd46b2548c8b8fe48d",
+        "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/7368ac8e9cc8dc9800d611bd46b2548c8b8fe48d",
+        "html_url": "https://github.com/Complexity-ML/mineflayer-26.2/commit/7368ac8e9cc8dc9800d611bd46b2548c8b8fe48d"
+      }
+    ]
+  },
+  {
+    "sha": "7368ac8e9cc8dc9800d611bd46b2548c8b8fe48d",
+    "node_id": "C_kwDOTlUYm9oAKDczNjhhYzhlOWNjOGRjOTgwMGQ2MTFiZDQ2YjI1NDhjOGI4ZmU0OGQ",
+    "commit": {
+      "author": {
+        "name": "extremeheat",
+        "email": "extreme@protonmail.ch",
+        "date": "2026-07-05T15:12:39Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-07-05T15:12:39Z"
+      },
+      "message": "Update quote link to archived version\n\nUpdated the link to Substack's quote to point to the archived version.",
+      "tree": {
+        "sha": "6fb48355677cde5dbdae0dca68201756a7a225ad",
+        "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/git/trees/6fb48355677cde5dbdae0dca68201756a7a225ad"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/git/commits/7368ac8e9cc8dc9800d611bd46b2548c8b8fe48d",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJqSnRnCRC1aQ7uu5UhlAAAzTMQAGDxsvX7Fh6YzSvf12bW1a5q\n7GEf3BoZK3UadpHYEhxHgtux3JoX19HhrZiQJvbs0f6VaDqI7xwRtHM1Dxk98/rU\nN6fZzrcx3r6B+E7EBR3HmyVtN9voXzQH/5JAgbFNBYKGqF2YYdk+UkLWFMjeiqD7\nFe2FPxm64gO4flzyYvgO0V+dH9WLQeAlJBkMCLRniU3GUSqYIwcT0sqkxCNyNDZy\nTverY1Zf14xBT8FoOHhJ8BX5Znz6Qff5hq1zxbZPgWbd3maIq9oThBWSLzxIw7de\noGwWK6IOfewwFiO78b659WUAAaKOhGB4J7IoBpE4t2AsMJApaxatcjZosUXwHc/8\nbERiqQa2u3CYgWYKdmKqpxbBKM7acVHkSPkoax8SzFmXdmtikySyQFdOJ1N81JKa\naHarlyJM6QqtcuRlRPEa5pa9d74CXxPcCFE64OOYgazBlfA4CpXJLSHjojEwQerd\nOydp+8WenIBYUmYiYWcSbOwKdrWoTtdrafRkhA443NP8SRL4ObIzxV7u3viPuyE/\n3mf5uYCmkpzsRwBJSry00EdcauPrUhTQKzM2UkbnwIzkSPafbp+aIdFvl8BrZdp7\nSJc/hDKnrCf6DKDQZ6x9FoJ3YraFTFtoWwfwP9QCXR3EvQnoHEqknLRzMmalexNM\nwcC7Xexel5gqbuHukc6n\n=e/Cs\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree 6fb48355677cde5dbdae0dca68201756a7a225ad\nparent b5478b029ee616b9c009bb6d4f2afcf3fab1c5d8\nauthor extremeheat <extreme@protonmail.ch> 1783264359 -0400\ncommitter GitHub <noreply@github.com> 1783264359 -0400\n\nUpdate quote link to archived version\n\nUpdated the link to Substack's quote to point to the archived version.",
+        "verified_at": "2026-07-27T19:22:07Z"
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/7368ac8e9cc8dc9800d611bd46b2548c8b8fe48d",
+    "html_url": "https://github.com/Complexity-ML/mineflayer-26.2/commit/7368ac8e9cc8dc9800d611bd46b2548c8b8fe48d",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/7368ac8e9cc8dc9800d611bd46b2548c8b8fe48d/comments",
+    "author": {
+      "login": "extremeheat",
+      "id": 13713600,
+      "node_id": "MDQ6VXNlcjEzNzEzNjAw",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13713600?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/extremeheat",
+      "html_url": "https://github.com/extremeheat",
+      "followers_url": "https://api.github.com/users/extremeheat/followers",
+      "following_url": "https://api.github.com/users/extremeheat/following{/other_user}",
+      "gists_url": "https://api.github.com/users/extremeheat/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/extremeheat/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/extremeheat/subscriptions",
+      "organizations_url": "https://api.github.com/users/extremeheat/orgs",
+      "repos_url": "https://api.github.com/users/extremeheat/repos",
+      "events_url": "https://api.github.com/users/extremeheat/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/extremeheat/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "b5478b029ee616b9c009bb6d4f2afcf3fab1c5d8",
+        "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/b5478b029ee616b9c009bb6d4f2afcf3fab1c5d8",
+        "html_url": "https://github.com/Complexity-ML/mineflayer-26.2/commit/b5478b029ee616b9c009bb6d4f2afcf3fab1c5d8"
+      }
+    ]
+  },
+  {
+    "sha": "b5478b029ee616b9c009bb6d4f2afcf3fab1c5d8",
+    "node_id": "C_kwDOTlUYm9oAKGI1NDc4YjAyOWVlNjE2YjljMDA5YmI2ZDRmMmFmY2YzZmFiMWM1ZDg",
+    "commit": {
+      "author": {
+        "name": "Vasilis",
+        "email": "40444267+VasilisDragon@users.noreply.github.com",
+        "date": "2026-06-12T08:24:06Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-06-12T08:24:06Z"
+      },
+      "message": "docs: correct bot.dig forceLook description (#3923)\n\nThe api.md signature showed forceLook defaulting to true, but the\nparameter has no default in lib/plugins/digging.js (back to at least\n3.0.0). Calling bot.dig(block) takes the non-force path: the bot turns\nits head at the normal look rate and the turn is awaited before digging\nstarts. Document that omitted-argument behavior, and drop the claim\nthat forceLook accepts 'raycast' - that value belongs to digFace, which\nalready documents it.\n\nDocs only, no code change. English docs only; translations are\nmaintained separately.",
+      "tree": {
+        "sha": "f280a7070b16a445695818c418afd4525a1e57e0",
+        "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/git/trees/f280a7070b16a445695818c418afd4525a1e57e0"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/git/commits/b5478b029ee616b9c009bb6d4f2afcf3fab1c5d8",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJqK8ImCRC1aQ7uu5UhlAAAgTkQAKAskCktPQe6ncmeEAwtLP5B\nFNZs3uNLwxgD0L3bpeBACJN3nfG9aQre1omye3Tyho7BhRx1i/Gdxll38tWctrBF\nRaNaZ3woiNuOgt6uvx6Z4qX8NjYE/3bz/IROHa+jfkfEjHiPtNYQGlIMFu2q/dlk\nWfnOV7Wm2QMFQ/DBBetb7dU1Wm/+qnRypNvFtYARw2wZz6lifmWQzD5E3T6mnI+G\nGpDU53SlzX1M/ph64kCo6COPIMRiMphVwzkibvJMr/eCtA0fa7XQXq1lY+xoesEW\ninyyedVSx0XINqGfMDosidRy1vsva4LfjTxE1G9AN9zRozwXHIBvJFMJvKIJGo03\nyGnu1zZfL4RvbsVGRqInSHL+usaspjTiCy5Nih6cTEVLQk/sjWOQjZ5t6J4OsuUF\n2LLrPpl8yyjOY1JId+cz7J7BhifLg0nHT53MvDa2cv5edBvXl+V6fiXOmGs3VKRg\n5rnLDjPKwwaFzbv0C+I41wQwiQijqKL8ZyIXHiJ6dkR0I5OjJiwwWPpxFexi1Fxy\nSoPjx3caLGR9503cYsBvLUk86jg7gUPvzPCy9bBxLBHcs6MtQ6u+N5p4kBgJLf3z\nHcQzl2IochjF6HU4kwdnm1XZB1BFT9Wo0cT6VCR+l3AXAq+m3gbHbwoz0CKwkepY\nuBth+WUtf2908vPH5kaK\n=uJ0u\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree f280a7070b16a445695818c418afd4525a1e57e0\nparent 03eba44f3e9cb93a0f0bf69a75938246e174dc6f\nauthor Vasilis <40444267+VasilisDragon@users.noreply.github.com> 1781252646 -0500\ncommitter GitHub <noreply@github.com> 1781252646 -0400\n\ndocs: correct bot.dig forceLook description (#3923)\n\nThe api.md signature showed forceLook defaulting to true, but the\nparameter has no default in lib/plugins/digging.js (back to at least\n3.0.0). Calling bot.dig(block) takes the non-force path: the bot turns\nits head at the normal look rate and the turn is awaited before digging\nstarts. Document that omitted-argument behavior, and drop the claim\nthat forceLook accepts 'raycast' - that value belongs to digFace, which\nalready documents it.\n\nDocs only, no code change. English docs only; translations are\nmaintained separately.",
+        "verified_at": "2026-07-27T19:22:07Z"
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/b5478b029ee616b9c009bb6d4f2afcf3fab1c5d8",
+    "html_url": "https://github.com/Complexity-ML/mineflayer-26.2/commit/b5478b029ee616b9c009bb6d4f2afcf3fab1c5d8",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/b5478b029ee616b9c009bb6d4f2afcf3fab1c5d8/comments",
+    "author": {
+      "login": "VasilisDragon",
+      "id": 40444267,
+      "node_id": "MDQ6VXNlcjQwNDQ0MjY3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/40444267?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/VasilisDragon",
+      "html_url": "https://github.com/VasilisDragon",
+      "followers_url": "https://api.github.com/users/VasilisDragon/followers",
+      "following_url": "https://api.github.com/users/VasilisDragon/following{/other_user}",
+      "gists_url": "https://api.github.com/users/VasilisDragon/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/VasilisDragon/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/VasilisDragon/subscriptions",
+      "organizations_url": "https://api.github.com/users/VasilisDragon/orgs",
+      "repos_url": "https://api.github.com/users/VasilisDragon/repos",
+      "events_url": "https://api.github.com/users/VasilisDragon/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/VasilisDragon/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "03eba44f3e9cb93a0f0bf69a75938246e174dc6f",
+        "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/03eba44f3e9cb93a0f0bf69a75938246e174dc6f",
+        "html_url": "https://github.com/Complexity-ML/mineflayer-26.2/commit/03eba44f3e9cb93a0f0bf69a75938246e174dc6f"
+      }
+    ]
+  },
+  {
+    "sha": "03eba44f3e9cb93a0f0bf69a75938246e174dc6f",
+    "node_id": "C_kwDOTlUYm9oAKDAzZWJhNDRmM2U5Y2I5M2EwZjBiZjY5YTc1OTM4MjQ2ZTE3NGRjNmY",
+    "commit": {
+      "author": {
+        "name": "rom1504bot",
+        "email": "romain.beaumont.rb@gmail.com",
+        "date": "2026-05-03T05:35:43Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-05-03T05:35:43Z"
+      },
+      "message": "Release 4.37.1 (#3897)\n\nCo-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>",
+      "tree": {
+        "sha": "04c0d4f0a56dc524639efdec7e8492d67f36b3d7",
+        "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/git/trees/04c0d4f0a56dc524639efdec7e8492d67f36b3d7"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/git/commits/03eba44f3e9cb93a0f0bf69a75938246e174dc6f",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJp9t6vCRC1aQ7uu5UhlAAAcqEQAEMBB3cBs/vIxSrj2Vc0OoWv\nQ8nxlgY+4LAm355I5KAwcaK1AwfFjDMrvrKfxFyNkkptRWq7dQNskHA6N59JFWoR\nsOv1FnRwnma6OKmhb4S/i7Wpe6iu8ge+tNF9c+i03ngLup0v8C3g57XAUbouuGE2\nDFvJgvoJyB2OS+0BNydJqE+/hq7Z2dxNJGv7gTvU9XJ3IZ8SwdOZUbehlHh0Gjpq\nmy0dg4fyXA16Ixhb6kZbLx4ybZz/wEbRpt6A2sEHwoMHO5XvkyiSd2nSQpLPbJpT\nLZNaeX/ot5SCah29cql1xSwak0TOtQjwzhPg2zhccyzo6bg70ec2VZvvyYkQ1mko\n8UKRAwX34XXpAnIarJsWED4eOrgyh5lh6ffAt88eOfS/SIw0gkoUcL5sC8uaeUUw\nXAFFegv59Zf+9Py3VGgcfLzlluxAbUqkyOgW3emgiT7hAjdReISalyoXk9ijEajG\nEJ+2VZpqkl838PkewHlaw4cF7ziYOPx+3vRqdjvUfGvBiU2sUAoJ+6ceA90whzoX\ndL7vC4eCejgmOUbIY8p8l5jvVoH4qR7evnP/u5j3GZYpcps73tmEHhmJ5qr28P87\ntZcItglEX5yo2yDtSmPbNiu9EsP08erNRxzUxBgYhgk/U0vxEggOqyB+ZA9y3gRx\nsRXsibGYVPd9p9Sqhw9G\n=KBGz\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree 04c0d4f0a56dc524639efdec7e8492d67f36b3d7\nparent 2b65c14c6d335758d1fe753ade99d736b610413b\nauthor rom1504bot <romain.beaumont.rb@gmail.com> 1777786543 +0200\ncommitter GitHub <noreply@github.com> 1777786543 -0400\n\nRelease 4.37.1 (#3897)\n\nCo-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>",
+        "verified_at": "2026-07-27T19:22:07Z"
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/03eba44f3e9cb93a0f0bf69a75938246e174dc6f",
+    "html_url": "https://github.com/Complexity-ML/mineflayer-26.2/commit/03eba44f3e9cb93a0f0bf69a75938246e174dc6f",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/03eba44f3e9cb93a0f0bf69a75938246e174dc6f/comments",
+    "author": {
+      "login": "rom1504bot",
+      "id": 15970751,
+      "node_id": "MDQ6VXNlcjE1OTcwNzUx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/15970751?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/rom1504bot",
+      "html_url": "https://github.com/rom1504bot",
+      "followers_url": "https://api.github.com/users/rom1504bot/followers",
+      "following_url": "https://api.github.com/users/rom1504bot/following{/other_user}",
+      "gists_url": "https://api.github.com/users/rom1504bot/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/rom1504bot/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/rom1504bot/subscriptions",
+      "organizations_url": "https://api.github.com/users/rom1504bot/orgs",
+      "repos_url": "https://api.github.com/users/rom1504bot/repos",
+      "events_url": "https://api.github.com/users/rom1504bot/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/rom1504bot/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "2b65c14c6d335758d1fe753ade99d736b610413b",
+        "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/2b65c14c6d335758d1fe753ade99d736b610413b",
+        "html_url": "https://github.com/Complexity-ML/mineflayer-26.2/commit/2b65c14c6d335758d1fe753ade99d736b610413b"
+      }
+    ]
+  },
+  {
+    "sha": "2b65c14c6d335758d1fe753ade99d736b610413b",
+    "node_id": "C_kwDOTlUYm9oAKDJiNjVjMTRjNmQzMzU3NThkMWZlNzUzYWRlOTlkNzM2YjYxMDQxM2I",
+    "commit": {
+      "author": {
+        "name": "adam jones",
+        "email": "domdomegg+git@gmail.com",
+        "date": "2026-05-02T07:13:18Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-05-02T07:13:18Z"
+      },
+      "message": "Convert yaw/pitch in sync_entity_position handler (#3896)\n\nThe 1.21.3+ sync_entity_position packet replaced separate look/move\npackets but the new handler set entity.yaw/pitch directly from packet\nfields, skipping the notchian → radians conversion the older handlers\nin this file apply via fromNotchianYaw/fromNotchianYawByte.\n\nTracked entities (other players, mobs) ended up with raw protocol\nvalues in their public yaw/pitch fields, so consumers like\nprismarine-viewer interpreting them as radians produced wildly wrong\nrotations on every move event. The bug was masked when entities also\nemitted entity_look packets (which set yaw correctly via the byte\nhelper), so it was visible mainly during y-only motion (jumping)\nwhere no look packet fires.\n\nCo-authored-by: domdomegg <domdomegg+anthropic@gmail.com>",
+      "tree": {
+        "sha": "ef3f18baf93f1fd4bcf968d017fb8a7c0896d55b",
+        "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/git/trees/ef3f18baf93f1fd4bcf968d017fb8a7c0896d55b"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/git/commits/2b65c14c6d335758d1fe753ade99d736b610413b",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJp9aQOCRC1aQ7uu5UhlAAA/rUQAIVON8QKkXbwgFa3tsR7lsO9\nA5kBLIMJVepOrljQDtD+1iKE8oQEtJ7nR+TTVTlaK2l4sMrjJqi/+stwxqPNYu6O\nbnUvlzcfcC5bTyEtHAOK1mm0gVc8EO8B8DLx/7TBLZ8A+RGdKM/9wSodQpLUQtC7\nHF2EaM3mL7w+ZuIq/119sNpevGY76fEKLlN2DK3E35jtnU/ceC/6K31Cxi1oFaV7\n69AaYjTk7/8lUt6fecxM/7CKAf0O+HYE3/P6fEqyautjeowyrkC51TjdsBGubBGf\nDkux3e6Uf/rJ6BdvOCrGINiDy2srb8MHcbgC8CXDQDTiMRjo4cwlpvCiC0yhAJZW\nVFPzZ530bj/2mkx8wTwKCVE9+W9St3qJssZ8UCiUXvKG5opm0rNn32KUbSDn7aAx\npINqyM2RGNeox3Y12+I/N/ylzvl7IWURnVjjrt2Jl0VHgGVuJtUOlEEjiKfSNdrL\nFi6Z4A9HLrNT18Z9XwI9HQexNIshF2cukWk0vVwwMQ/f9QDOqNwgT6aeW73s7SPd\nH+3p3E5+9fbIz1hJDfvkpKhApe61D/tc4HbQG3gYx9qZKH20IO/JdBGE5r7o+slM\ncQYuJmN7U8Jegm9ouV+/hYygBwuVA67fFfMuUtrzy9CkDKOWNqm4SnElvBdsUWGq\nMUzN/ItTXzxK3bS4inxy\n=BHvc\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree ef3f18baf93f1fd4bcf968d017fb8a7c0896d55b\nparent 61fbd3a38177bde100b4ee9e130ccbcdb73fc7ea\nauthor adam jones <domdomegg+git@gmail.com> 1777705998 +0100\ncommitter GitHub <noreply@github.com> 1777705998 -0400\n\nConvert yaw/pitch in sync_entity_position handler (#3896)\n\nThe 1.21.3+ sync_entity_position packet replaced separate look/move\npackets but the new handler set entity.yaw/pitch directly from packet\nfields, skipping the notchian → radians conversion the older handlers\nin this file apply via fromNotchianYaw/fromNotchianYawByte.\n\nTracked entities (other players, mobs) ended up with raw protocol\nvalues in their public yaw/pitch fields, so consumers like\nprismarine-viewer interpreting them as radians produced wildly wrong\nrotations on every move event. The bug was masked when entities also\nemitted entity_look packets (which set yaw correctly via the byte\nhelper), so it was visible mainly during y-only motion (jumping)\nwhere no look packet fires.\n\nCo-authored-by: domdomegg <domdomegg+anthropic@gmail.com>",
+        "verified_at": "2026-07-27T19:22:07Z"
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/2b65c14c6d335758d1fe753ade99d736b610413b",
+    "html_url": "https://github.com/Complexity-ML/mineflayer-26.2/commit/2b65c14c6d335758d1fe753ade99d736b610413b",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/2b65c14c6d335758d1fe753ade99d736b610413b/comments",
+    "author": {
+      "login": "domdomegg",
+      "id": 4953590,
+      "node_id": "MDQ6VXNlcjQ5NTM1OTA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4953590?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/domdomegg",
+      "html_url": "https://github.com/domdomegg",
+      "followers_url": "https://api.github.com/users/domdomegg/followers",
+      "following_url": "https://api.github.com/users/domdomegg/following{/other_user}",
+      "gists_url": "https://api.github.com/users/domdomegg/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/domdomegg/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/domdomegg/subscriptions",
+      "organizations_url": "https://api.github.com/users/domdomegg/orgs",
+      "repos_url": "https://api.github.com/users/domdomegg/repos",
+      "events_url": "https://api.github.com/users/domdomegg/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/domdomegg/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "61fbd3a38177bde100b4ee9e130ccbcdb73fc7ea",
+        "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/61fbd3a38177bde100b4ee9e130ccbcdb73fc7ea",
+        "html_url": "https://github.com/Complexity-ML/mineflayer-26.2/commit/61fbd3a38177bde100b4ee9e130ccbcdb73fc7ea"
+      }
+    ]
+  },
+  {
+    "sha": "61fbd3a38177bde100b4ee9e130ccbcdb73fc7ea",
+    "node_id": "C_kwDOTlUYm9oAKDYxZmJkM2EzODE3N2JkZTEwMGI0ZWU5ZTEzMGNjYmNkYjczZmM3ZWE",
+    "commit": {
+      "author": {
+        "name": "SuperGamerTron",
+        "email": "45374546+SuperGamerTron@users.noreply.github.com",
+        "date": "2026-04-29T21:43:48Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-04-29T21:43:48Z"
+      },
+      "message": "Backport velocity field changes from 1.21.9+ to older versions (#3839)\n\n* Backport velocity naming changes\n\n* Update ci.yml\n\n* Update package.json\n\n* Update ci.yml\n\n* Update package.json\n\n* dbg\n\n* Remove debug logging\n\n---------\n\nCo-authored-by: extremeheat <extreme@protonmail.ch>",
+      "tree": {
+        "sha": "e297fe9e87d01a691d4e9d05dab60325de89469c",
+        "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/git/trees/e297fe9e87d01a691d4e9d05dab60325de89469c"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/git/commits/61fbd3a38177bde100b4ee9e130ccbcdb73fc7ea",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJp8nuUCRC1aQ7uu5UhlAAA61wQAE3EcMZHRg35DPHkLJQj/CrU\nVQzIar9qvjlToBNynNxIOcS4F9AaU1YLEzF2ZKc2yMdCDqNUaZqtjqEvhbJFxHa8\npuR4VkPc5C4oqEL8sqyuosGjZXwkrf4OeA/e1Ze4E4xgU6DYi1oU3/XeMoeb/azF\nLNkAz7rk002Oo+MkYDwYykcbGDtQO0Sh3eiGlONAUrsGVk8ByavQ6u12e2ufcKsM\nx6H4U1JFGnGvLeDLP3sd13x4Cybfx1eVWzkLvkzY0yS15a57shMSrunnZO+jtHjx\nQCS6EuJymPAf9CwHxtFkVchI3oPo6jyRKYD6yrUBFfgtnQY6j8gZ4HyOhCbGy+vW\nrnWSWMS3oHSuTxcVaTSu4VviWeNmnBkr5l/eoNXrgGYElBm5bKeCuS9qwny1/LWM\nwcWcqLVW1ijsbPu3fTBXxxHuDFGO/bgyWSm+TpCOEby9kn9v5meexj6gDzkbzdr5\n9NqGLmF6fVMxcFVNmdGI5fU4cNCZXxs3/iynoZx7/nZQm+qBYCcL9stiVvzAvJXD\nPmY0v5xQUzuKcycUBDoF4NlR6xnAyXkvuYY7gZx428iXl8q9Srk7KoV/vTHrycTP\n31kU+8SlGMSo3Ev8iAFFM2TbUt4TU1GsakH6+0wXEENr+Po47qes+XD4/lYDUbcE\n1xni7le4EKOzliirkSpV\n=VcWV\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree e297fe9e87d01a691d4e9d05dab60325de89469c\nparent fd00edd4a0211e8f131abf23b0951e04acceb3f5\nauthor SuperGamerTron <45374546+SuperGamerTron@users.noreply.github.com> 1777499028 -0600\ncommitter GitHub <noreply@github.com> 1777499028 -0400\n\nBackport velocity field changes from 1.21.9+ to older versions (#3839)\n\n* Backport velocity naming changes\n\n* Update ci.yml\n\n* Update package.json\n\n* Update ci.yml\n\n* Update package.json\n\n* dbg\n\n* Remove debug logging\n\n---------\n\nCo-authored-by: extremeheat <extreme@protonmail.ch>",
+        "verified_at": "2026-07-27T19:22:07Z"
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/61fbd3a38177bde100b4ee9e130ccbcdb73fc7ea",
+    "html_url": "https://github.com/Complexity-ML/mineflayer-26.2/commit/61fbd3a38177bde100b4ee9e130ccbcdb73fc7ea",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/61fbd3a38177bde100b4ee9e130ccbcdb73fc7ea/comments",
+    "author": {
+      "login": "SuperGamerTron",
+      "id": 45374546,
+      "node_id": "MDQ6VXNlcjQ1Mzc0NTQ2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/45374546?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/SuperGamerTron",
+      "html_url": "https://github.com/SuperGamerTron",
+      "followers_url": "https://api.github.com/users/SuperGamerTron/followers",
+      "following_url": "https://api.github.com/users/SuperGamerTron/following{/other_user}",
+      "gists_url": "https://api.github.com/users/SuperGamerTron/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/SuperGamerTron/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/SuperGamerTron/subscriptions",
+      "organizations_url": "https://api.github.com/users/SuperGamerTron/orgs",
+      "repos_url": "https://api.github.com/users/SuperGamerTron/repos",
+      "events_url": "https://api.github.com/users/SuperGamerTron/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/SuperGamerTron/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "fd00edd4a0211e8f131abf23b0951e04acceb3f5",
+        "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/fd00edd4a0211e8f131abf23b0951e04acceb3f5",
+        "html_url": "https://github.com/Complexity-ML/mineflayer-26.2/commit/fd00edd4a0211e8f131abf23b0951e04acceb3f5"
+      }
+    ]
+  },
+  {
+    "sha": "fd00edd4a0211e8f131abf23b0951e04acceb3f5",
+    "node_id": "C_kwDOTlUYm9oAKGZkMDBlZGQ0YTAyMTFlOGYxMzFhYmYyM2IwOTUxZTA0YWNjZWIzZjU",
+    "commit": {
+      "author": {
+        "name": "extremeheat",
+        "email": "extreme@protonmail.ch",
+        "date": "2026-04-25T23:29:02Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-04-25T23:29:02Z"
+      },
+      "message": "Update history.md",
+      "tree": {
+        "sha": "332b6849454ee543bd1b1499b383273705af01bf",
+        "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/git/trees/332b6849454ee543bd1b1499b383273705af01bf"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/git/commits/fd00edd4a0211e8f131abf23b0951e04acceb3f5",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJp7U4+CRC1aQ7uu5UhlAAAW2oQAKCA5tSqByjsEuGke4flpPaI\n4D03BXP4b1Us7Oj5L8M9p2reTkOlAj7VcVCNb+4sfTc5O5/T+8n8mAcMGVNjVi8B\n7fQHsPO8Of/E3GD9rNf7qeH8PMVKnv79tqdXpF1HZCKnrqyp6rk8dzLgUIUDSG5/\nspp87B2A0mD3BvDgAUV2O+NFjK/UKea4vgDbc6w7CWQA+9bujDLu/esvdlwQP+z0\npemlQJ8WT6eQxxMXUa9w3Yoj+htPofmofYZCHZo2jEM+kQW1yVL5aVfMgrq6YdE5\nvN2nE/LTGOREcl3GvqbE695l6dQ7SLJNqucw/WFKDV+UH9JXKryqFJMkLgQONwqS\nofyTrV7iXcv9kt4wAosXj/AgQpNWvifW7NI2KM5K4Y5FpI7wZdySYKUTQmMvgL6q\nB0bgflMXN5t1YYB5z5scnk2FgJqPSrweFc8YPrCowlvcKzC0O7JuWBVCZqheH0vg\nGWGPyW/cbUsIsZkFXgWzxSOsdUBJcPuEBcWiS6C1PkCH7dFtK/eMbZUH88nWh8lg\nEFWU/KHul9wKQwLzaJ086mghtSSYFTezPRRJvT8m7bONoDVaBp27wup76YHKbehy\nqf1dkIGmwsx5lnNiMj2d6m8TDFQhV3n4PDJB+5BzdEfoJffos1AyYBjyhs2tvDVg\nWUbRNmyx3W+kQozPBU9w\n=slFR\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree 332b6849454ee543bd1b1499b383273705af01bf\nparent 47a41c666f1f6e6783867ebe81e7386bbae72c24\nauthor extremeheat <extreme@protonmail.ch> 1777159742 -0400\ncommitter GitHub <noreply@github.com> 1777159742 -0400\n\nUpdate history.md",
+        "verified_at": "2026-07-27T19:22:07Z"
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/fd00edd4a0211e8f131abf23b0951e04acceb3f5",
+    "html_url": "https://github.com/Complexity-ML/mineflayer-26.2/commit/fd00edd4a0211e8f131abf23b0951e04acceb3f5",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/fd00edd4a0211e8f131abf23b0951e04acceb3f5/comments",
+    "author": {
+      "login": "extremeheat",
+      "id": 13713600,
+      "node_id": "MDQ6VXNlcjEzNzEzNjAw",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13713600?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/extremeheat",
+      "html_url": "https://github.com/extremeheat",
+      "followers_url": "https://api.github.com/users/extremeheat/followers",
+      "following_url": "https://api.github.com/users/extremeheat/following{/other_user}",
+      "gists_url": "https://api.github.com/users/extremeheat/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/extremeheat/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/extremeheat/subscriptions",
+      "organizations_url": "https://api.github.com/users/extremeheat/orgs",
+      "repos_url": "https://api.github.com/users/extremeheat/repos",
+      "events_url": "https://api.github.com/users/extremeheat/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/extremeheat/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "47a41c666f1f6e6783867ebe81e7386bbae72c24",
+        "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/47a41c666f1f6e6783867ebe81e7386bbae72c24",
+        "html_url": "https://github.com/Complexity-ML/mineflayer-26.2/commit/47a41c666f1f6e6783867ebe81e7386bbae72c24"
+      }
+    ]
+  },
+  {
+    "sha": "47a41c666f1f6e6783867ebe81e7386bbae72c24",
+    "node_id": "C_kwDOTlUYm9oAKDQ3YTQxYzY2NmYxZjZlNjc4Mzg2N2ViZTgxZTczODZiYmFlNzJjMjQ",
+    "commit": {
+      "author": {
+        "name": "SuperGamerTron",
+        "email": "45374546+SuperGamerTron@users.noreply.github.com",
+        "date": "2026-04-02T06:12:31Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-04-02T06:12:31Z"
+      },
+      "message": "Fix activateItem always having the same rotation (#3840)\n\n* Use bot rotation for use_item packet\n\n* Add test for activateItem rotation in use_item packet\n\nVerifies that bot.activateItem() sends the bot's current yaw and pitch\n(converted via toNotchianYaw/toNotchianPitch) in the use_item packet's\nrotation field. Skips on protocol versions before 1.21.1 where the\nrotation field does not exist.\n\nCo-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>\n\n* Add external test for activateItem rotation\n\nVerifies that activateItem sends the bot's actual yaw/pitch in the\nuse_item packet by intercepting the outgoing packet and checking the\nrotation values match expected Notchian angles for two different\nlook directions.\n\nCo-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: Claude <claude@anthropic.com>\nCo-authored-by: Claude Opus 4.6 (1M context) <noreply@anthropic.com>",
+      "tree": {
+        "sha": "8701e1a89880ca090e36badf5cce60d991565e5d",
+        "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/git/trees/8701e1a89880ca090e36badf5cce60d991565e5d"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/git/commits/47a41c666f1f6e6783867ebe81e7386bbae72c24",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJpzgjPCRC1aQ7uu5UhlAAA6OwQAInBXICXsi7c1GxbOtK8WBov\nAQn4FabYwXeoYm6V0zMA+oP5QlqaH5XUvny6xCGZOB+KdTRIHBFThG4dZbfYhP6h\njX9RTyVQuEjM6Vl9OFLqj1z/UubH5K/rcik0nqYl6df6+bmlbxwUk9JF+xUwsYOR\nAaOK25m1m0iHMm9nB9jGXoIN29fdLNNo+NrHUHkrsAFXLOEUC4oWZ4CmOxnAWhit\nh1+J24GOG7egzBjaXEH+IaURJ3ERMRQkTSduqW8O8DtbpCdPdeFfVUvjzHeVbD/T\nrSh/ezsaR/9vYTKJ+Omy5c9giC1nwd7CwLYlnBY8n38R1GYwmC63sqbircYEQAMq\nGC0zv2yr60+n4FKdRTcEZ7c0gVTo/d1k5bO6o+NodlQEfpWPSltISvt6oE5q0Hdh\nXXw66Y+ZUO81lsIz0gS7yv6pCI+/5qv7dUfIAt7D+gpMOGWcFgFKh2uYS3jpRB7K\nPa6MzJ3If/Y2TyzpJgLyIHTRMf9/2ti7j5fVCPeKg6TqINEt9x/mYg/bYyguy2E2\nBKynQ76KTMcESC9Hw/wiSSpqGoUjnTAoksRaXSh8cSN6HmtxJnI3XKYvuUps+ChS\nxawGlwDh0rUx07j0BPkzIlC/Z6TmPFnGEGF7Mhq3gmp+VKSsiuGwaAtNY6eHXDQJ\n+/bQiGph7GhdV9z09g9C\n=fyAE\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree 8701e1a89880ca090e36badf5cce60d991565e5d\nparent 8af96fc0186ab770174744ea3e1f247c229a8cb3\nauthor SuperGamerTron <45374546+SuperGamerTron@users.noreply.github.com> 1775110351 -0600\ncommitter GitHub <noreply@github.com> 1775110351 -0700\n\nFix activateItem always having the same rotation (#3840)\n\n* Use bot rotation for use_item packet\n\n* Add test for activateItem rotation in use_item packet\n\nVerifies that bot.activateItem() sends the bot's current yaw and pitch\n(converted via toNotchianYaw/toNotchianPitch) in the use_item packet's\nrotation field. Skips on protocol versions before 1.21.1 where the\nrotation field does not exist.\n\nCo-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>\n\n* Add external test for activateItem rotation\n\nVerifies that activateItem sends the bot's actual yaw/pitch in the\nuse_item packet by intercepting the outgoing packet and checking the\nrotation values match expected Notchian angles for two different\nlook directions.\n\nCo-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: Claude <claude@anthropic.com>\nCo-authored-by: Claude Opus 4.6 (1M context) <noreply@anthropic.com>",
+        "verified_at": "2026-07-27T19:22:07Z"
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/47a41c666f1f6e6783867ebe81e7386bbae72c24",
+    "html_url": "https://github.com/Complexity-ML/mineflayer-26.2/commit/47a41c666f1f6e6783867ebe81e7386bbae72c24",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/47a41c666f1f6e6783867ebe81e7386bbae72c24/comments",
+    "author": {
+      "login": "SuperGamerTron",
+      "id": 45374546,
+      "node_id": "MDQ6VXNlcjQ1Mzc0NTQ2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/45374546?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/SuperGamerTron",
+      "html_url": "https://github.com/SuperGamerTron",
+      "followers_url": "https://api.github.com/users/SuperGamerTron/followers",
+      "following_url": "https://api.github.com/users/SuperGamerTron/following{/other_user}",
+      "gists_url": "https://api.github.com/users/SuperGamerTron/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/SuperGamerTron/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/SuperGamerTron/subscriptions",
+      "organizations_url": "https://api.github.com/users/SuperGamerTron/orgs",
+      "repos_url": "https://api.github.com/users/SuperGamerTron/repos",
+      "events_url": "https://api.github.com/users/SuperGamerTron/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/SuperGamerTron/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "8af96fc0186ab770174744ea3e1f247c229a8cb3",
+        "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/8af96fc0186ab770174744ea3e1f247c229a8cb3",
+        "html_url": "https://github.com/Complexity-ML/mineflayer-26.2/commit/8af96fc0186ab770174744ea3e1f247c229a8cb3"
+      }
+    ]
+  },
+  {
+    "sha": "8af96fc0186ab770174744ea3e1f247c229a8cb3",
+    "node_id": "C_kwDOTlUYm9oAKDhhZjk2ZmMwMTg2YWI3NzAxNzQ3NDRlYTNlMWYyNDdjMjI5YThjYjM",
+    "commit": {
+      "author": {
+        "name": "plainprince",
+        "email": "119175160+plainprince@users.noreply.github.com",
+        "date": "2026-04-02T03:56:35Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-04-02T03:56:35Z"
+      },
+      "message": "Fix crash in digging plugin death handler (#3553) (#3835)\n\n* Fix crash in digging plugin death handler when bot._events is undefined\n\nWhen the bot dies during certain states (e.g. Velocity proxy transfers,\nor when using Bun runtime), the EventEmitter internals can be torn down\nbefore the death event fires. This causes removeAllListeners to throw\n\"TypeError: undefined is not an object (evaluating 'this._events')\".\n\nWrapping the death handler in a try/catch prevents the crash.\n\nFixes #3553\n\nCo-authored-by: Cursor <cursoragent@cursor.com>\n\n* Add test for digging death handler crash fix\n\nCo-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>\n\n* Add external test for digging death crash fix\n\nVerifies that killing the bot mid-dig via /kill doesn't crash, by\nplacing a block, starting to dig it in survival mode, killing the bot,\nand confirming the death event fires and the bot respawns.\n\nCo-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>\n\n* fix(test): reset state after diggingDeath to prevent cascading failures\n\nAfter killing the bot, wait for chunks to load at the respawn point and\ncall resetState() so subsequent tests start with a clean creative-mode\nbot at the origin with loaded chunks. Without this, the next test's\nresetState() would fail with \"Timeout waiting for chunks\" or\n\"updateSlot did not fire\" because the bot was still at the respawn\nlocation without chunks.\n\nCo-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>\n\n* Remove flaky diggingDeath external test (covered by unit test)\n\n---------\n\nCo-authored-by: Simeon Kummer <simeon@hitthecode.de>\nCo-authored-by: Cursor <cursoragent@cursor.com>\nCo-authored-by: rom1504 <rom1504@users.noreply.github.com>\nCo-authored-by: Claude Opus 4.6 (1M context) <noreply@anthropic.com>\nCo-authored-by: Claude <claude@anthropic.com>",
+      "tree": {
+        "sha": "697f962354231ec68aa483800b003620549721e3",
+        "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/git/trees/697f962354231ec68aa483800b003620549721e3"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/git/commits/8af96fc0186ab770174744ea3e1f247c229a8cb3",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJpzejzCRC1aQ7uu5UhlAAAEEEQAE0iU1Mh70QTvo3AF05RbNPk\nTYsCa+++u0Pdl0lw9JYk3JRg3IW6Wedom7lMWlNuWBqqUENgHYs5GZaNcLBdYhYz\nZ+2BfG5bSRjMp/+uotI8CNAuFtTT77BZRkY4llEK0WWBM96g02/7Cwq8/bRPpB/3\nKVp9RSU4c9QOoCqkU489t0fzaO2E+tAdOBl1CZD/rgBJaIhKbvAg6B96Q9aRcSHu\nEaEUYEkfFUReK1qYc8qF656pWzOqPtU+WI2Bl+n/L5YtB5FUaBgh9B96loM6eNPF\nHPYhoBE9tPK+eAaErH6k+3Nl3t0swn2+Xy+A9PDoUbVRWCglH1ofoKRvfG7zB+eg\nCp3mgA9g9+0xSzVeQMzKoGX5ZeGqVpsx2G5WWaSaOCvM4Iw9HAIHbnnVZ4rj2had\nlSOrfvHaqimd917ISFVjgoJwTotkCJfaXXcPVWy74SrrwtVyg2jHrtaAYGvLtmCq\nRRCdZMXrK3SCzfur6V8R209JcMaYLyBISqGj7pBzOmj8zU9S6IyBQqUecAWU6GxZ\nE5xqCKprGIuLqaTtriVjBeMEVpioBqTPJqWky0m/zL8KVvzM/12T0bgE/Sdl5uIL\nJmt2ISoPFTVnUMsyHrXXjNF/wrNcJygB7TYUBCBhle/idyfbDB3o1ulk9fAKjaAQ\nkesklZyCQLo0vDTK6fMe\n=Zfju\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree 697f962354231ec68aa483800b003620549721e3\nparent dcbc5b2d605e38379724ca36467a911dc9cc562f\nauthor plainprince <119175160+plainprince@users.noreply.github.com> 1775102195 +0200\ncommitter GitHub <noreply@github.com> 1775102195 -0700\n\nFix crash in digging plugin death handler (#3553) (#3835)\n\n* Fix crash in digging plugin death handler when bot._events is undefined\n\nWhen the bot dies during certain states (e.g. Velocity proxy transfers,\nor when using Bun runtime), the EventEmitter internals can be torn down\nbefore the death event fires. This causes removeAllListeners to throw\n\"TypeError: undefined is not an object (evaluating 'this._events')\".\n\nWrapping the death handler in a try/catch prevents the crash.\n\nFixes #3553\n\nCo-authored-by: Cursor <cursoragent@cursor.com>\n\n* Add test for digging death handler crash fix\n\nCo-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>\n\n* Add external test for digging death crash fix\n\nVerifies that killing the bot mid-dig via /kill doesn't crash, by\nplacing a block, starting to dig it in survival mode, killing the bot,\nand confirming the death event fires and the bot respawns.\n\nCo-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>\n\n* fix(test): reset state after diggingDeath to prevent cascading failures\n\nAfter killing the bot, wait for chunks to load at the respawn point and\ncall resetState() so subsequent tests start with a clean creative-mode\nbot at the origin with loaded chunks. Without this, the next test's\nresetState() would fail with \"Timeout waiting for chunks\" or\n\"updateSlot did not fire\" because the bot was still at the respawn\nlocation without chunks.\n\nCo-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>\n\n* Remove flaky diggingDeath external test (covered by unit test)\n\n---------\n\nCo-authored-by: Simeon Kummer <simeon@hitthecode.de>\nCo-authored-by: Cursor <cursoragent@cursor.com>\nCo-authored-by: rom1504 <rom1504@users.noreply.github.com>\nCo-authored-by: Claude Opus 4.6 (1M context) <noreply@anthropic.com>\nCo-authored-by: Claude <claude@anthropic.com>",
+        "verified_at": "2026-07-27T19:22:07Z"
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/8af96fc0186ab770174744ea3e1f247c229a8cb3",
+    "html_url": "https://github.com/Complexity-ML/mineflayer-26.2/commit/8af96fc0186ab770174744ea3e1f247c229a8cb3",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/8af96fc0186ab770174744ea3e1f247c229a8cb3/comments",
+    "author": {
+      "login": "plainprince",
+      "id": 119175160,
+      "node_id": "U_kgDOBxp3-A",
+      "avatar_url": "https://avatars.githubusercontent.com/u/119175160?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/plainprince",
+      "html_url": "https://github.com/plainprince",
+      "followers_url": "https://api.github.com/users/plainprince/followers",
+      "following_url": "https://api.github.com/users/plainprince/following{/other_user}",
+      "gists_url": "https://api.github.com/users/plainprince/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/plainprince/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/plainprince/subscriptions",
+      "organizations_url": "https://api.github.com/users/plainprince/orgs",
+      "repos_url": "https://api.github.com/users/plainprince/repos",
+      "events_url": "https://api.github.com/users/plainprince/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/plainprince/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "dcbc5b2d605e38379724ca36467a911dc9cc562f",
+        "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/dcbc5b2d605e38379724ca36467a911dc9cc562f",
+        "html_url": "https://github.com/Complexity-ML/mineflayer-26.2/commit/dcbc5b2d605e38379724ca36467a911dc9cc562f"
+      }
+    ]
+  },
+  {
+    "sha": "dcbc5b2d605e38379724ca36467a911dc9cc562f",
+    "node_id": "C_kwDOTlUYm9oAKGRjYmM1YjJkNjA1ZTM4Mzc5NzI0Y2EzNjQ2N2E5MTFkYzljYzU2MmY",
+    "commit": {
+      "author": {
+        "name": "-Sharky-",
+        "email": "help.scratcheur2020@gmail.com",
+        "date": "2026-04-02T03:54:59Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-04-02T03:54:59Z"
+      },
+      "message": "Fix crash issue when trying to parse bad skin JSON (#3712)\n\n* Fix crash issue when trying to parse bad skin JSON \n\nBad JSON sometimes occur with NPC players on servers\n\n* fixing indent to pass standardjs test\n\n* added test\n\n* changed double quotes into single quotes\n\n* replaced custom parsing with mojangson\n\n* linting\n\n* fix\n\n* lint\n\n* linting\n\n* linting\n\n* test\n\n* deleted non-working AI generated test\n\n* tested and fixed\n\n* Add tests for bad skin JSON parsing and add mojangson dependency\n\nAdd two tests verifying that extractSkinInformation correctly handles\nboth standard JSON and mojangson-formatted skin texture data without\ncrashing. Also add mojangson as a direct dependency since it is used\nin lib/plugins/entities.js.\n\nCo-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: Claude <claude@anthropic.com>\nCo-authored-by: Claude Opus 4.6 (1M context) <noreply@anthropic.com>",
+      "tree": {
+        "sha": "02b06373abdee7c7b4612371e071d3063b0e9c1e",
+        "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/git/trees/02b06373abdee7c7b4612371e071d3063b0e9c1e"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/git/commits/dcbc5b2d605e38379724ca36467a911dc9cc562f",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJpzeiTCRC1aQ7uu5UhlAAAFRYQAEPJHMR6n1NdvsFy47ynWzPv\nuyc/90lqkRByRDv31S/f4bGJiBUiLee29kfbUy+ovEx91DZ1PltJGptTEGqO74cl\niO0ek0Bx7RX2gvZDDcVNpYOw2XMjtHhJylfMOQZzn9rs1lfRk5LX54LIPpyg9cz1\n5D5TtiqOtE/ZTeSdvaYRCm46KiJKlykheGPPXbCpDbvBbsvl1xgNCnCwH0aXQheg\n9NFKGveZfxrQqKDk+azmDhvUfkCQJYTEvdCJOTMBijYmxksqnVW8jyJMKhgBUsdg\nrDODvq2sil+J8JERHsGh0yr3JgyWW17Ukysnd7nnljnzMA7SX/ebmtrpf5TtoA9y\najZiCj71EzkSICFEZeYKZstNF2xirVm4c+io75PfodmNIP5AJoXwtLCivM2/aPFi\nDB1UH6ndAcs6dIwwUHysIDzn7MYiMl3zZML7nSbThenpVyTOQShnl8bBSTTqzjWk\nMcvYUb5ElkIpdbvL4Li3MjgnNIWln9BESSGVo9Tv8sSignWC+EhCuG9tZMvpSV2O\nui+ytXqWHR3/ggzXE+fyhJbBwXBaajgCRFvA6OCSfUBoiYeo8TlqLG2Rrb6ugO+6\nKQD0G/oZXoe91Ob/Lr9XrrTv/mYWOQ7V/ijvys2/qPA1Uh5EawLkwe8TK1YNlG3x\ncUHd1kSp41S+NVcwmCmc\n=GREQ\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree 02b06373abdee7c7b4612371e071d3063b0e9c1e\nparent a516d1cdf21ce2676195c595a64798c6ad29c195\nauthor -Sharky- <help.scratcheur2020@gmail.com> 1775102099 +0200\ncommitter GitHub <noreply@github.com> 1775102099 -0700\n\nFix crash issue when trying to parse bad skin JSON (#3712)\n\n* Fix crash issue when trying to parse bad skin JSON \n\nBad JSON sometimes occur with NPC players on servers\n\n* fixing indent to pass standardjs test\n\n* added test\n\n* changed double quotes into single quotes\n\n* replaced custom parsing with mojangson\n\n* linting\n\n* fix\n\n* lint\n\n* linting\n\n* linting\n\n* test\n\n* deleted non-working AI generated test\n\n* tested and fixed\n\n* Add tests for bad skin JSON parsing and add mojangson dependency\n\nAdd two tests verifying that extractSkinInformation correctly handles\nboth standard JSON and mojangson-formatted skin texture data without\ncrashing. Also add mojangson as a direct dependency since it is used\nin lib/plugins/entities.js.\n\nCo-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: Claude <claude@anthropic.com>\nCo-authored-by: Claude Opus 4.6 (1M context) <noreply@anthropic.com>",
+        "verified_at": "2026-07-27T19:22:07Z"
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/dcbc5b2d605e38379724ca36467a911dc9cc562f",
+    "html_url": "https://github.com/Complexity-ML/mineflayer-26.2/commit/dcbc5b2d605e38379724ca36467a911dc9cc562f",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/dcbc5b2d605e38379724ca36467a911dc9cc562f/comments",
+    "author": {
+      "login": "TheSharkyOfficial",
+      "id": 69837569,
+      "node_id": "MDQ6VXNlcjY5ODM3NTY5",
+      "avatar_url": "https://avatars.githubusercontent.com/u/69837569?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/TheSharkyOfficial",
+      "html_url": "https://github.com/TheSharkyOfficial",
+      "followers_url": "https://api.github.com/users/TheSharkyOfficial/followers",
+      "following_url": "https://api.github.com/users/TheSharkyOfficial/following{/other_user}",
+      "gists_url": "https://api.github.com/users/TheSharkyOfficial/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/TheSharkyOfficial/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/TheSharkyOfficial/subscriptions",
+      "organizations_url": "https://api.github.com/users/TheSharkyOfficial/orgs",
+      "repos_url": "https://api.github.com/users/TheSharkyOfficial/repos",
+      "events_url": "https://api.github.com/users/TheSharkyOfficial/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/TheSharkyOfficial/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "a516d1cdf21ce2676195c595a64798c6ad29c195",
+        "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/a516d1cdf21ce2676195c595a64798c6ad29c195",
+        "html_url": "https://github.com/Complexity-ML/mineflayer-26.2/commit/a516d1cdf21ce2676195c595a64798c6ad29c195"
+      }
+    ]
+  },
+  {
+    "sha": "a516d1cdf21ce2676195c595a64798c6ad29c195",
+    "node_id": "C_kwDOTlUYm9oAKGE1MTZkMWNkZjIxY2UyNjc2MTk1YzU5NWE2NDc5OGM2YWQyOWMxOTU",
+    "commit": {
+      "author": {
+        "name": "Pix3lPirat3",
+        "email": "pix3lpirat3@yahoo.com",
+        "date": "2026-04-02T03:49:18Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-04-02T03:49:18Z"
+      },
+      "message": "Patches isInWater for digSpeed (#3542)\n\n* Patches isInWater for digSpeed\n\nIf the bot is standing in water it should not be slowed, however passing isInWater is slowing it, while digSpeed should only be slowed if the block at eyeHeight is water\n\n* Added bot._getBlockAtEyeLevel\n\n* Update digging.js\n\n* Update digging.js\n\n* Add test for eye-level water check in digTime\n\nVerifies that dig speed correctly uses the block at eye level to\ndetermine underwater status, rather than bot.entity.isInWater which\nchecks feet position. The test confirms:\n- Water at eye level increases dig time (slower digging)\n- isInWater=true with no water at eye level does not affect dig time\n\nCo-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>\n\n* Add external test for eye-level water check in dig speed\n\nVerifies that dig speed is only penalized when the bot's head (eye level)\nis underwater, not when only feet are in water. Tests three scenarios:\ndry land (baseline), feet-in-water (should match baseline), and fully\nsubmerged (should be significantly slower).\n\nCo-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>\n\n* Fix external test to use bot.digTime() instead of wall-clock measurement\n\nThe previous test measured actual dig time with performance.now() which was\naffected by bot physics state (onGround), server latency, and timing issues.\nUsing bot.digTime() directly tests the patched function and isolates the\nwater-at-eye-level check from other variables.\n\n* Fix external test: wait for onGround and use robust assertions\n\nThe test was failing because bot.entity.onGround was false after teleport,\ncausing a 5x penalty in the dry test that matched the water penalty in the\nsubmerged test. Now waits for the bot to land before measuring dry digTime,\nand uses assertions that account for varying onGround states across scenarios.\n\n* Fix external test: avoid onGround dependency, keep bot stationary\n\nInstead of relying on bot.entity.onGround state (which varies after teleport),\nthe test now teleports the bot once and only changes blocks around it. This\nensures the same physics state across all scenarios, isolating the water-at-\neye-level variable that the PR actually changes.\n\n* Rewrite external test to verify eye-level water detection and isInWater independence\n\nTests that _getBlockAtEyeLevel returns correct block in dry, submerged, and\nfeet-only-wet scenarios. Also directly verifies that setting isInWater=true\nwithout actual water blocks does not affect digTime (the core behavior change\nof this PR). Fixes lint error and avoids onGround timing issues.\n\n* Simplify external test: remove flaky feet-in-water scenario\n\nRemove test for water-at-feet-only which was failing due to water physics\n(water source blocks affecting adjacent block detection). The remaining tests\ncover the essential behavior: eye-level detection works (dry=no water,\nsubmerged=water), and isInWater flag no longer affects digTime.\n\n* Handle flowing_water block name for MC 1.8-1.15 compatibility\n\nOlder MC versions (pre-1.16) report water blocks as 'flowing_water' instead\nof 'water'. The eye-level check now handles both block names to ensure the\nwater penalty is correctly applied across all supported MC versions.\n\n---------\n\nCo-authored-by: Claude Code <claude-code@anthropic.com>\nCo-authored-by: Claude Opus 4.6 (1M context) <noreply@anthropic.com>\nCo-authored-by: Claude <claude@anthropic.com>",
+      "tree": {
+        "sha": "6faa5862b295c9a0bff9463da75c945dd32f48e9",
+        "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/git/trees/6faa5862b295c9a0bff9463da75c945dd32f48e9"
+      },
+      "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/git/commits/a516d1cdf21ce2676195c595a64798c6ad29c195",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJpzec+CRC1aQ7uu5UhlAAApwQQAFFBEJ/1VXkuDVROSlfnNi8t\nwumwMFVLI6S1brb2GAJKMm7bC21xoR7oP6MAqSVt3xn7upHSYLPnK1pNGEgjpffU\n+dXJ7oU+BUwUlE4L6ArwhHVJ5PDqFmclNiPztFv9CWC5sG3QnbQnEINVBT0TqQUK\nLHOoMKhW1MqQXgsMNOXmtAlT5VGZ0Ptqb63J5PuFe6bdIRfcPiAtuzso/uPpYkg4\nC9CIQnzYSTQO1foEu/u1q8Z/SgzvgattVwDrnp4x7N7lfLdFspM5+g7AUxqoFi9i\nLfs7hAE6PxNv64s8Pn8yOu9LYg9wEkz7Ucghn5zD4W0wBEh3ULoM6UCkDhPOudnb\n+TmPvg2cWm9tzEtXhDPHruqf/RqBXN46IgQsaHf4rueAF6r+sUHI+zRzfnERMTAp\nfec2R23u98xocLknDvBiHXeNc8kGlItQYPJiJPj9SZIbyMnISi3a8Kl2IZcVLT+x\nuCxHnEv+PLAW3pWxTgPJ9pe4Nt8xeGrSlO5yJaQaHs3jv766Joo6SGUVui+7bRrB\nbfuiT9xHxE23DcgXJN3XdTB2ysFL5Y4BxGDKSXg/xnWn6n43qW4yS98wKZB+ZS1y\nAVYoz+67hU7uSXdlvBYMTwIygJNhFfaBYm/8vTA1YdP3WMJdpaiwQYjEP3i5hpij\nQFcC9YIynp/+pzRh2srL\n=Nv/o\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree 6faa5862b295c9a0bff9463da75c945dd32f48e9\nparent c5e0200686c269617f2a92c8db50fdceb899ba8a\nauthor Pix3lPirat3 <pix3lpirat3@yahoo.com> 1775101758 -0700\ncommitter GitHub <noreply@github.com> 1775101758 -0700\n\nPatches isInWater for digSpeed (#3542)\n\n* Patches isInWater for digSpeed\n\nIf the bot is standing in water it should not be slowed, however passing isInWater is slowing it, while digSpeed should only be slowed if the block at eyeHeight is water\n\n* Added bot._getBlockAtEyeLevel\n\n* Update digging.js\n\n* Update digging.js\n\n* Add test for eye-level water check in digTime\n\nVerifies that dig speed correctly uses the block at eye level to\ndetermine underwater status, rather than bot.entity.isInWater which\nchecks feet position. The test confirms:\n- Water at eye level increases dig time (slower digging)\n- isInWater=true with no water at eye level does not affect dig time\n\nCo-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>\n\n* Add external test for eye-level water check in dig speed\n\nVerifies that dig speed is only penalized when the bot's head (eye level)\nis underwater, not when only feet are in water. Tests three scenarios:\ndry land (baseline), feet-in-water (should match baseline), and fully\nsubmerged (should be significantly slower).\n\nCo-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>\n\n* Fix external test to use bot.digTime() instead of wall-clock measurement\n\nThe previous test measured actual dig time with performance.now() which was\naffected by bot physics state (onGround), server latency, and timing issues.\nUsing bot.digTime() directly tests the patched function and isolates the\nwater-at-eye-level check from other variables.\n\n* Fix external test: wait for onGround and use robust assertions\n\nThe test was failing because bot.entity.onGround was false after teleport,\ncausing a 5x penalty in the dry test that matched the water penalty in the\nsubmerged test. Now waits for the bot to land before measuring dry digTime,\nand uses assertions that account for varying onGround states across scenarios.\n\n* Fix external test: avoid onGround dependency, keep bot stationary\n\nInstead of relying on bot.entity.onGround state (which varies after teleport),\nthe test now teleports the bot once and only changes blocks around it. This\nensures the same physics state across all scenarios, isolating the water-at-\neye-level variable that the PR actually changes.\n\n* Rewrite external test to verify eye-level water detection and isInWater independence\n\nTests that _getBlockAtEyeLevel returns correct block in dry, submerged, and\nfeet-only-wet scenarios. Also directly verifies that setting isInWater=true\nwithout actual water blocks does not affect digTime (the core behavior change\nof this PR). Fixes lint error and avoids onGround timing issues.\n\n* Simplify external test: remove flaky feet-in-water scenario\n\nRemove test for water-at-feet-only which was failing due to water physics\n(water source blocks affecting adjacent block detection). The remaining tests\ncover the essential behavior: eye-level detection works (dry=no water,\nsubmerged=water), and isInWater flag no longer affects digTime.\n\n* Handle flowing_water block name for MC 1.8-1.15 compatibility\n\nOlder MC versions (pre-1.16) report water blocks as 'flowing_water' instead\nof 'water'. The eye-level check now handles both block names to ensure the\nwater penalty is correctly applied across all supported MC versions.\n\n---------\n\nCo-authored-by: Claude Code <claude-code@anthropic.com>\nCo-authored-by: Claude Opus 4.6 (1M context) <noreply@anthropic.com>\nCo-authored-by: Claude <claude@anthropic.com>",
+        "verified_at": "2026-07-27T19:22:07Z"
+      }
+    },
+    "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/a516d1cdf21ce2676195c595a64798c6ad29c195",
+    "html_url": "https://github.com/Complexity-ML/mineflayer-26.2/commit/a516d1cdf21ce2676195c595a64798c6ad29c195",
+    "comments_url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/a516d1cdf21ce2676195c595a64798c6ad29c195/comments",
+    "author": {
+      "login": "Pix3lPirat3",
+      "id": 83902522,
+      "node_id": "MDQ6VXNlcjgzOTAyNTIy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/83902522?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Pix3lPirat3",
+      "html_url": "https://github.com/Pix3lPirat3",
+      "followers_url": "https://api.github.com/users/Pix3lPirat3/followers",
+      "following_url": "https://api.github.com/users/Pix3lPirat3/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Pix3lPirat3/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Pix3lPirat3/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Pix3lPirat3/subscriptions",
+      "organizations_url": "https://api.github.com/users/Pix3lPirat3/orgs",
+      "repos_url": "https://api.github.com/users/Pix3lPirat3/repos",
+      "events_url": "https://api.github.com/users/Pix3lPirat3/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Pix3lPirat3/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "c5e0200686c269617f2a92c8db50fdceb899ba8a",
+        "url": "https://api.github.com/repos/Complexity-ML/mineflayer-26.2/commits/c5e0200686c269617f2a92c8db50fdceb899ba8a",
+        "html_url": "https://github.com/Complexity-ML/mineflayer-26.2/commit/c5e0200686c269617f2a92c8db50fdceb899ba8a"
+      }
+    ]
+  }
+]

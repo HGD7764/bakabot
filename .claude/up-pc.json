@@ -1,0 +1,1170 @@
+[
+  {
+    "name": "0.30c",
+    "path": "data/pc/0.30c",
+    "sha": "61cfecf8b9f143e856ab2fcf53a38bd77a2b4bd9",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/0.30c?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/0.30c",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/61cfecf8b9f143e856ab2fcf53a38bd77a2b4bd9",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/0.30c?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/61cfecf8b9f143e856ab2fcf53a38bd77a2b4bd9",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/0.30c"
+    }
+  },
+  {
+    "name": "1.10-pre1",
+    "path": "data/pc/1.10-pre1",
+    "sha": "9d42d853af34607fe3cc48b13f0d54510a058d9a",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.10-pre1?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.10-pre1",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/9d42d853af34607fe3cc48b13f0d54510a058d9a",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.10-pre1?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/9d42d853af34607fe3cc48b13f0d54510a058d9a",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.10-pre1"
+    }
+  },
+  {
+    "name": "1.10.1",
+    "path": "data/pc/1.10.1",
+    "sha": "765da62c926198aa6a8c9deee3f21a8bc4c531d3",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.10.1?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.10.1",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/765da62c926198aa6a8c9deee3f21a8bc4c531d3",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.10.1?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/765da62c926198aa6a8c9deee3f21a8bc4c531d3",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.10.1"
+    }
+  },
+  {
+    "name": "1.10.2",
+    "path": "data/pc/1.10.2",
+    "sha": "cb2ccf7bb02705557a827bdfdca66979675e78a4",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.10.2?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.10.2",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/cb2ccf7bb02705557a827bdfdca66979675e78a4",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.10.2?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/cb2ccf7bb02705557a827bdfdca66979675e78a4",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.10.2"
+    }
+  },
+  {
+    "name": "1.10",
+    "path": "data/pc/1.10",
+    "sha": "a1a53fd504362b851236292ba7b7d4201c334ff4",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.10?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.10",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/a1a53fd504362b851236292ba7b7d4201c334ff4",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.10?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/a1a53fd504362b851236292ba7b7d4201c334ff4",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.10"
+    }
+  },
+  {
+    "name": "1.11.2",
+    "path": "data/pc/1.11.2",
+    "sha": "81a47decc4961404af907a4e3dbf828f9eca3f23",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.11.2?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.11.2",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/81a47decc4961404af907a4e3dbf828f9eca3f23",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.11.2?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/81a47decc4961404af907a4e3dbf828f9eca3f23",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.11.2"
+    }
+  },
+  {
+    "name": "1.11",
+    "path": "data/pc/1.11",
+    "sha": "5553a0e2f901f905389f145a9416d2e4a8dc2ec8",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.11?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.11",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/5553a0e2f901f905389f145a9416d2e4a8dc2ec8",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.11?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/5553a0e2f901f905389f145a9416d2e4a8dc2ec8",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.11"
+    }
+  },
+  {
+    "name": "1.12-pre4",
+    "path": "data/pc/1.12-pre4",
+    "sha": "76bc224a7798d62e900cf7c16c3fecbd1e927281",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.12-pre4?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.12-pre4",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/76bc224a7798d62e900cf7c16c3fecbd1e927281",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.12-pre4?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/76bc224a7798d62e900cf7c16c3fecbd1e927281",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.12-pre4"
+    }
+  },
+  {
+    "name": "1.12.1",
+    "path": "data/pc/1.12.1",
+    "sha": "5ef463c656a91eaaeaaf9b8de00a2b29c072a9da",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.12.1?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.12.1",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/5ef463c656a91eaaeaaf9b8de00a2b29c072a9da",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.12.1?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/5ef463c656a91eaaeaaf9b8de00a2b29c072a9da",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.12.1"
+    }
+  },
+  {
+    "name": "1.12.2",
+    "path": "data/pc/1.12.2",
+    "sha": "63dcea05e496c3124b1d9c94b0dc730d96870a16",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.12.2?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.12.2",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/63dcea05e496c3124b1d9c94b0dc730d96870a16",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.12.2?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/63dcea05e496c3124b1d9c94b0dc730d96870a16",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.12.2"
+    }
+  },
+  {
+    "name": "1.12",
+    "path": "data/pc/1.12",
+    "sha": "fa9bfca80d9a6efd4fa2929fa0e61ac381ec2891",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.12?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.12",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/fa9bfca80d9a6efd4fa2929fa0e61ac381ec2891",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.12?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/fa9bfca80d9a6efd4fa2929fa0e61ac381ec2891",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.12"
+    }
+  },
+  {
+    "name": "1.13.1",
+    "path": "data/pc/1.13.1",
+    "sha": "40c1e63e7d524ef46691fecdb5735694f5aa22a5",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.13.1?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.13.1",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/40c1e63e7d524ef46691fecdb5735694f5aa22a5",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.13.1?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/40c1e63e7d524ef46691fecdb5735694f5aa22a5",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.13.1"
+    }
+  },
+  {
+    "name": "1.13.2-pre1",
+    "path": "data/pc/1.13.2-pre1",
+    "sha": "a19fb4cf594cd3d41554871ef415b5ae8240ebdb",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.13.2-pre1?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.13.2-pre1",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/a19fb4cf594cd3d41554871ef415b5ae8240ebdb",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.13.2-pre1?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/a19fb4cf594cd3d41554871ef415b5ae8240ebdb",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.13.2-pre1"
+    }
+  },
+  {
+    "name": "1.13.2-pre2",
+    "path": "data/pc/1.13.2-pre2",
+    "sha": "96424191ac5d7155aefb3e8848cd13691aac0ad4",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.13.2-pre2?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.13.2-pre2",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/96424191ac5d7155aefb3e8848cd13691aac0ad4",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.13.2-pre2?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/96424191ac5d7155aefb3e8848cd13691aac0ad4",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.13.2-pre2"
+    }
+  },
+  {
+    "name": "1.13.2",
+    "path": "data/pc/1.13.2",
+    "sha": "584329aba50ab38de58299505b34335d1115e531",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.13.2?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.13.2",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/584329aba50ab38de58299505b34335d1115e531",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.13.2?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/584329aba50ab38de58299505b34335d1115e531",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.13.2"
+    }
+  },
+  {
+    "name": "1.13",
+    "path": "data/pc/1.13",
+    "sha": "58523eb5f9915cd2a557bb921aafee9da01035fa",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.13?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.13",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/58523eb5f9915cd2a557bb921aafee9da01035fa",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.13?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/58523eb5f9915cd2a557bb921aafee9da01035fa",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.13"
+    }
+  },
+  {
+    "name": "1.14.1",
+    "path": "data/pc/1.14.1",
+    "sha": "7f022173bc9af588ad4b45bb2fdf6abc8a7b784d",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.14.1?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.14.1",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/7f022173bc9af588ad4b45bb2fdf6abc8a7b784d",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.14.1?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/7f022173bc9af588ad4b45bb2fdf6abc8a7b784d",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.14.1"
+    }
+  },
+  {
+    "name": "1.14.3",
+    "path": "data/pc/1.14.3",
+    "sha": "73c599da60514d0bb5824cce10433b7a9ffe5571",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.14.3?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.14.3",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/73c599da60514d0bb5824cce10433b7a9ffe5571",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.14.3?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/73c599da60514d0bb5824cce10433b7a9ffe5571",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.14.3"
+    }
+  },
+  {
+    "name": "1.14.4",
+    "path": "data/pc/1.14.4",
+    "sha": "ad0e473a36ae6e1983a3c4a14f98e231cc7aaba3",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.14.4?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.14.4",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/ad0e473a36ae6e1983a3c4a14f98e231cc7aaba3",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.14.4?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/ad0e473a36ae6e1983a3c4a14f98e231cc7aaba3",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.14.4"
+    }
+  },
+  {
+    "name": "1.14",
+    "path": "data/pc/1.14",
+    "sha": "4b13f1360b441ead85383ee9de362e86f98b1e73",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.14?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.14",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/4b13f1360b441ead85383ee9de362e86f98b1e73",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.14?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/4b13f1360b441ead85383ee9de362e86f98b1e73",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.14"
+    }
+  },
+  {
+    "name": "1.15.1",
+    "path": "data/pc/1.15.1",
+    "sha": "60f1938e1265a77a860bf87ab085de8f91de5473",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.15.1?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.15.1",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/60f1938e1265a77a860bf87ab085de8f91de5473",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.15.1?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/60f1938e1265a77a860bf87ab085de8f91de5473",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.15.1"
+    }
+  },
+  {
+    "name": "1.15.2",
+    "path": "data/pc/1.15.2",
+    "sha": "f66207aa67117692c2186bafd28d3b7552e51fc4",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.15.2?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.15.2",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/f66207aa67117692c2186bafd28d3b7552e51fc4",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.15.2?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/f66207aa67117692c2186bafd28d3b7552e51fc4",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.15.2"
+    }
+  },
+  {
+    "name": "1.15",
+    "path": "data/pc/1.15",
+    "sha": "9595b5cd306ed7cb9b4b38b2ab9a8178c9716978",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.15?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.15",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/9595b5cd306ed7cb9b4b38b2ab9a8178c9716978",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.15?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/9595b5cd306ed7cb9b4b38b2ab9a8178c9716978",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.15"
+    }
+  },
+  {
+    "name": "1.16-rc1",
+    "path": "data/pc/1.16-rc1",
+    "sha": "b91da4d283311970c3fc9ee8454de1437b205ee4",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.16-rc1?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.16-rc1",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/b91da4d283311970c3fc9ee8454de1437b205ee4",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.16-rc1?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/b91da4d283311970c3fc9ee8454de1437b205ee4",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.16-rc1"
+    }
+  },
+  {
+    "name": "1.16.1",
+    "path": "data/pc/1.16.1",
+    "sha": "7352696e625b8acb05d18d80067d04545511effb",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.16.1?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.16.1",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/7352696e625b8acb05d18d80067d04545511effb",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.16.1?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/7352696e625b8acb05d18d80067d04545511effb",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.16.1"
+    }
+  },
+  {
+    "name": "1.16.2",
+    "path": "data/pc/1.16.2",
+    "sha": "fc0f17638cd0fff3ca1118cc2ecc88bf5298494e",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.16.2?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.16.2",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/fc0f17638cd0fff3ca1118cc2ecc88bf5298494e",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.16.2?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/fc0f17638cd0fff3ca1118cc2ecc88bf5298494e",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.16.2"
+    }
+  },
+  {
+    "name": "1.16.3",
+    "path": "data/pc/1.16.3",
+    "sha": "6ed24f725c8a3d6f3275302e43e45f2219bbcb3f",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.16.3?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.16.3",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/6ed24f725c8a3d6f3275302e43e45f2219bbcb3f",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.16.3?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/6ed24f725c8a3d6f3275302e43e45f2219bbcb3f",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.16.3"
+    }
+  },
+  {
+    "name": "1.16.4",
+    "path": "data/pc/1.16.4",
+    "sha": "0b7e47c67a4b62cedf594ee1f21bba717cba2465",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.16.4?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.16.4",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/0b7e47c67a4b62cedf594ee1f21bba717cba2465",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.16.4?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/0b7e47c67a4b62cedf594ee1f21bba717cba2465",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.16.4"
+    }
+  },
+  {
+    "name": "1.16.5",
+    "path": "data/pc/1.16.5",
+    "sha": "ad7f9554d00604c4beeb9da51f5abbe880de8804",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.16.5?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.16.5",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/ad7f9554d00604c4beeb9da51f5abbe880de8804",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.16.5?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/ad7f9554d00604c4beeb9da51f5abbe880de8804",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.16.5"
+    }
+  },
+  {
+    "name": "1.16",
+    "path": "data/pc/1.16",
+    "sha": "661be2d7fb717e973d70021c86ca28abbea4fc97",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.16?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.16",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/661be2d7fb717e973d70021c86ca28abbea4fc97",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.16?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/661be2d7fb717e973d70021c86ca28abbea4fc97",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.16"
+    }
+  },
+  {
+    "name": "1.17.1",
+    "path": "data/pc/1.17.1",
+    "sha": "50e1e67c09cbb9eb291376e204c12158518c3e43",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.17.1?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.17.1",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/50e1e67c09cbb9eb291376e204c12158518c3e43",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.17.1?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/50e1e67c09cbb9eb291376e204c12158518c3e43",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.17.1"
+    }
+  },
+  {
+    "name": "1.17",
+    "path": "data/pc/1.17",
+    "sha": "6ae48e1da32ca54b7ffd26aab9bed4798dc16830",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.17?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.17",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/6ae48e1da32ca54b7ffd26aab9bed4798dc16830",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.17?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/6ae48e1da32ca54b7ffd26aab9bed4798dc16830",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.17"
+    }
+  },
+  {
+    "name": "1.18.1",
+    "path": "data/pc/1.18.1",
+    "sha": "6c87b4dc8be0f6a4a46b5eb029384441b70f8f74",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.18.1?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.18.1",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/6c87b4dc8be0f6a4a46b5eb029384441b70f8f74",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.18.1?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/6c87b4dc8be0f6a4a46b5eb029384441b70f8f74",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.18.1"
+    }
+  },
+  {
+    "name": "1.18.2",
+    "path": "data/pc/1.18.2",
+    "sha": "262cec429832927b921a6b32191f31b9b305f3c1",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.18.2?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.18.2",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/262cec429832927b921a6b32191f31b9b305f3c1",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.18.2?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/262cec429832927b921a6b32191f31b9b305f3c1",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.18.2"
+    }
+  },
+  {
+    "name": "1.18",
+    "path": "data/pc/1.18",
+    "sha": "f7b9198b360121ff93757907237b76fb1c91ab84",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.18?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.18",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/f7b9198b360121ff93757907237b76fb1c91ab84",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.18?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/f7b9198b360121ff93757907237b76fb1c91ab84",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.18"
+    }
+  },
+  {
+    "name": "1.19.2",
+    "path": "data/pc/1.19.2",
+    "sha": "769c0f7988ce2fa0c2ebd68c855d59aabe2b4f43",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.19.2?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.19.2",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/769c0f7988ce2fa0c2ebd68c855d59aabe2b4f43",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.19.2?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/769c0f7988ce2fa0c2ebd68c855d59aabe2b4f43",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.19.2"
+    }
+  },
+  {
+    "name": "1.19.3",
+    "path": "data/pc/1.19.3",
+    "sha": "3b7488f6388b66cefac859103312159380c9d4bb",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.19.3?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.19.3",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/3b7488f6388b66cefac859103312159380c9d4bb",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.19.3?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/3b7488f6388b66cefac859103312159380c9d4bb",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.19.3"
+    }
+  },
+  {
+    "name": "1.19.4",
+    "path": "data/pc/1.19.4",
+    "sha": "3b22f461defcd065404e6f48917bf9f64b0b87cf",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.19.4?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.19.4",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/3b22f461defcd065404e6f48917bf9f64b0b87cf",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.19.4?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/3b22f461defcd065404e6f48917bf9f64b0b87cf",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.19.4"
+    }
+  },
+  {
+    "name": "1.19",
+    "path": "data/pc/1.19",
+    "sha": "51146d2d7f7ff978e1adffc2b21a0c2c9fee06f1",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.19?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.19",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/51146d2d7f7ff978e1adffc2b21a0c2c9fee06f1",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.19?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/51146d2d7f7ff978e1adffc2b21a0c2c9fee06f1",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.19"
+    }
+  },
+  {
+    "name": "1.20.1",
+    "path": "data/pc/1.20.1",
+    "sha": "67929ea6125ef724eaef595333c7f750b06ff5f3",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.20.1?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.20.1",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/67929ea6125ef724eaef595333c7f750b06ff5f3",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.20.1?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/67929ea6125ef724eaef595333c7f750b06ff5f3",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.20.1"
+    }
+  },
+  {
+    "name": "1.20.2",
+    "path": "data/pc/1.20.2",
+    "sha": "3838563da07752d4df8099d7fe41dc5b1db0512f",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.20.2?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.20.2",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/3838563da07752d4df8099d7fe41dc5b1db0512f",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.20.2?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/3838563da07752d4df8099d7fe41dc5b1db0512f",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.20.2"
+    }
+  },
+  {
+    "name": "1.20.3",
+    "path": "data/pc/1.20.3",
+    "sha": "d8fde465788e4ed9f0ecf737de149708a2b60a9d",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.20.3?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.20.3",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/d8fde465788e4ed9f0ecf737de149708a2b60a9d",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.20.3?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/d8fde465788e4ed9f0ecf737de149708a2b60a9d",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.20.3"
+    }
+  },
+  {
+    "name": "1.20.4",
+    "path": "data/pc/1.20.4",
+    "sha": "0a8e6f8d5b572aa3d8599c43ad60846d098d0bcc",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.20.4?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.20.4",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/0a8e6f8d5b572aa3d8599c43ad60846d098d0bcc",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.20.4?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/0a8e6f8d5b572aa3d8599c43ad60846d098d0bcc",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.20.4"
+    }
+  },
+  {
+    "name": "1.20.5",
+    "path": "data/pc/1.20.5",
+    "sha": "f32bc2c6d48c08ce8dbfc3c8cba29c59aefc4121",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.20.5?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.20.5",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/f32bc2c6d48c08ce8dbfc3c8cba29c59aefc4121",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.20.5?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/f32bc2c6d48c08ce8dbfc3c8cba29c59aefc4121",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.20.5"
+    }
+  },
+  {
+    "name": "1.20.6",
+    "path": "data/pc/1.20.6",
+    "sha": "8fec3567c4f88bf1621a0e988a10063b75f0731c",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.20.6?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.20.6",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/8fec3567c4f88bf1621a0e988a10063b75f0731c",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.20.6?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/8fec3567c4f88bf1621a0e988a10063b75f0731c",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.20.6"
+    }
+  },
+  {
+    "name": "1.20",
+    "path": "data/pc/1.20",
+    "sha": "2fff0a26baf5fb8d8a7f02b445269443cd1faceb",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.20?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.20",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/2fff0a26baf5fb8d8a7f02b445269443cd1faceb",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.20?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/2fff0a26baf5fb8d8a7f02b445269443cd1faceb",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.20"
+    }
+  },
+  {
+    "name": "1.21.1",
+    "path": "data/pc/1.21.1",
+    "sha": "5e4eb6431916d373eb9f41835e34e78b3e564cfa",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.21.1?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.21.1",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/5e4eb6431916d373eb9f41835e34e78b3e564cfa",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.21.1?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/5e4eb6431916d373eb9f41835e34e78b3e564cfa",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.21.1"
+    }
+  },
+  {
+    "name": "1.21.11",
+    "path": "data/pc/1.21.11",
+    "sha": "f1bb80e31cc31641dcb55303c073fbdb878f833f",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.21.11?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.21.11",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/f1bb80e31cc31641dcb55303c073fbdb878f833f",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.21.11?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/f1bb80e31cc31641dcb55303c073fbdb878f833f",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.21.11"
+    }
+  },
+  {
+    "name": "1.21.3",
+    "path": "data/pc/1.21.3",
+    "sha": "1679a3eaef637eb4aa1259b3bcca54c111131871",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.21.3?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.21.3",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/1679a3eaef637eb4aa1259b3bcca54c111131871",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.21.3?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/1679a3eaef637eb4aa1259b3bcca54c111131871",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.21.3"
+    }
+  },
+  {
+    "name": "1.21.4",
+    "path": "data/pc/1.21.4",
+    "sha": "7904c02c559bad4f93308ae31498951650b218f1",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.21.4?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.21.4",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/7904c02c559bad4f93308ae31498951650b218f1",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.21.4?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/7904c02c559bad4f93308ae31498951650b218f1",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.21.4"
+    }
+  },
+  {
+    "name": "1.21.5",
+    "path": "data/pc/1.21.5",
+    "sha": "53a62aeb79b3ab1b0ccd5fdaa1f651da34a14a37",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.21.5?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.21.5",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/53a62aeb79b3ab1b0ccd5fdaa1f651da34a14a37",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.21.5?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/53a62aeb79b3ab1b0ccd5fdaa1f651da34a14a37",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.21.5"
+    }
+  },
+  {
+    "name": "1.21.6",
+    "path": "data/pc/1.21.6",
+    "sha": "b06e0ccdb1cea8a58f506f75d01738f737dde117",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.21.6?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.21.6",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/b06e0ccdb1cea8a58f506f75d01738f737dde117",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.21.6?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/b06e0ccdb1cea8a58f506f75d01738f737dde117",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.21.6"
+    }
+  },
+  {
+    "name": "1.21.8",
+    "path": "data/pc/1.21.8",
+    "sha": "46dca07f39c34e88a14dde33bbaafc158af1b203",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.21.8?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.21.8",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/46dca07f39c34e88a14dde33bbaafc158af1b203",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.21.8?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/46dca07f39c34e88a14dde33bbaafc158af1b203",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.21.8"
+    }
+  },
+  {
+    "name": "1.21.9",
+    "path": "data/pc/1.21.9",
+    "sha": "47a379f5a5e88a7bcf91d1826cff9a13c6fe90b1",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.21.9?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.21.9",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/47a379f5a5e88a7bcf91d1826cff9a13c6fe90b1",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.21.9?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/47a379f5a5e88a7bcf91d1826cff9a13c6fe90b1",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.21.9"
+    }
+  },
+  {
+    "name": "1.21",
+    "path": "data/pc/1.21",
+    "sha": "6c9a2058c3856dab3e3d6b4ca2d2c896b46d922a",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.21?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.21",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/6c9a2058c3856dab3e3d6b4ca2d2c896b46d922a",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.21?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/6c9a2058c3856dab3e3d6b4ca2d2c896b46d922a",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.21"
+    }
+  },
+  {
+    "name": "1.7",
+    "path": "data/pc/1.7",
+    "sha": "97c7660f5c144bceb3ef88bc31a0fdf0bcf83741",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.7?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.7",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/97c7660f5c144bceb3ef88bc31a0fdf0bcf83741",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.7?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/97c7660f5c144bceb3ef88bc31a0fdf0bcf83741",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.7"
+    }
+  },
+  {
+    "name": "1.8",
+    "path": "data/pc/1.8",
+    "sha": "0a6ae1f7e30748a1cf81005a132d825161392791",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.8?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.8",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/0a6ae1f7e30748a1cf81005a132d825161392791",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.8?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/0a6ae1f7e30748a1cf81005a132d825161392791",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.8"
+    }
+  },
+  {
+    "name": "1.9.1-pre2",
+    "path": "data/pc/1.9.1-pre2",
+    "sha": "28e06a0baea1a6ce9483bf30a513a6fb2c3a86e1",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.9.1-pre2?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.9.1-pre2",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/28e06a0baea1a6ce9483bf30a513a6fb2c3a86e1",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.9.1-pre2?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/28e06a0baea1a6ce9483bf30a513a6fb2c3a86e1",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.9.1-pre2"
+    }
+  },
+  {
+    "name": "1.9.2",
+    "path": "data/pc/1.9.2",
+    "sha": "32c7edb7b8f23e924cdda16f1c4e18d779730b9b",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.9.2?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.9.2",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/32c7edb7b8f23e924cdda16f1c4e18d779730b9b",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.9.2?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/32c7edb7b8f23e924cdda16f1c4e18d779730b9b",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.9.2"
+    }
+  },
+  {
+    "name": "1.9.4",
+    "path": "data/pc/1.9.4",
+    "sha": "6ee992b489fa7f6ecacf2959db37f5b70a38226c",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.9.4?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.9.4",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/6ee992b489fa7f6ecacf2959db37f5b70a38226c",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.9.4?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/6ee992b489fa7f6ecacf2959db37f5b70a38226c",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.9.4"
+    }
+  },
+  {
+    "name": "1.9",
+    "path": "data/pc/1.9",
+    "sha": "5265fc4508cd29f4c4974d0936c230e621f708bc",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.9?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.9",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/5265fc4508cd29f4c4974d0936c230e621f708bc",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/1.9?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/5265fc4508cd29f4c4974d0936c230e621f708bc",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/1.9"
+    }
+  },
+  {
+    "name": "15w40b",
+    "path": "data/pc/15w40b",
+    "sha": "e1716597cd3b65036a0cea8821ea5b7da36e2014",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/15w40b?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/15w40b",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/e1716597cd3b65036a0cea8821ea5b7da36e2014",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/15w40b?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/e1716597cd3b65036a0cea8821ea5b7da36e2014",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/15w40b"
+    }
+  },
+  {
+    "name": "16w20a",
+    "path": "data/pc/16w20a",
+    "sha": "90a2ad37d072d998c4679c541f42985565dc9c91",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/16w20a?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/16w20a",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/90a2ad37d072d998c4679c541f42985565dc9c91",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/16w20a?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/90a2ad37d072d998c4679c541f42985565dc9c91",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/16w20a"
+    }
+  },
+  {
+    "name": "16w35a",
+    "path": "data/pc/16w35a",
+    "sha": "ffcc435c3b683d39da0033a6013f858cd95177de",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/16w35a?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/16w35a",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/ffcc435c3b683d39da0033a6013f858cd95177de",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/16w35a?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/ffcc435c3b683d39da0033a6013f858cd95177de",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/16w35a"
+    }
+  },
+  {
+    "name": "17w15a",
+    "path": "data/pc/17w15a",
+    "sha": "b3daf2cab3cfec29b2b86e6c6fc4dc4357510db0",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/17w15a?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/17w15a",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/b3daf2cab3cfec29b2b86e6c6fc4dc4357510db0",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/17w15a?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/b3daf2cab3cfec29b2b86e6c6fc4dc4357510db0",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/17w15a"
+    }
+  },
+  {
+    "name": "17w18b",
+    "path": "data/pc/17w18b",
+    "sha": "ad15b6456c73b06c96e7bdc916efdfc9e8c5d1ff",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/17w18b?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/17w18b",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/ad15b6456c73b06c96e7bdc916efdfc9e8c5d1ff",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/17w18b?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/ad15b6456c73b06c96e7bdc916efdfc9e8c5d1ff",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/17w18b"
+    }
+  },
+  {
+    "name": "17w50a",
+    "path": "data/pc/17w50a",
+    "sha": "aa4a8d7328c2ad8056df7bab7ffa80965d56d6c6",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/17w50a?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/17w50a",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/aa4a8d7328c2ad8056df7bab7ffa80965d56d6c6",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/17w50a?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/aa4a8d7328c2ad8056df7bab7ffa80965d56d6c6",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/17w50a"
+    }
+  },
+  {
+    "name": "20w13b",
+    "path": "data/pc/20w13b",
+    "sha": "a3ae4685294d81d19fcd8efce9a66de766d45a07",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/20w13b?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/20w13b",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/a3ae4685294d81d19fcd8efce9a66de766d45a07",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/20w13b?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/a3ae4685294d81d19fcd8efce9a66de766d45a07",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/20w13b"
+    }
+  },
+  {
+    "name": "20w14a",
+    "path": "data/pc/20w14a",
+    "sha": "8f94246e32488d3ec8890ee9ae6135157a884683",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/20w14a?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/20w14a",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/8f94246e32488d3ec8890ee9ae6135157a884683",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/20w14a?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/8f94246e32488d3ec8890ee9ae6135157a884683",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/20w14a"
+    }
+  },
+  {
+    "name": "21w07a",
+    "path": "data/pc/21w07a",
+    "sha": "c3c85519f1e718af5caa6cb0713689db05a7e223",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/21w07a?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/21w07a",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/c3c85519f1e718af5caa6cb0713689db05a7e223",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/21w07a?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/c3c85519f1e718af5caa6cb0713689db05a7e223",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/21w07a"
+    }
+  },
+  {
+    "name": "26.1",
+    "path": "data/pc/26.1",
+    "sha": "201d6af5ccd61d2179f833dcde03df392c1d7903",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/26.1?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/26.1",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/201d6af5ccd61d2179f833dcde03df392c1d7903",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/26.1?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/201d6af5ccd61d2179f833dcde03df392c1d7903",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/26.1"
+    }
+  },
+  {
+    "name": "common",
+    "path": "data/pc/common",
+    "sha": "232567500597659092c0550c4cc24a52f879ffb8",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/common?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/common",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/232567500597659092c0550c4cc24a52f879ffb8",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/common?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/232567500597659092c0550c4cc24a52f879ffb8",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/common"
+    }
+  },
+  {
+    "name": "latest",
+    "path": "data/pc/latest",
+    "sha": "b4b16885fed43ff5706aff27731b6ceb1c0901fe",
+    "size": 0,
+    "url": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/latest?ref=master",
+    "html_url": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/latest",
+    "git_url": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/b4b16885fed43ff5706aff27731b6ceb1c0901fe",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/PrismarineJS/minecraft-data/contents/data/pc/latest?ref=master",
+      "git": "https://api.github.com/repos/PrismarineJS/minecraft-data/git/trees/b4b16885fed43ff5706aff27731b6ceb1c0901fe",
+      "html": "https://github.com/PrismarineJS/minecraft-data/tree/master/data/pc/latest"
+    }
+  }
+]
