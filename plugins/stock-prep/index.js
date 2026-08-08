@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { GoalNear } = require('mineflayer-pathfinder').goals;
+const zhCnItems = require('./zh_cn_items.json');
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -114,6 +115,7 @@ module.exports = (context) => {
   const isChineseText = (value) => /[\u3400-\u9fff]/.test(String(value || ''));
 
   const preferredLabelForItem = (itemName, displayName = null) => {
+    if (zhCnItems[itemName]) return zhCnItems[itemName];
     const pair = Object.entries(cfg.aliases || {})
       .find(([key, value]) => value === itemName && isChineseText(key));
     if (pair) return pair[0];
@@ -158,6 +160,15 @@ module.exports = (context) => {
       };
     }
 
+    const zhMatchName = Object.entries(zhCnItems).find(([, label]) => normalizeKey(label) === normalizeKey(raw));
+    if (zhMatchName) {
+      return {
+        name: zhMatchName[0],
+        displayName: zhMatchName[1],
+        input: raw,
+      };
+    }
+
     if (registry) {
       const normalized = normalizeKey(raw);
       for (const it of Object.values(registry)) {
@@ -196,7 +207,7 @@ module.exports = (context) => {
         name: item.name,
         displayName: preferredLabelForItem(item.name, item.displayName || item.name),
       }))
-      .sort((a, b) => a.name.localeCompare(b.name));
+      .sort((a, b) => a.displayName.localeCompare(b.displayName, 'zh-CN'));
   };
 
   const insideWarehouse = (position) => {
