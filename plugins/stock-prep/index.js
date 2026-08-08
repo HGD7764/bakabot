@@ -148,6 +148,17 @@ module.exports = (context) => {
 
   const taskById = (id) => st.tasks.find((task) => task.id === id);
 
+  const itemPresets = () => {
+    const registry = bot.registry && bot.registry.itemsByName ? bot.registry.itemsByName : {};
+    return Object.values(registry)
+      .filter((item) => item && item.name)
+      .map((item) => ({
+        name: item.name,
+        displayName: item.displayName || item.name,
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  };
+
   const insideWarehouse = (position) => {
     if (!position || !cfg.warehouseCenter || !cfg.warehouseSize) return false;
     const dx = Math.abs(position.x - Number(cfg.warehouseCenter.x || 0));
@@ -261,6 +272,27 @@ module.exports = (context) => {
       await sleep(200);
     }
     throw new Error(`接近目标超时（>${Math.round(timeoutMs / 1000)} 秒）`);
+  };
+
+  const moveToWarehouseCenter = async (task = null) => {
+    if (!cfg.warehouseCenter) throw new Error('未配置仓库中心坐标');
+    if (!bot.entity) throw new Error('机器人尚未进入世界');
+    if (!bot.pathfinder) throw new Error('未检测到寻路模块，请先启用 navigator 插件');
+
+    const center = cfg.warehouseCenter;
+    const targetPoint = { x: Number(center.x || 0), y: Number(center.y || 0), z: Number(center.z || 0) };
+    const radius = Math.max(1, Math.min(
+      Number(cfg.warehouseSize.x || 0),
+      Number(cfg.warehouseSize.z || 0),
+      3
+    ));
+
+    if (insideWarehouse(bot.entity.position)) return;
+
+    if (task) setTaskStage(task, 'warehouse', '正在前往仓库中心');
+    bot.pathfinder.setGoal(new GoalNear(targetPoint.x, targetPoint.y, targetPoint.z, radius));
+    await waitUntilNearPoint(targetPoint, Math.max(radius + 1, 3), cfg.deliveryMoveTimeoutMs);
+    await sleep(500);
   };
 
   const approachPlayer = async (playerName) => {
@@ -394,6 +426,7 @@ module.exports = (context) => {
     task.status = 'collecting';
     setTaskStage(task, 'collect', '开始补货');
     reconcileTask(task);
+    await moveToWarehouseCenter(task);
 
     const need = () => Math.max(0, task.requestedCount - countInInventory(task.itemName));
 
@@ -534,6 +567,7 @@ module.exports = (context) => {
       warehouseCenter: cfg.warehouseCenter,
       warehouseSize: cfg.warehouseSize,
       tpaCommand: cfg.tpaCommand,
+      itemPresets: itemPresets(),
     };
   };
 
