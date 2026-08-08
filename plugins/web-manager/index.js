@@ -21,7 +21,7 @@ module.exports = (context) => {
     html: null,
     auth: null,
     terminal: [],  // 终端消息缓冲区（chat/whisper/系统事件）
-    hooked: false, // bot.chat/bot.whisper 包装与事件监听只挂载一次
+    hookedBot: null, // 已挂接事件的 bot 实例（重连后对新 bot 重新挂接）
   });
   wm.auth = { host: cfg.host, port: cfg.port, token: cfg.token || '' };
 
@@ -121,10 +121,11 @@ module.exports = (context) => {
     if (wm.terminal.length > 500) wm.terminal.splice(0, wm.terminal.length - 500);
   };
 
-  // 只在首次运行时挂载：包装 bot.chat/bot.whisper 记录发出的消息，
-  // 监听 chat/whisper 事件记录收到的消息（机器人自己的消息走钩子，跳过回声）
-  if (!wm.hooked) {
-    wm.hooked = true;
+  // 只对同一 bot 实例挂载一次：包装 bot.chat/bot.whisper 记录发出的消息，
+  // 监听 chat/whisper 事件记录收到的消息（机器人自己的消息走钩子，跳过回声）。
+  // 自动重连重建 bot 后（新实例）会重新挂接。
+  if (wm.hookedBot !== bot) {
+    wm.hookedBot = bot;
 
     // ⚠️ 此 mineflayer fork 的插件在连接握手后异步注入（inject_allowed 事件），
     // 插件加载时 bot.chat/bot.whisper 尚未定义，必须等注入完成后再包装。

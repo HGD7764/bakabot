@@ -1,0 +1,5 @@
+{
+  "enabled": true,
+  "delay": 3000,
+  "maxRetries": -1
+}

@@ -129,7 +129,25 @@ context.webManager = {
   },
 };
 
-// --- 3. 创建 Mineflayer Bot 实例 ---
+// --- 3. 创建 Mineflayer Bot 实例（支持自动重连重建） ---
+const pluginsDir = path.join(__dirname, 'plugins');
+
+// 清空全部插件的 require 缓存：自动重连重建时让插件以新 bot 重新执行；
+// 首次加载时缓存为空，无副作用。
+function clearPluginCache() {
+  if (!Array.isArray(config.plugins)) return;
+  for (const name of config.plugins) {
+    const prefix = path.resolve(path.join(pluginsDir, name)) + path.sep;
+    for (const key of Object.keys(require.cache)) {
+      if (key.startsWith(prefix)) delete require.cache[key];
+    }
+    try { delete require.cache[require.resolve(path.join(pluginsDir, name, 'index.js'))]; } catch (err) { /* 插件目录可能不存在 */ }
+  }
+}
+
+// 创建 bot 并挂接框架各部件（补丁 → 日志钩子 → 命令管理器 → 插件 → 核心事件）。
+// 自动重连时重复调用：旧 bot 已 'end'，新 bot 重新走完整流程。
+function startBot() {
 console.log('正在连接到服务器...');
 try {
   context.bot = mineflayer.createBot(config.bot);
@@ -164,8 +182,8 @@ const commandTrigger = config.commandTrigger === 'chat' ? 'chat' : 'whisper';
 context.commands = new CommandManager(bot, context.permissions, config.commandPrefix || '!', commandTrigger);
 
 // --- 4. 插件加载器 (新版本) ---
-const pluginsDir = path.join(__dirname, 'plugins');
-
+// 自动重连重建时先清缓存，确保插件以新 bot 重新执行
+clearPluginCache();
 console.log('正在加载插件...');
 if (config.plugins && Array.isArray(config.plugins)) {
   config.plugins.forEach(pluginName => {
@@ -244,3 +262,14 @@ bot.on('end', (reason) => {
   logger.info('bot', `连接已断开，原因: ${text}`);
   console.log(`机器人连接已断开，原因: ${text}`);
 });
+} // end startBot()
+
+// 供 auto-reconnect 插件调用的全量重建入口（插件在 bot 'end' 后延迟触发）
+context.restartBot = (reason) => {
+  logger.info('bot', `自动重连中,原因: ${reasonToText(reason) || '未知'}`);
+  console.log('自动重连中...');
+  startBot();
+};
+
+// 启动框架
+startBot();
