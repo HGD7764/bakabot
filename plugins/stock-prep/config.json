@@ -23,6 +23,7 @@
     "z": 16
   },
   "tpaCommand": "/tpa {player}",
+  "fallbackToTpaOnDeliveryTimeout": true,
   "aliases": {
     "泥土": "dirt",
     "圆石": "cobblestone",

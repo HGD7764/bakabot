@@ -22,6 +22,7 @@ module.exports = (context) => {
     warehouseCenter: { x: 0, y: 64, z: 0 },
     warehouseSize: { x: 16, y: 8, z: 16 },
     tpaCommand: '/tpa {player}',
+    fallbackToTpaOnDeliveryTimeout: true,
     postTpaAutoDeliverDelayMs: 3000,
     postTpaAutoDeliverRetryMs: 4000,
     postTpaAutoDeliverMaxAttempts: 8,
@@ -87,6 +88,7 @@ module.exports = (context) => {
       warehouseCenter: cfg.warehouseCenter,
       warehouseSize: cfg.warehouseSize,
       tpaCommand: cfg.tpaCommand,
+      fallbackToTpaOnDeliveryTimeout: cfg.fallbackToTpaOnDeliveryTimeout,
       aliases: cfg.aliases,
     }, null, 2));
   };
@@ -592,6 +594,22 @@ module.exports = (context) => {
       }
       return summarizeTask(task);
     } catch (err) {
+      const shouldFallbackToTpa = cfg.fallbackToTpaOnDeliveryTimeout &&
+        typeof err.message === 'string' &&
+        err.message.includes('接近目标超时') &&
+        !String(source).startsWith('auto-after-tpa:');
+
+      if (shouldFallbackToTpa) {
+        task.lastError = null;
+        setTaskStage(task, 'tpa', '寻路超时，已改为传送送货');
+        sendTpaForTask(task);
+        scheduleAutoDeliver(task.id, 1);
+        if (typeof bot.whisper === 'function') {
+          bot.whisper(task.targetPlayer, `> 送货路上卡住了，已改为向你发起传送并继续自动交付 ${taskLabel(task)} × ${task.requestedCount}。`);
+        }
+        return summarizeTask(task);
+      }
+
       task.lastError = err.message;
       task.updatedAt = Date.now();
       reconcileTask(task);
@@ -694,6 +712,7 @@ module.exports = (context) => {
     warehouseSize: cfg.warehouseSize,
     warehouseBlocks: cfg.warehouseBlocks,
     tpaCommand: cfg.tpaCommand,
+    fallbackToTpaOnDeliveryTimeout: cfg.fallbackToTpaOnDeliveryTimeout,
     maxStorageBlocksScan: cfg.maxStorageBlocksScan,
   });
 
@@ -703,6 +722,18 @@ module.exports = (context) => {
       result = result.replaceAll(`{${key}}`, String(value));
     }
     return result;
+  };
+
+  const sendTpaForTask = (task) => {
+    const tpaCommand = fillTemplate(cfg.tpaCommand, {
+      player: task.targetPlayer,
+      username: task.targetPlayer,
+      item: task.itemName,
+      count: task.requestedCount,
+    }).trim();
+    if (!tpaCommand) throw new Error('tpaCommand 未配置');
+    bot.chat(tpaCommand);
+    return tpaCommand;
   };
 
   const scheduleAutoDeliver = (taskId, attempt = 1) => {
@@ -757,14 +788,7 @@ module.exports = (context) => {
       await fulfillTask(task.id);
       task.status = 'ready';
       setTaskStage(task, 'tpa', '已找到物品，准备 TPA');
-      const tpaCommand = fillTemplate(cfg.tpaCommand, {
-        player: username,
-        username,
-        item: task.itemName,
-        count: task.requestedCount,
-      }).trim();
-      if (!tpaCommand) throw new Error('tpaCommand 未配置');
-      bot.chat(tpaCommand);
+      sendTpaForTask(task);
       setTaskStage(task, 'tpa', '已发起传送，等待自动交付');
       scheduleAutoDeliver(task.id, 1);
       bot.whisper(username, `> 已在仓库找到 ${task.displayName} × ${task.requestedCount}，已向你发起传送并准备自动交付。`);
@@ -822,7 +846,7 @@ module.exports = (context) => {
 
   ep('PUT', 'settings', (req, res, url, body) => {
     const payload = jsonBody(body) || {};
-    const { warehouseCenter, warehouseSize, warehouseBlocks, tpaCommand, maxStorageBlocksScan } = payload;
+    const { warehouseCenter, warehouseSize, warehouseBlocks, tpaCommand, fallbackToTpaOnDeliveryTimeout, maxStorageBlocksScan } = payload;
 
     const parseAxisGroup = (value, label) => {
       if (!value || typeof value !== 'object') throw new Error(`${label} 必须是对象`);
@@ -848,6 +872,9 @@ module.exports = (context) => {
     if (tpaCommand !== undefined) {
       if (typeof tpaCommand !== 'string' || !tpaCommand.trim()) throw new Error('tpaCommand 不能为空');
       cfg.tpaCommand = tpaCommand.trim();
+    }
+    if (fallbackToTpaOnDeliveryTimeout !== undefined) {
+      cfg.fallbackToTpaOnDeliveryTimeout = !!fallbackToTpaOnDeliveryTimeout;
     }
     if (maxStorageBlocksScan !== undefined) {
       const n = Number(maxStorageBlocksScan);
