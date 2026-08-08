@@ -22,6 +22,9 @@ module.exports = (context) => {
     warehouseCenter: { x: 0, y: 64, z: 0 },
     warehouseSize: { x: 16, y: 8, z: 16 },
     tpaCommand: '/tpa {player}',
+    postTpaAutoDeliverDelayMs: 3000,
+    postTpaAutoDeliverRetryMs: 4000,
+    postTpaAutoDeliverMaxAttempts: 8,
     aliases: {
       dirt: 'dirt',
       mud: 'mud',
@@ -702,6 +705,27 @@ module.exports = (context) => {
     return result;
   };
 
+  const scheduleAutoDeliver = (taskId, attempt = 1) => {
+    const delay = attempt === 1 ? cfg.postTpaAutoDeliverDelayMs : cfg.postTpaAutoDeliverRetryMs;
+    setTimeout(() => {
+      const task = taskById(taskId);
+      if (!task || task.status === 'delivered' || task.status === 'cancelled' || task.status === 'failed') return;
+      if (st.activeDeliveryId && st.activeDeliveryId !== taskId) {
+        return scheduleAutoDeliver(taskId, attempt);
+      }
+
+      deliverTask(taskId, `auto-after-tpa:${attempt}`).catch((err) => {
+        task.lastError = err.message;
+        if (attempt < cfg.postTpaAutoDeliverMaxAttempts) {
+          setTaskStage(task, 'tpa', `已发起传送，等待交付（重试 ${attempt}/${cfg.postTpaAutoDeliverMaxAttempts}）`);
+          scheduleAutoDeliver(taskId, attempt + 1);
+        } else {
+          setTaskStage(task, 'ready', '传送后自动交付超时，请手动补发');
+        }
+      });
+    }, Math.max(0, delay));
+  };
+
   const requestByCommand = async (username, itemInput, countInput) => {
     const item = resolveItem(itemInput);
     if (!item) throw new Error('无法识别物品，请使用原版物品 ID');
@@ -719,7 +743,7 @@ module.exports = (context) => {
       status: 'collecting',
       stage: 'storage',
       stageLabel: '正在仓库查找',
-      autoDeliver: false,
+      autoDeliver: true,
       lastError: null,
       createdAt: Date.now(),
       updatedAt: Date.now(),
@@ -741,7 +765,9 @@ module.exports = (context) => {
       }).trim();
       if (!tpaCommand) throw new Error('tpaCommand 未配置');
       bot.chat(tpaCommand);
-      bot.whisper(username, `> 已在仓库找到 ${task.itemName} × ${task.requestedCount}，已向你发起 TPA。`);
+      setTaskStage(task, 'tpa', '已发起传送，等待自动交付');
+      scheduleAutoDeliver(task.id, 1);
+      bot.whisper(username, `> 已在仓库找到 ${task.displayName} × ${task.requestedCount}，已向你发起传送并准备自动交付。`);
       return summarizeTask(task);
     } catch (err) {
       task.status = 'failed';
