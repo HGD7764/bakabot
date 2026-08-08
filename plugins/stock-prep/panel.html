@@ -91,6 +91,37 @@
     border: 1px dashed var(--line);
     border-radius: 14px;
   }
+  .stock-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+    max-height: 320px;
+    overflow: auto;
+  }
+  .stock-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.06);
+  }
+  .stock-item .name {
+    font-weight: 700;
+  }
+  .stock-item .meta {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 4px;
+  }
+  .stock-item .count {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--accent);
+    white-space: nowrap;
+  }
   .task {
     padding: 16px;
     border-radius: 14px;
@@ -207,8 +238,8 @@
         </div>
 
         <div class="hint">
-          识别规则优先走原版物品 ID，例如 `dirt`、`oak_log`。
-          <br>这套面板也内置了几个常见中文别名，比如“泥土”“圆石”“木板”。
+          现在可以直接输扫描出来的中文库存名，比如“下界岩”“绿宝石”“泥土”。
+          <br>如果没命中，再回退到原版物品 ID 和已配置别名。
         </div>
 
         <h2 style="margin-top:20px;">仓库范围设置</h2>
@@ -271,6 +302,20 @@
         <div id="taskList" class="list"></div>
       </div>
     </div>
+
+    <div class="card" style="margin-top:18px;">
+      <div class="task-head" style="justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <div>
+          <h2 style="margin:0;">仓库库存</h2>
+          <div class="sub" id="stockMeta">尚未扫描</div>
+        </div>
+        <div class="task-actions">
+          <button class="secondary" onclick="manualScan()">手动扫描</button>
+        </div>
+      </div>
+      <div id="stockError" class="error" style="display:none;"></div>
+      <div id="stockList" class="stock-list"></div>
+    </div>
   </div>
 
   <div id="toast"></div>
@@ -279,6 +324,7 @@
   const TOKEN_KEY = 'webManagerToken';
   const base = '/api/plugins/stock-prep';
   let currentSettings = null;
+  let lastStatus = null;
 
   async function api(path, opts = {}) {
     let token = localStorage.getItem(TOKEN_KEY) || '';
@@ -389,14 +435,74 @@
     }).join('');
   }
 
-  function renderItemPresets(items) {
+  function renderItemPresets(items, stockItems) {
     const list = document.getElementById('itemPresetList');
-    list.innerHTML = (items || []).map((item) => {
+    const merged = [];
+    const seen = new Set();
+    for (const item of (stockItems || [])) {
+      const key = item.itemName || item.name;
+      if (!key || seen.has(key)) continue;
+      seen.add(key);
+      merged.push({
+        value: item.label || item.displayName || item.itemName,
+        name: item.itemName,
+        displayName: item.label || item.displayName || item.itemName,
+      });
+    }
+    for (const item of (items || [])) {
+      if (!item || !item.name || seen.has(item.name)) continue;
+      seen.add(item.name);
+      merged.push({
+        value: item.name,
+        name: item.name,
+        displayName: item.displayName || item.name,
+      });
+    }
+    list.innerHTML = merged.map((item) => {
       const label = item.displayName && item.displayName !== item.name
         ? `${item.name} · ${item.displayName}`
         : item.name;
-      return `<option value="${esc(item.name)}" label="${esc(label)}"></option>`;
+      return `<option value="${esc(item.value)}" label="${esc(label)}"></option>`;
     }).join('');
+  }
+
+  function renderStock(stock) {
+    const meta = document.getElementById('stockMeta');
+    const error = document.getElementById('stockError');
+    const list = document.getElementById('stockList');
+    const items = (stock && stock.items) || [];
+    const scannedAt = stock && stock.scannedAt;
+
+    meta.textContent = scannedAt
+      ? `上次扫描：${new Date(scannedAt).toLocaleString('zh-CN', { hour12: false })}${stock.scanning ? ' · 扫描中' : ''}`
+      : (stock && stock.scanning ? '扫描中...' : '尚未扫描');
+
+    if (stock && stock.lastError) {
+      error.style.display = '';
+      error.textContent = stock.lastError;
+    } else {
+      error.style.display = 'none';
+      error.textContent = '';
+    }
+
+    if (!items.length) {
+      list.innerHTML = '<div class="empty">当前没有扫描到库存，点一下“手动扫描”试试。</div>';
+      return;
+    }
+
+    list.innerHTML = items.map((item) => `
+      <div class="stock-item" onclick="useStockName('${esc(item.label || item.displayName || item.itemName)}')" style="cursor:pointer;">
+        <div>
+          <div class="name">${esc(item.label || item.displayName || item.itemName)}</div>
+          <div class="meta">${esc(item.itemName)}</div>
+        </div>
+        <div class="count">${esc(item.count)}</div>
+      </div>
+    `).join('');
+  }
+
+  function useStockName(name) {
+    document.getElementById('itemInput').value = name;
   }
 
   function applySettings(settings) {
@@ -415,11 +521,13 @@
   async function refreshStatus() {
     try {
       const data = await api(base + '/status');
+      lastStatus = data;
       renderPlayers(data.onlinePlayers || []);
       renderAliases(data.aliases || {});
-      renderItemPresets(data.itemPresets || []);
+      renderItemPresets(data.itemPresets || [], data.stock && data.stock.items);
       renderStats(data.tasks || []);
       renderTasks(data.tasks || []);
+      renderStock(data.stock || {});
       document.getElementById('lastUpdate').textContent = '刚刚同步';
     } catch (err) {
       document.getElementById('lastUpdate').textContent = '同步失败';
@@ -466,6 +574,16 @@
       toast('仓库设置已保存');
     } catch (err) {
       toast(err.message, 'err');
+    }
+  }
+
+  async function manualScan() {
+    try {
+      await api(base + '/scan', { method: 'POST' });
+      toast('仓库扫描已完成');
+      refreshStatus();
+    } catch (err) {
+      toast('扫描失败: ' + err.message, 'err');
     }
   }
 
