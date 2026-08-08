@@ -149,29 +149,51 @@ module.exports = (context) => {
       bot.once('inject_allowed', installHooks);
     }
 
-    // 接收消息：统一走底层 message 事件（公屏/私信/服务器系统消息全覆盖）。
-    // 按 chat type 分类，不依赖翻译字符串格式；旧版监听 'chat'/'whisper' 模式事件
-    // 会漏掉 systemChat 数据包（服务器系统消息），导致终端看不到服务器发来的消息。
-    const detectWhisper = require('../../message-utils').createWhisperDetector(bot);
-    bot.on('message', (msg, position) => {
-      if (position === 'game_info') return; // 动作栏消息，跳过
-      if (position === 'system' || (msg && msg.translate === 'chat.type.announcement')) {
-        // 服务器系统消息 / 公告（控制台 /say 等）
-        logTerminal('in', 'system', '', msg ? msg.toString() : String(msg));
-        return;
-      }
-      const info = detectWhisper(msg);
-      if (info) {
-        if (info.sender === bot.username) return; // 机器人自己的私信回声（out 钩子已记录）
-        logTerminal('in', 'whisper', info.sender, info.content);
-        return;
-      }
-      const withs = (msg && msg.with) || [];
-      const sender = withs[0] ? withs[0].toString() : null;
-      if (sender === bot.username) return; // 机器人自己的消息回声（已由 out 钩子记录）
-      const content = withs[1] ? withs[1].toString() : (msg ? msg.toString() : '');
-      logTerminal('in', 'chat', sender || '未知玩家', content);
-    });
+    // 接收消息：优先解析 player_chat 数据包（chatType 编号 + senderUuid + 明文，
+    // 服务器聊天格式插件改不了这些协议字段，能稳定拿到发送者真实用户名与消息类型）。
+    // 兜底走 message 事件按翻译 key 分类（无 player_chat 的环境，如旧协议/mock）。
+    const { createChatResolver, createWhisperDetector, nbtComponentToText } = require('../../message-utils');
+    const chatResolver = createChatResolver(bot);
+    const hasPacketPath = !!(bot._client && chatResolver && chatResolver.packet);
+    if (hasPacketPath) {
+      bot._client.on('playerChat', (data) => {
+        const info = chatResolver.packet(data);
+        if (!info) return;
+        if (info.sender === bot.username) return; // 机器人自己的消息回声（已由 out 钩子记录）
+        logTerminal('in', info.type === 'whisper' ? 'whisper' : 'chat', info.sender, info.content);
+      });
+      // 系统消息走 systemChat 数据包（字段随 minecraft-protocol 版本可能是
+      // content/isActionBar 或 formattedMessage/positionId，兼容两者）
+      bot._client.on('systemChat', (data) => {
+        if (data.isActionBar === true || data.positionId === 2) return; // 动作栏消息，跳过
+        const raw = data.formattedMessage != null ? data.formattedMessage : data.content;
+        const text = typeof raw === 'string'
+          ? (raw.startsWith('{') || raw.startsWith('[') ? (() => { try { return JSON.parse(raw).text || raw; } catch (err) { return raw; } })() : raw)
+          : nbtComponentToText(raw);
+        logTerminal('in', 'system', '', text);
+      });
+    } else {
+      const detectWhisper = createWhisperDetector(bot);
+      bot.on('message', (msg, position) => {
+        if (position === 'game_info') return; // 动作栏消息，跳过
+        if (position === 'system' || (msg && msg.translate === 'chat.type.announcement')) {
+          // 服务器系统消息 / 公告（控制台 /say 等）
+          logTerminal('in', 'system', '', msg ? msg.toString() : String(msg));
+          return;
+        }
+        const info = detectWhisper(msg);
+        if (info) {
+          if (info.sender === bot.username) return; // 机器人自己的私信回声（out 钩子已记录）
+          logTerminal('in', 'whisper', info.sender, info.content);
+          return;
+        }
+        const withs = (msg && msg.with) || [];
+        const sender = withs[0] ? withs[0].toString() : null;
+        if (sender === bot.username) return; // 机器人自己的消息回声（已由 out 钩子记录）
+        const content = withs[1] ? withs[1].toString() : (msg ? msg.toString() : '');
+        logTerminal('in', 'chat', sender || '未知玩家', content);
+      });
+    }
 
     bot.on('login', () => logTerminal('system', 'system', '', `机器人 ${bot.username} 已登录。`));
     bot.on('spawn', () => logTerminal('system', 'system', '', '已进入世界。'));
