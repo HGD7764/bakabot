@@ -26,6 +26,8 @@ module.exports = (context) => {
       mud: 'mud',
       cobble: 'cobblestone',
       stone: 'stone',
+      emerald: 'emerald',
+      netherrack: 'netherrack',
       oaklog: 'oak_log',
       plank: 'oak_planks',
       planks: 'oak_planks',
@@ -33,6 +35,8 @@ module.exports = (context) => {
       泥巴: 'mud',
       圆石: 'cobblestone',
       石头: 'stone',
+      绿宝石: 'emerald',
+      下界岩: 'netherrack',
       原木: 'oak_log',
       木板: 'oak_planks',
       火把: 'torch',
@@ -54,6 +58,13 @@ module.exports = (context) => {
     fulfillmentPromise: null,
     activeRequestId: null,
     timer: null,
+    stock: {
+      items: [],
+      scannedAt: null,
+      lastError: null,
+      scanning: false,
+      timer: null,
+    },
   });
 
   const htmlFile = path.join(__dirname, 'panel.html');
@@ -100,6 +111,26 @@ module.exports = (context) => {
     .filter((item) => item && item.name === itemName)
     .reduce((sum, item) => sum + item.count, 0);
 
+  const isChineseText = (value) => /[\u3400-\u9fff]/.test(String(value || ''));
+
+  const preferredLabelForItem = (itemName, displayName = null) => {
+    const pair = Object.entries(cfg.aliases || {})
+      .find(([key, value]) => value === itemName && isChineseText(key));
+    if (pair) return pair[0];
+    return displayName || itemName;
+  };
+
+  const stockLookupMap = () => {
+    const lookup = new Map();
+    for (const entry of st.stock.items || []) {
+      for (const raw of [entry.itemName, entry.displayName, entry.label]) {
+        const key = normalizeKey(raw);
+        if (key) lookup.set(key, entry);
+      }
+    }
+    return lookup;
+  };
+
   const resolveItem = (input) => {
     const raw = String(input || '').trim();
     if (!raw) return null;
@@ -113,7 +144,16 @@ module.exports = (context) => {
       const it = registry[cleanName];
       return {
         name: it.name,
-        displayName: it.displayName || it.name,
+        displayName: preferredLabelForItem(it.name, it.displayName || it.name),
+        input: raw,
+      };
+    }
+
+    const stockMatch = stockLookupMap().get(normalizeKey(raw));
+    if (stockMatch) {
+      return {
+        name: stockMatch.itemName,
+        displayName: stockMatch.label || stockMatch.displayName || stockMatch.itemName,
         input: raw,
       };
     }
@@ -124,7 +164,7 @@ module.exports = (context) => {
         if (normalizeKey(it.name) === normalized || normalizeKey(it.displayName || '') === normalized) {
           return {
             name: it.name,
-            displayName: it.displayName || it.name,
+            displayName: preferredLabelForItem(it.name, it.displayName || it.name),
             input: raw,
           };
         }
@@ -154,7 +194,7 @@ module.exports = (context) => {
       .filter((item) => item && item.name)
       .map((item) => ({
         name: item.name,
-        displayName: item.displayName || item.name,
+        displayName: preferredLabelForItem(item.name, item.displayName || item.name),
       }))
       .sort((a, b) => a.name.localeCompare(b.name));
   };
@@ -354,6 +394,64 @@ module.exports = (context) => {
       }) || []).filter(insideWarehouse);
     } catch (err) {
       return [];
+    }
+  };
+
+  const scanWarehouseInventory = async (reason = 'manual') => {
+    if (st.stock.scanning) {
+      return {
+        items: st.stock.items,
+        scannedAt: st.stock.scannedAt,
+        lastError: st.stock.lastError,
+        skipped: true,
+      };
+    }
+
+    st.stock.scanning = true;
+    st.stock.lastError = null;
+    try {
+      await moveToWarehouseCenter();
+      const positions = warehouseContainerPositions();
+      const merged = new Map();
+
+      for (const pos of positions) {
+        const block = bot.blockAt(pos);
+        if (!block) continue;
+        try {
+          await approachBlock(block, 2);
+          const container = await openContainerBlock(block);
+          try {
+            for (const item of containerItems(container)) {
+              if (!item || !item.name || !item.count) continue;
+              const existing = merged.get(item.name) || {
+                itemName: item.name,
+                displayName: item.displayName || item.name,
+                label: preferredLabelForItem(item.name, item.displayName || item.name),
+                count: 0,
+              };
+              existing.count += item.count;
+              merged.set(item.name, existing);
+            }
+          } finally {
+            if (typeof container.close === 'function') {
+              try { container.close(); } catch (err) {}
+            }
+          }
+        } catch (err) {
+          st.stock.lastError = `扫描 ${block.name} 失败: ${err.message}`;
+        }
+      }
+
+      st.stock.items = Array.from(merged.values()).sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
+      st.stock.scannedAt = Date.now();
+      console.log(`[stock-prep] 已完成仓库库存扫描 (${reason})，共 ${st.stock.items.length} 种物品`);
+      return {
+        items: st.stock.items,
+        scannedAt: st.stock.scannedAt,
+        lastError: st.stock.lastError,
+      };
+    } finally {
+      st.stock.scanning = false;
     }
   };
 
@@ -568,6 +666,12 @@ module.exports = (context) => {
       warehouseSize: cfg.warehouseSize,
       tpaCommand: cfg.tpaCommand,
       itemPresets: itemPresets(),
+      stock: {
+        items: st.stock.items,
+        scannedAt: st.stock.scannedAt,
+        lastError: st.stock.lastError,
+        scanning: st.stock.scanning,
+      },
     };
   };
 
@@ -666,6 +770,18 @@ module.exports = (context) => {
   ep('GET', 'status', (req, res) => ok(res, statusPayload()));
 
   ep('GET', 'settings', (req, res) => ok(res, { settings: settingsPayload() }));
+
+  ep('POST', 'scan', async (req, res) => {
+    const result = await scanWarehouseInventory('manual');
+    ok(res, {
+      stock: {
+        items: result.items,
+        scannedAt: result.scannedAt,
+        lastError: result.lastError,
+        scanning: st.stock.scanning,
+      },
+    });
+  });
 
   ep('PUT', 'settings', (req, res, url, body) => {
     const payload = jsonBody(body) || {};
@@ -766,6 +882,15 @@ module.exports = (context) => {
   if (!st.timer) {
     st.timer = setInterval(reconcileAll, Math.max(500, cfg.reconcileIntervalMs));
     if (typeof st.timer.unref === 'function') st.timer.unref();
+  }
+
+  if (!st.stock.timer) {
+    st.stock.timer = setInterval(() => {
+      scanWarehouseInventory('timer').catch((err) => {
+        st.stock.lastError = err.message;
+      });
+    }, 10 * 60 * 1000);
+    if (typeof st.stock.timer.unref === 'function') st.stock.timer.unref();
   }
 
   webManager.registerTile({
