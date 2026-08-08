@@ -7,6 +7,10 @@
   },
   "commandPrefix": "!",
   "commandTrigger": "whisper",
+  "logging": {
+    "dir": "logs",
+    "packets": false
+  },
   "plugins": [
     "auto-login",
     "core-commands",

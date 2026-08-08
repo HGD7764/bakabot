@@ -12,7 +12,8 @@
 //   兜底路径（无 player_chat 数据包的环境，如旧协议或 mock 测试）：
 //   私信走底层 message 事件的翻译 key 识别 + 旧版 whisper 模式事件（WeakSet 去重），
 //   公屏走旧版正则 chat 事件。
-const { createWhisperDetector, createChatResolver } = require('./message-utils');
+const { createWhisperDetector, createChatResolver, parseSystemWhisper, nbtComponentToText } = require('./message-utils');
+const logger = require('./logger');
 
 class CommandManager {
   constructor(bot, permissions, prefix = '!', trigger = 'whisper') {
@@ -36,6 +37,18 @@ class CommandManager {
           if (info.type === 'whisper') this.handleMessage(info.sender, info.content);
         }
       });
+      if (this.trigger === 'whisper') {
+        // 私信通道二：部分服务端（Paper 关闭聊天签名）/聊天格式插件把私信渲染成
+        // '[发送者 -> 我] 内容' 以 system_chat 发送，playerChat 里根本没有——
+        // 必须在这里接住，否则私信触发完全失效。
+        bot._client.on('systemChat', (data) => {
+          if (data.isActionBar === true || data.positionId === 2) return; // 动作栏，跳过
+          const raw = data.formattedMessage != null ? data.formattedMessage : data.content;
+          const text = nbtComponentToText(raw) || (typeof raw === 'string' ? raw : '');
+          const info = parseSystemWhisper(text);
+          if (info) this.handleMessage(info.sender, info.content);
+        });
+      }
       return; // 不再挂旧路径，避免同一消息双触发
     }
 
@@ -73,17 +86,21 @@ class CommandManager {
       // --- 权限检查 ---
       const userLevel = this.permissions.getLevel(username);
       if (userLevel < command.permissionLevel) {
+        logger.command(username, message, 'denied', `需要等级 ${command.permissionLevel}，实际 ${userLevel}`);
         this.bot.whisper(username, `> 指令错误：权限不足。需要等级 ${command.permissionLevel}，你的等级为 ${userLevel}。`);
         return;
       }
 
       try {
         command.execute(username, args);
+        logger.command(username, message, 'ok');
       } catch (err) {
+        logger.command(username, message, 'error', `${err && err.stack ? err.stack : err}`);
         console.error(`执行命令 '${commandName}' 时出错:`, err);
         this.bot.whisper(username, '> 系统异常：指令执行失败。');
       }
     } else {
+      logger.command(username, message, 'unknown');
       this.bot.whisper(username, '> 指令错误：未知指令。');
     }
   }
@@ -102,6 +119,7 @@ class CommandManager {
       console.warn(`[CommandManager] 警告: 命令 '${name}' 已被注册，将被覆盖。`);
     }
     this.commands.set(name, { name, permissionLevel, description, execute });
+    logger.info('cmd', `注册指令 ${this.prefix}${name} (权限等级: ${permissionLevel}, 说明: ${description || '无'})`);
     console.log(`[CommandManager] 已注册命令: ${this.prefix}${name} (权限等级: ${permissionLevel})`);
   }
 }

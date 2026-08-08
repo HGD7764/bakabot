@@ -149,10 +149,11 @@ module.exports = (context) => {
       bot.once('inject_allowed', installHooks);
     }
 
-    // 接收消息：优先解析 player_chat 数据包（chatType 编号 + senderUuid + 明文，
-    // 服务器聊天格式插件改不了这些协议字段，能稳定拿到发送者真实用户名与消息类型）。
+    // 接收消息：优先解析 minecraft-protocol 重发的 playerChat 事件（chatType 编号 +
+    // 发送者 UUID + 明文，服务器聊天格式插件改不了这些协议字段，能稳定拿到发送者
+    // 真实用户名与消息类型）。
     // 兜底走 message 事件按翻译 key 分类（无 player_chat 的环境，如旧协议/mock）。
-    const { createChatResolver, createWhisperDetector, nbtComponentToText } = require('../../message-utils');
+    const { createChatResolver, createWhisperDetector, nbtComponentToText, reasonToText, parseSystemWhisper } = require('../../message-utils');
     const chatResolver = createChatResolver(bot);
     const hasPacketPath = !!(bot._client && chatResolver && chatResolver.packet);
     if (hasPacketPath) {
@@ -160,17 +161,27 @@ module.exports = (context) => {
         const info = chatResolver.packet(data);
         if (!info) return;
         if (info.sender === bot.username) return; // 机器人自己的消息回声（已由 out 钩子记录）
-        logTerminal('in', info.type === 'whisper' ? 'whisper' : 'chat', info.sender, info.content);
+        logTerminal('in', info.type === 'whisper' ? 'whisper' : (info.type === 'system' ? 'system' : 'chat'), info.sender, info.content);
       });
-      // 系统消息走 systemChat 数据包（字段随 minecraft-protocol 版本可能是
-      // content/isActionBar 或 formattedMessage/positionId，兼容两者）
+      // 系统消息走 systemChat 事件（minecraft-protocol 重发为 formattedMessage/positionId，
+      // 原始包字段为 content/isActionBar，兼容两者；nbtComponentToText 可同时处理
+      // NBT 组件、JSON 字符串与普通字符串）
       bot._client.on('systemChat', (data) => {
         if (data.isActionBar === true || data.positionId === 2) return; // 动作栏消息，跳过
         const raw = data.formattedMessage != null ? data.formattedMessage : data.content;
-        const text = typeof raw === 'string'
-          ? (raw.startsWith('{') || raw.startsWith('[') ? (() => { try { return JSON.parse(raw).text || raw; } catch (err) { return raw; } })() : raw)
-          : nbtComponentToText(raw);
-        logTerminal('in', 'system', '', text);
+        let text = nbtComponentToText(raw);
+        if (!text) {
+          try { text = typeof raw === 'string' ? raw : JSON.stringify(raw); }
+          catch (err) { text = String(raw || ''); }
+        }
+        // 私信渲染成 '[发送者 -> 我] 内容' → 终端里归类为私信
+        const w = parseSystemWhisper(text);
+        if (w) {
+          if (w.sender === bot.username) return; // 机器人自己的私信回声（out 钩子已记录）
+          logTerminal('in', 'whisper', w.sender, w.content);
+        } else {
+          logTerminal('in', 'system', '', text);
+        }
       });
     } else {
       const detectWhisper = createWhisperDetector(bot);
@@ -197,8 +208,8 @@ module.exports = (context) => {
 
     bot.on('login', () => logTerminal('system', 'system', '', `机器人 ${bot.username} 已登录。`));
     bot.on('spawn', () => logTerminal('system', 'system', '', '已进入世界。'));
-    bot.on('kicked', (reason) => logTerminal('system', 'system', '', `被踢出服务器: ${reason}`));
-    bot.on('end', (reason) => logTerminal('system', 'system', '', `连接已断开: ${reason}`));
+    bot.on('kicked', (reason) => logTerminal('system', 'system', '', `被踢出服务器: ${reasonToText(reason)}`));
+    bot.on('end', (reason) => logTerminal('system', 'system', '', `连接已断开: ${reasonToText(reason)}`));
   }
 
   // ---- 内置路由 ----

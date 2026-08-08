@@ -2,3 +2,5 @@
 .claude/
 #nodemodules
 node_modules/
+#logs
+logs/
