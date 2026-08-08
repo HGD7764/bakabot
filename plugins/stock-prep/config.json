@@ -1,0 +1,36 @@
+{
+  "autoDeliverByDefault": true,
+  "reconcileIntervalMs": 1500,
+  "handoffDistance": 2.5,
+  "deliveryMoveTimeoutMs": 25000,
+  "blockApproachDistance": 2,
+  "collectPauseMs": 400,
+  "maxTasks": 50,
+  "maxStorageBlocksScan": 128,
+  "warehouseBlocks": [
+    "chest",
+    "trapped_chest",
+    "barrel"
+  ],
+  "warehouseCenter": {
+    "x": 0,
+    "y": 64,
+    "z": 0
+  },
+  "warehouseSize": {
+    "x": 16,
+    "y": 8,
+    "z": 16
+  },
+  "tpaCommand": "/tpa {player}",
+  "aliases": {
+    "泥土": "dirt",
+    "圆石": "cobblestone",
+    "石头": "stone",
+    "原木": "oak_log",
+    "木板": "oak_planks",
+    "火把": "torch",
+    "箱子": "chest",
+    "鱼竿": "fishing_rod"
+  }
+}

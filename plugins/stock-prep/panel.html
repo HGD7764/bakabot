@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>备货中心</title>
+<style>
+  :root {
+    --bg: #0e1511;
+    --panel: #18231d;
+    --panel-2: #223127;
+    --line: #33473a;
+    --text: #eef5ef;
+    --muted: #9db1a2;
+    --accent: #74c365;
+    --warn: #f0b34f;
+    --err: #ef6b6b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 20px;
+    background:
+      radial-gradient(circle at top left, rgba(116,195,101,.16), transparent 24%),
+      linear-gradient(180deg, #0c120e, var(--bg));
+    color: var(--text);
+    font-family: system-ui, "Microsoft YaHei", sans-serif;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  .hero, .card {
+    background: rgba(24, 35, 29, .92);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow: 0 16px 38px rgba(0,0,0,.28);
+  }
+  .hero { padding: 20px; margin-bottom: 18px; }
+  .hero h1 { margin: 0 0 8px; font-size: 26px; }
+  .sub { color: var(--muted); font-size: 14px; }
+  .hero-grid, .stats, .task-head, .task-meta, .task-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .stats { margin-top: 14px; }
+  .stat {
+    min-width: 130px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.05);
+  }
+  .stat b { display: block; font-size: 21px; margin-bottom: 4px; }
+  .layout { display: grid; grid-template-columns: 360px 1fr; gap: 18px; }
+  .card { padding: 18px; }
+  h2 { margin: 0 0 12px; font-size: 18px; }
+  label { display: block; margin: 10px 0 6px; color: var(--muted); font-size: 13px; }
+  input, select {
+    width: 100%;
+    padding: 11px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: #101813;
+    color: var(--text);
+    font-size: 14px;
+  }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  button {
+    border: none;
+    border-radius: 10px;
+    padding: 10px 14px;
+    cursor: pointer;
+    background: var(--accent);
+    color: #10200f;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  button.secondary {
+    background: #29382d;
+    color: var(--text);
+  }
+  button.warn {
+    background: var(--warn);
+    color: #2d2209;
+  }
+  button.danger {
+    background: var(--err);
+    color: white;
+  }
+  .hint { color: var(--muted); font-size: 12px; line-height: 1.7; margin-top: 10px; }
+  .list { display: flex; flex-direction: column; gap: 12px; }
+  .empty {
+    padding: 26px 14px;
+    text-align: center;
+    color: var(--muted);
+    border: 1px dashed var(--line);
+    border-radius: 14px;
+  }
+  .task {
+    padding: 16px;
+    border-radius: 14px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+  }
+  .task-title { font-size: 17px; font-weight: 700; }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .badge.pending { background: rgba(240,179,79,.16); color: var(--warn); }
+  .badge.collecting { background: rgba(116,195,101,.12); color: #a8e19d; }
+  .badge.ready { background: rgba(116,195,101,.16); color: var(--accent); }
+  .badge.delivering { background: rgba(116,195,101,.2); color: #c7f7be; }
+  .badge.delivered { background: rgba(255,255,255,.09); color: #d9e2dc; }
+  .badge.cancelled { background: rgba(239,107,107,.16); color: var(--err); }
+  .badge.failed { background: rgba(239,107,107,.16); color: var(--err); }
+  .task-meta { color: var(--muted); font-size: 13px; margin: 10px 0 12px; }
+  .bar {
+    position: relative;
+    height: 10px;
+    border-radius: 999px;
+    overflow: hidden;
+    background: #101813;
+    border: 1px solid rgba(255,255,255,.06);
+  }
+  .bar > span {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, #5cb856, #9ce16b);
+  }
+  .progress-text { margin-top: 8px; font-size: 13px; color: var(--muted); }
+  .error {
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(239,107,107,.12);
+    color: #ffc2c2;
+    font-size: 13px;
+  }
+  .pill {
+    display: inline-block;
+    margin: 6px 6px 0 0;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.06);
+    color: var(--muted);
+    font-size: 12px;
+  }
+  #toast {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    display: none;
+    max-width: 360px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: #132018;
+  }
+  #toast.show { display: block; }
+  #toast.err { background: #2a1818; border-color: rgba(239,107,107,.35); }
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <h1>备货中心</h1>
+      <div class="sub">在这里给机器人下达备货任务，实时看差多少，货齐后可自动或手动交付给指定玩家。</div>
+      <div class="stats">
+        <div class="stat"><b id="statOpen">0</b><span>进行中任务</span></div>
+        <div class="stat"><b id="statReady">0</b><span>已备齐</span></div>
+        <div class="stat"><b id="statDelivering">0</b><span>交付中</span></div>
+        <div class="stat"><b id="statDone">0</b><span>已完成</span></div>
+      </div>
+    </div>
+
+    <div class="layout">
+      <div class="card">
+        <h2>新建任务</h2>
+        <label for="itemInput">物品</label>
+        <input id="itemInput" placeholder="例如 dirt / 泥土 / cobblestone">
+
+        <div class="row">
+          <div>
+            <label for="countInput">数量</label>
+            <input id="countInput" type="number" min="1" step="1" value="64">
+          </div>
+          <div>
+            <label for="playerInput">交付玩家</label>
+            <input id="playerInput" placeholder="例如 玩家1">
+          </div>
+        </div>
+
+        <label for="autoDeliverInput">交付方式</label>
+        <select id="autoDeliverInput">
+          <option value="true">货齐后自动交付</option>
+          <option value="false">只备货，手动点交付</option>
+        </select>
+
+        <div class="task-actions" style="margin-top:14px;">
+          <button onclick="createTask()">创建任务</button>
+          <button class="secondary" onclick="refreshStatus()">刷新</button>
+        </div>
+
+        <div class="hint">
+          识别规则优先走原版物品 ID，例如 `dirt`、`oak_log`。
+          <br>这套面板也内置了几个常见中文别名，比如“泥土”“圆石”“木板”。
+        </div>
+
+        <h2 style="margin-top:20px;">仓库范围设置</h2>
+        <div class="row">
+          <div>
+            <label for="centerX">中心 X</label>
+            <input id="centerX" type="number" step="1">
+          </div>
+          <div>
+            <label for="sizeX">范围 X</label>
+            <input id="sizeX" type="number" min="0" step="1">
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="centerY">中心 Y</label>
+            <input id="centerY" type="number" step="1">
+          </div>
+          <div>
+            <label for="sizeY">范围 Y</label>
+            <input id="sizeY" type="number" min="0" step="1">
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="centerZ">中心 Z</label>
+            <input id="centerZ" type="number" step="1">
+          </div>
+          <div>
+            <label for="sizeZ">范围 Z</label>
+            <input id="sizeZ" type="number" min="0" step="1">
+          </div>
+        </div>
+        <label for="warehouseBlocksInput">容器类型</label>
+        <input id="warehouseBlocksInput" placeholder="chest, trapped_chest, barrel">
+        <label for="maxStorageBlocksScanInput">最多扫描容器数</label>
+        <input id="maxStorageBlocksScanInput" type="number" min="1" step="1">
+        <label for="tpaCommandInput">TPA 指令模板</label>
+        <input id="tpaCommandInput" placeholder="/tpa {player}">
+        <div class="task-actions" style="margin-top:14px;">
+          <button onclick="saveSettings()">保存仓库设置</button>
+        </div>
+        <div class="hint">
+          范围是以中心点向四周延展的盒子。
+          <br>`TPA` 指令里可用 `{player}` 占位，例如 `/tpa {player}`。
+        </div>
+
+        <h2 style="margin-top:20px;">在线玩家</h2>
+        <div id="playersBox" class="hint">加载中...</div>
+
+        <h2 style="margin-top:20px;">已配置别名</h2>
+        <div id="aliasBox"></div>
+      </div>
+
+      <div class="card">
+        <div class="task-head" style="justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <h2 style="margin:0;">任务列表</h2>
+          <div class="sub" id="lastUpdate">等待同步...</div>
+        </div>
+        <div id="taskList" class="list"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+<script>
+  const TOKEN_KEY = 'webManagerToken';
+  const base = '/api/plugins/stock-prep';
+  let currentSettings = null;
+
+  async function api(path, opts = {}) {
+    let token = localStorage.getItem(TOKEN_KEY) || '';
+    if (!token) {
+      token = new URLSearchParams(location.search).get('token') || '';
+      if (token) localStorage.setItem(TOKEN_KEY, token);
+    }
+    const headers = { ...(opts.headers || {}) };
+    if (token) headers.Authorization = 'Bearer ' + token;
+    const resp = await fetch(path, { ...opts, headers });
+    const data = await resp.json().catch(() => null);
+    if (!resp.ok) throw new Error((data && data.error) || ('HTTP ' + resp.status));
+    return data;
+  }
+
+  function toast(message, type = '') {
+    const el = document.getElementById('toast');
+    el.textContent = message;
+    el.className = 'show ' + type;
+    clearTimeout(el._timer);
+    el._timer = setTimeout(() => { el.className = ''; }, 3200);
+  }
+
+  function esc(value) {
+    return String(value).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  function statusText(status) {
+    return ({
+      pending: '备货中',
+      collecting: '补货中',
+      ready: '已备齐',
+      delivering: '交付中',
+      delivered: '已完成',
+      cancelled: '已取消',
+      failed: '缺货',
+    })[status] || status;
+  }
+
+  function renderPlayers(players) {
+    const box = document.getElementById('playersBox');
+    if (!players.length) {
+      box.textContent = '当前没有可见玩家数据。';
+      return;
+    }
+    box.innerHTML = players.map((p) => `<span class="pill">${esc(p.username)} · ${p.visible ? '可交付' : '在线但未可见'}</span>`).join('');
+  }
+
+  function renderAliases(aliases) {
+    const box = document.getElementById('aliasBox');
+    const keys = Object.keys(aliases || {});
+    if (!keys.length) {
+      box.innerHTML = '<div class="hint">没有配置别名</div>';
+      return;
+    }
+    box.innerHTML = keys.slice(0, 20).map((k) => `<span class="pill">${esc(k)} → ${esc(aliases[k])}</span>`).join('');
+  }
+
+  function renderStats(tasks) {
+    const open = tasks.filter((t) => t.status === 'pending' || t.status === 'ready' || t.status === 'delivering').length;
+    const ready = tasks.filter((t) => t.status === 'ready').length;
+    const delivering = tasks.filter((t) => t.status === 'delivering').length;
+    const done = tasks.filter((t) => t.status === 'delivered').length;
+    document.getElementById('statOpen').textContent = open;
+    document.getElementById('statReady').textContent = ready;
+    document.getElementById('statDelivering').textContent = delivering;
+    document.getElementById('statDone').textContent = done;
+  }
+
+  function renderTasks(tasks) {
+    const list = document.getElementById('taskList');
+    if (!tasks.length) {
+      list.innerHTML = '<div class="empty">还没有任务，先在左边创建一个吧。</div>';
+      return;
+    }
+
+    list.innerHTML = tasks.map((task) => {
+      const percent = Math.max(0, Math.min(100, Math.round(task.progress * 100)));
+      const title = task.displayName && task.displayName !== task.itemName
+        ? `${task.displayName} (${task.itemName})`
+        : task.itemName;
+      const progressText = task.status === 'delivered'
+        ? `已交付 ${task.requestedCount} / ${task.requestedCount}`
+        : `当前 ${task.collectedCount} / ${task.requestedCount}，还差 ${task.remainingCount}`;
+      return `
+        <div class="task">
+          <div class="task-head" style="justify-content:space-between; align-items:flex-start;">
+            <div>
+              <div class="task-title">#${task.id} ${esc(title)}</div>
+              <div class="task-meta">
+                <span>交付给 ${esc(task.targetPlayer)}</span>
+                <span>${task.autoDeliver ? '自动交付' : '手动交付'}</span>
+                ${task.stageLabel ? `<span>${esc(task.stageLabel)}</span>` : ''}
+              </div>
+            </div>
+            <span class="badge ${esc(task.status)}">${esc(statusText(task.status))}</span>
+          </div>
+          <div class="bar"><span style="width:${percent}%"></span></div>
+          <div class="progress-text">${esc(progressText)}</div>
+          ${task.lastError ? `<div class="error">${esc(task.lastError)}</div>` : ''}
+          <div class="task-actions" style="margin-top:14px;">
+            ${(task.status === 'ready' || task.status === 'pending') ? `<button onclick="deliverTask(${task.id})" ${task.status === 'pending' ? 'class="warn"' : ''}>立即交付</button>` : ''}
+            ${(task.status !== 'delivered' && task.status !== 'cancelled' && task.status !== 'delivering') ? `<button class="secondary" onclick="cancelTask(${task.id})">取消任务</button>` : ''}
+            ${(task.status === 'delivered' || task.status === 'cancelled') ? `<button class="danger" onclick="deleteTask(${task.id})">删除记录</button>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function applySettings(settings) {
+    currentSettings = settings;
+    document.getElementById('centerX').value = settings.warehouseCenter.x;
+    document.getElementById('centerY').value = settings.warehouseCenter.y;
+    document.getElementById('centerZ').value = settings.warehouseCenter.z;
+    document.getElementById('sizeX').value = settings.warehouseSize.x;
+    document.getElementById('sizeY').value = settings.warehouseSize.y;
+    document.getElementById('sizeZ').value = settings.warehouseSize.z;
+    document.getElementById('warehouseBlocksInput').value = (settings.warehouseBlocks || []).join(', ');
+    document.getElementById('tpaCommandInput').value = settings.tpaCommand || '';
+    document.getElementById('maxStorageBlocksScanInput').value = settings.maxStorageBlocksScan || 1;
+  }
+
+  async function refreshStatus() {
+    try {
+      const data = await api(base + '/status');
+      renderPlayers(data.onlinePlayers || []);
+      renderAliases(data.aliases || {});
+      renderStats(data.tasks || []);
+      renderTasks(data.tasks || []);
+      document.getElementById('lastUpdate').textContent = '刚刚同步';
+    } catch (err) {
+      document.getElementById('lastUpdate').textContent = '同步失败';
+      toast(err.message, 'err');
+    }
+  }
+
+  async function refreshSettings() {
+    try {
+      const data = await api(base + '/settings');
+      applySettings(data.settings);
+    } catch (err) {
+      toast('加载仓库设置失败: ' + err.message, 'err');
+    }
+  }
+
+  async function saveSettings() {
+    const payload = {
+      warehouseCenter: {
+        x: Number(document.getElementById('centerX').value),
+        y: Number(document.getElementById('centerY').value),
+        z: Number(document.getElementById('centerZ').value),
+      },
+      warehouseSize: {
+        x: Number(document.getElementById('sizeX').value),
+        y: Number(document.getElementById('sizeY').value),
+        z: Number(document.getElementById('sizeZ').value),
+      },
+      warehouseBlocks: document.getElementById('warehouseBlocksInput').value
+        .split(',')
+        .map((v) => v.trim())
+        .filter(Boolean),
+      tpaCommand: document.getElementById('tpaCommandInput').value.trim(),
+      maxStorageBlocksScan: Number(document.getElementById('maxStorageBlocksScanInput').value),
+    };
+
+    try {
+      const data = await api(base + '/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      applySettings(data.settings);
+      toast('仓库设置已保存');
+    } catch (err) {
+      toast(err.message, 'err');
+    }
+  }
+
+  async function createTask() {
+    const item = document.getElementById('itemInput').value.trim();
+    const count = Number(document.getElementById('countInput').value);
+    const targetPlayer = document.getElementById('playerInput').value.trim();
+    const autoDeliver = document.getElementById('autoDeliverInput').value === 'true';
+    if (!item || !targetPlayer || !count) return toast('请把物品、数量、玩家都填完整', 'err');
+
+    try {
+      await api(base + '/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ item, count, targetPlayer, autoDeliver }),
+      });
+      toast('任务已创建');
+      document.getElementById('itemInput').value = '';
+      document.getElementById('countInput').value = '64';
+      refreshStatus();
+    } catch (err) {
+      toast(err.message, 'err');
+    }
+  }
+
+  async function deliverTask(id) {
+    try {
+      await api(base + '/deliver', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      });
+      toast('已开始交付');
+      refreshStatus();
+    } catch (err) {
+      toast(err.message, 'err');
+    }
+  }
+
+  async function cancelTask(id) {
+    try {
+      await api(base + '/cancel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      });
+      toast('任务已取消');
+      refreshStatus();
+    } catch (err) {
+      toast(err.message, 'err');
+    }
+  }
+
+  async function deleteTask(id) {
+    try {
+      await api(base + '/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      });
+      toast('记录已删除');
+      refreshStatus();
+    } catch (err) {
+      toast(err.message, 'err');
+    }
+  }
+
+  document.getElementById('playerInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') createTask();
+  });
+
+  refreshStatus();
+  refreshSettings();
+  setInterval(refreshStatus, 2000);
+</script>
+</body>
+</html>
