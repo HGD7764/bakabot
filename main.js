@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const { EventEmitter } = require('events');
 const { CommandManager } = require('./command-manager');
-const { reasonToText } = require('./message-utils');
+const { reasonToText, createChatResolver, nbtComponentToText } = require('./message-utils');
 const logger = require('./logger');
 
 class PermissionManager {
@@ -221,6 +221,45 @@ const wireBot = (currentBot) => {
   }
 
   logger.installBotHooks(currentBot);
+
+  const autoTpacceptState = {
+    lastAcceptAt: 0,
+  };
+  const looksLikeTpaRequest = (text) => {
+    const normalized = String(text || '').replace(/§./g, '').trim().toLowerCase();
+    if (!normalized) return false;
+    return (
+      /(?:has requested to teleport to you|wants to teleport to you|requested to teleport to you|request to teleport to you|teleport request|tp request|tpa request)/i.test(normalized) ||
+      /(?:请求.*传送到你|向你发起了?传送|想要传送到你|邀请你传送|请求传送|tpa请求|tpa 申请)/i.test(normalized) ||
+      (/(\btpa\b|\btpahere\b)/i.test(normalized) && /(?:请求|邀请|传送|teleport|request|wants?|asked|向你|到你)/i.test(normalized))
+    );
+  };
+  const tryAutoTpaccept = (source, text) => {
+    if (!looksLikeTpaRequest(text)) return;
+    const now = Date.now();
+    if (now - autoTpacceptState.lastAcceptAt < 1500) return;
+    autoTpacceptState.lastAcceptAt = now;
+    logger.info('bot', `检测到 TPA 请求 (${source})，自动执行 /tpaccept`);
+    try {
+      currentBot.chat('/tpaccept');
+    } catch (err) {
+      logger.warn('bot', `自动接收 TPA 失败: ${err.message}`);
+    }
+  };
+
+  const chatResolver = createChatResolver(currentBot);
+  currentBot._client.on('playerChat', (data) => {
+    const info = chatResolver.packet(data);
+    if (!info || info.sender === currentBot.username) return;
+    tryAutoTpaccept('playerChat', info.content);
+  });
+  currentBot._client.on('systemChat', (data) => {
+    if (data && (data.isActionBar === true || data.positionId === 2)) return;
+    const raw = data && data.formattedMessage != null ? data.formattedMessage : (data && data.content != null ? data.content : null);
+    const text = nbtComponentToText(raw) || (typeof raw === 'string' ? raw : '');
+    if (!text) return;
+    tryAutoTpaccept('systemChat', text);
+  });
 
   const commandTrigger = config.commandTrigger === 'chat' ? 'chat' : 'whisper';
   context.commands = new CommandManager(currentBot, context.permissions, config.commandPrefix || '!', commandTrigger);

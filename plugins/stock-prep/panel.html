@@ -7,8 +7,10 @@
 <style>
   :root {
     --bg: #eef6ff;
+    --bg-2: #f9fcff;
     --panel: #ffffff;
     --panel-2: #f7fbff;
+    --panel-3: #eef5fb;
     --line: #d8e6f5;
     --text: #17324a;
     --muted: #6d8297;
@@ -19,8 +21,10 @@
   }
   :root[data-theme="dark"] {
     --bg: #0f1722;
+    --bg-2: #101827;
     --panel: #162233;
     --panel-2: #1b2a3f;
+    --panel-3: #203147;
     --line: #2a3a52;
     --text: #e7eef8;
     --muted: #8ea3ba;
@@ -35,13 +39,13 @@
     padding: 20px;
     background:
       radial-gradient(circle at top left, rgba(108,184,255,.24), transparent 24%),
-      linear-gradient(180deg, #f9fcff, var(--bg));
+      linear-gradient(180deg, var(--bg-2), var(--bg));
     color: var(--text);
     font-family: system-ui, "Microsoft YaHei", sans-serif;
   }
   .wrap { max-width: 1080px; margin: 0 auto; }
   .hero, .card {
-    background: rgba(255, 255, 255, .94);
+    background: var(--panel);
     border: 1px solid var(--line);
     border-radius: 16px;
     box-shadow: 0 16px 38px rgba(35,84,126,.08);
@@ -56,8 +60,8 @@
     min-width: 130px;
     padding: 12px 14px;
     border-radius: 12px;
-    background: #f5faff;
-    border: 1px solid #e1edf8;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
   }
   .stat b { display: block; font-size: 21px; margin-bottom: 4px; }
   .layout { display: grid; grid-template-columns: 360px 1fr; gap: 18px; }
@@ -69,7 +73,7 @@
     padding: 11px 12px;
     border-radius: 10px;
     border: 1px solid var(--line);
-    background: #fbfdff;
+    background: var(--panel-2);
     color: var(--text);
     font-size: 14px;
   }
@@ -85,7 +89,7 @@
     font-size: 14px;
   }
   button.secondary {
-    background: #eaf3ff;
+    background: var(--panel-3);
     color: var(--accent);
   }
   button.warn {
@@ -119,8 +123,8 @@
     gap: 12px;
     padding: 10px 12px;
     border-radius: 12px;
-    background: #f7fbff;
-    border: 1px solid #e3edf8;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
   }
   .stock-item .name {
     font-weight: 700;
@@ -185,13 +189,9 @@
     gap: 12px;
     padding: 9px 11px;
     border-radius: 10px;
-    background: rgba(255,255,255,.55);
-    border: 1px solid rgba(216,230,245,.9);
+    background: var(--panel-3);
+    border: 1px solid var(--line);
     font-size: 13px;
-  }
-  :root[data-theme="dark"] .task-item {
-    background: rgba(255,255,255,.04);
-    border-color: var(--line);
   }
   .task-item .meta { color: var(--muted); margin-top: 2px; font-size: 12px; }
   .error {
@@ -207,8 +207,8 @@
     margin: 6px 6px 0 0;
     padding: 6px 10px;
     border-radius: 999px;
-    background: #f4f9ff;
-    border: 1px solid #e0ebf7;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
     color: var(--muted);
     font-size: 12px;
   }
@@ -238,12 +238,12 @@
     padding: 12px 14px;
     border-radius: 12px;
     border: 1px solid var(--line);
-    background: #ffffff;
+    background: var(--panel);
   }
   #toast.show { display: block; }
   #toast.err { background: #fff4f4; border-color: rgba(224,92,92,.35); }
   .theme-toggle {
-    background: #eaf3ff;
+    background: var(--panel-2);
     color: var(--accent);
     border: 1px solid var(--line);
     padding: 8px 12px;
@@ -251,10 +251,7 @@
     font-size: 12px;
     white-space: nowrap;
   }
-  :root[data-theme="dark"] .theme-toggle {
-    background: #203147;
-    color: #d8e9ff;
-  }
+  :root[data-theme="dark"] #toast.err { background: #2f1a1a; }
   @media (max-width: 900px) {
     .layout { grid-template-columns: 1fr; }
     .hero-top { flex-direction: column; }

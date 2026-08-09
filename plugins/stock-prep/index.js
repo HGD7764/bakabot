@@ -30,7 +30,7 @@ module.exports = (context) => {
     fallbackToTpaOnDeliveryTimeout: true,
     postCollectTpaDelayMs: 800,
     postTpaAutoDeliverDelayMs: 3000,
-    postTpaAutoDeliverRetryMs: 4000,
+    postTpaAutoDeliverRetryMs: 25000,
     postTpaAutoDeliverMaxAttempts: 8,
     aliases: {
       dirt: 'dirt',
@@ -600,25 +600,16 @@ module.exports = (context) => {
     await sleep(500);
   };
 
-  const approachPlayer = async (playerName) => {
-    const player = bot.players && bot.players[playerName];
-    if (!player || !player.entity) throw new Error(`无法定位玩家 ${playerName}`);
-
-    if (bot.entity && bot.entity.position.distanceTo(player.entity.position) <= cfg.handoffDistance) {
-      return player.entity;
+  const waitForPlayerArrival = async (playerName, timeoutMs) => {
+    const started = Date.now();
+    while (Date.now() - started < timeoutMs) {
+      const player = bot.players && bot.players[playerName];
+      if (player && player.entity && bot.entity && bot.entity.position.distanceTo(player.entity.position) <= cfg.handoffDistance) {
+        return player.entity;
+      }
+      await sleep(200);
     }
-
-    if (!bot.pathfinder) throw new Error('未检测到寻路模块，请先启用 navigator 插件');
-
-    bot.pathfinder.setGoal(new GoalNear(
-      player.entity.position.x,
-      player.entity.position.y,
-      player.entity.position.z,
-      Math.max(1, Math.ceil(cfg.handoffDistance))
-    ));
-
-    await waitUntilNear(player.entity, cfg.handoffDistance, cfg.deliveryMoveTimeoutMs);
-    return player.entity;
+    throw new Error(`等待玩家接受 TPA 超时（>${Math.round(timeoutMs / 1000)} 秒）`);
   };
 
   const tossExact = async (itemName, count) => {
@@ -856,7 +847,15 @@ module.exports = (context) => {
     task.updatedAt = Date.now();
 
     try {
-      const targetEntity = await approachPlayer(task.targetPlayer);
+      if (!task.tpaSentAt || task.stage !== 'tpa') {
+        promptBeforeTpa(task);
+        sendTpaForTask(task);
+        task.tpaSentAt = Date.now();
+        task.tpaSource = source;
+        setTaskStage(task, 'tpa', '已发起传送，等待自动交付');
+      }
+
+      const targetEntity = await waitForPlayerArrival(task.targetPlayer, cfg.deliveryMoveTimeoutMs);
       if (typeof bot.lookAt === 'function') {
         await bot.lookAt(targetEntity.position.offset(0, 1.2, 0), true);
       }
@@ -1107,7 +1106,9 @@ module.exports = (context) => {
   };
 
   const scheduleAutoDeliver = (taskId, attempt = 1) => {
-    const delay = attempt === 1 ? cfg.postTpaAutoDeliverDelayMs : cfg.postTpaAutoDeliverRetryMs;
+    const delay = attempt === 1
+      ? cfg.postTpaAutoDeliverDelayMs
+      : Math.max(25000, Number(cfg.postTpaAutoDeliverRetryMs || 25000));
     setTimeout(() => {
       const task = taskById(taskId);
       if (!task || task.status === 'delivered' || task.status === 'cancelled' || task.status === 'failed') return;
@@ -1118,6 +1119,7 @@ module.exports = (context) => {
       deliverTask(taskId, `auto-after-tpa:${attempt}`).catch((err) => {
         task.lastError = err.message;
         if (attempt < cfg.postTpaAutoDeliverMaxAttempts) {
+          task.tpaSentAt = null;
           setTaskStage(task, 'tpa', `已发起传送，等待交付（重试 ${attempt}/${cfg.postTpaAutoDeliverMaxAttempts}）`);
           scheduleAutoDeliver(taskId, attempt + 1);
         } else {
