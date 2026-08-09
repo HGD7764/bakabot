@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { GoalNear } = require('mineflayer-pathfinder').goals;
+const { Vec3 } = require('vec3');
 const zhCnItems = require('../stock-prep/zh_cn_items.json');
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -153,6 +154,10 @@ module.exports = (context) => {
       .filter(Boolean);
   };
 
+  const warehouseContainerVec3s = () => normalizedWarehouseContainers()
+    .map((pos) => new Vec3(Number(pos.x), Number(pos.y), Number(pos.z)))
+    .filter((pos) => Number.isFinite(pos.x) && Number.isFinite(pos.y) && Number.isFinite(pos.z));
+
   const warehouseFocusPoint = () => {
     if (String(cfg.warehouseMode || 'area') === 'list') {
       return normalizedWarehouseContainers()[0] || null;
@@ -168,7 +173,7 @@ module.exports = (context) => {
   const warehouseContainerPositions = () => {
     const ids = blockIds(cfg.warehouseBlocks);
     if (String(cfg.warehouseMode || 'area') === 'list') {
-      return normalizedWarehouseContainers().filter((pos) => {
+      return warehouseContainerVec3s().filter((pos) => {
         const block = bot.blockAt(pos);
         return !!(block && ids.includes(block.type));
       });
