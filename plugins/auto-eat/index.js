@@ -192,7 +192,9 @@ module.exports = (context) => {
     }
     if (typeof bot.findBlocks !== 'function') return [];
     if (!ids.length) return [];
-    const center = bot.entity && bot.entity.position ? bot.entity.position : cfg.warehouseCenter;
+    const center = bot.entity && bot.entity.position
+      ? bot.entity.position
+      : new Vec3(Number(cfg.warehouseCenter.x || 0), Number(cfg.warehouseCenter.y || 0), Number(cfg.warehouseCenter.z || 0));
     const maxDistance = Math.max(Number(cfg.warehouseSize.x || 0), Number(cfg.warehouseSize.y || 0), Number(cfg.warehouseSize.z || 0)) + 8;
     try {
       return (bot.findBlocks({ point: center, matching: ids, maxDistance, count: cfg.maxStorageBlocksScan }) || []).filter(insideWarehouse);
