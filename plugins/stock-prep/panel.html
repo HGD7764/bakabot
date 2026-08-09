@@ -462,7 +462,7 @@
           ${task.lastError ? `<div class="error">${esc(task.lastError)}</div>` : ''}
           <div class="task-actions" style="margin-top:14px;">
             ${(task.status === 'ready' || task.status === 'pending') ? `<button onclick="deliverTask(${task.id})" ${task.status === 'pending' ? 'class="warn"' : ''}>立即交付</button>` : ''}
-            ${(task.status !== 'delivered' && task.status !== 'cancelled' && task.status !== 'delivering') ? `<button class="secondary" onclick="cancelTask(${task.id})">取消任务</button>` : ''}
+            ${(task.status !== 'delivered' && task.status !== 'cancelled') ? `<button class="secondary" onclick="cancelTask(${task.id})">取消任务</button>` : ''}
             ${(task.status === 'delivered' || task.status === 'cancelled') ? `<button class="danger" onclick="deleteTask(${task.id})">删除记录</button>` : ''}
           </div>
         </div>
