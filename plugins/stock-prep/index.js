@@ -149,6 +149,11 @@ module.exports = (context) => {
     return displayName || itemName;
   };
 
+  const registryItems = () => {
+    const registry = bot.registry && bot.registry.itemsByName ? bot.registry.itemsByName : {};
+    return Object.values(registry).filter((item) => item && item.name);
+  };
+
   const stockLookupMap = () => {
     const lookup = new Map();
     for (const entry of st.stock.items || []) {
@@ -196,17 +201,37 @@ module.exports = (context) => {
       };
     }
 
-    if (registry) {
-      const normalized = normalizeKey(raw);
-      for (const it of Object.values(registry)) {
-        if (normalizeKey(it.name) === normalized || normalizeKey(it.displayName || '') === normalized) {
-          return {
-            name: it.name,
-            displayName: preferredLabelForItem(it.name, it.displayName || it.name),
-            input: raw,
-          };
-        }
+    const normalized = normalizeKey(raw);
+    const candidates = registryItems();
+    for (const it of candidates) {
+      const labels = [
+        it.name,
+        it.displayName || '',
+        preferredLabelForItem(it.name, it.displayName || it.name),
+      ];
+      if (labels.some((value) => normalizeKey(value) === normalized)) {
+        return {
+          name: it.name,
+          displayName: preferredLabelForItem(it.name, it.displayName || it.name),
+          input: raw,
+        };
       }
+    }
+
+    const looseMatch = candidates.find((it) => {
+      const labels = [
+        it.name,
+        it.displayName || '',
+        preferredLabelForItem(it.name, it.displayName || it.name),
+      ].map((value) => normalizeKey(value));
+      return labels.some((value) => value && (value.includes(normalized) || normalized.includes(value)));
+    });
+    if (looseMatch) {
+      return {
+        name: looseMatch.name,
+        displayName: preferredLabelForItem(looseMatch.name, looseMatch.displayName || looseMatch.name),
+        input: raw,
+      };
     }
 
     if (/^[a-z0-9_]+$/.test(cleanName)) {
@@ -223,8 +248,7 @@ module.exports = (context) => {
   const taskById = (id) => st.tasks.find((task) => task.id === id);
 
   const itemPresets = () => {
-    const registry = bot.registry && bot.registry.itemsByName ? bot.registry.itemsByName : {};
-    return Object.values(registry)
+    return registryItems()
       .filter((item) => item && item.name)
       .map((item) => ({
         name: item.name,
