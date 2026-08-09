@@ -933,7 +933,7 @@ module.exports = (context) => {
     ) + 8;
     const center = bot.entity && bot.entity.position
       ? bot.entity.position
-      : cfg.warehouseCenter;
+      : new Vec3(Number(cfg.warehouseCenter.x || 0), Number(cfg.warehouseCenter.y || 0), Number(cfg.warehouseCenter.z || 0));
     try {
       return (bot.findBlocks({
         point: center,
