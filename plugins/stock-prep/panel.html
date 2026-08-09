@@ -17,6 +17,18 @@
     --warn: #d99b2b;
     --err: #e05c5c;
   }
+  :root[data-theme="dark"] {
+    --bg: #0f1722;
+    --panel: #162233;
+    --panel-2: #1b2a3f;
+    --line: #2a3a52;
+    --text: #e7eef8;
+    --muted: #8ea3ba;
+    --accent: #63a4ff;
+    --accent-2: #8bc2ff;
+    --warn: #f0b34f;
+    --err: #ef6b6b;
+  }
   * { box-sizing: border-box; }
   body {
     margin: 0;
@@ -35,6 +47,7 @@
     box-shadow: 0 16px 38px rgba(35,84,126,.08);
   }
   .hero { padding: 20px; margin-bottom: 18px; }
+  .hero-top { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
   .hero h1 { margin: 0 0 8px; font-size: 26px; }
   .sub { color: var(--muted); font-size: 14px; }
   .hero-grid, .stats, .task-head, .task-meta, .task-actions { display: flex; gap: 12px; flex-wrap: wrap; }
@@ -208,16 +221,35 @@
   }
   #toast.show { display: block; }
   #toast.err { background: #fff4f4; border-color: rgba(224,92,92,.35); }
+  .theme-toggle {
+    background: #eaf3ff;
+    color: var(--accent);
+    border: 1px solid var(--line);
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  :root[data-theme="dark"] .theme-toggle {
+    background: #203147;
+    color: #d8e9ff;
+  }
   @media (max-width: 900px) {
     .layout { grid-template-columns: 1fr; }
+    .hero-top { flex-direction: column; }
   }
 </style>
 </head>
 <body>
   <div class="wrap">
     <div class="hero">
-      <h1>备货中心</h1>
-      <div class="sub">在这里给机器人下达备货任务，实时看差多少，货齐后可自动或手动交付给指定玩家。</div>
+      <div class="hero-top">
+        <div>
+          <h1>备货中心</h1>
+          <div class="sub">在这里给机器人下达备货任务，实时看差多少，货齐后可自动或手动交付给指定玩家。</div>
+        </div>
+        <button class="theme-toggle" type="button" onclick="toggleTheme()">切换深色/浅色</button>
+      </div>
       <div class="stats">
         <div class="stat"><b id="statOpen">0</b><span>进行中任务</span></div>
         <div class="stat"><b id="statReady">0</b><span>已备齐</span></div>
@@ -357,6 +389,7 @@
 
 <script>
   const TOKEN_KEY = 'webManagerToken';
+  const THEME_KEY = 'bakabotTheme';
   const base = '/api/plugins/stock-prep';
   let currentSettings = null;
   let lastStatus = null;
@@ -385,6 +418,20 @@
 
   function esc(value) {
     return String(value).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  function applyTheme(theme) {
+    const next = theme === 'dark' ? 'dark' : 'light';
+    document.documentElement.dataset.theme = next;
+    localStorage.setItem(THEME_KEY, next);
+  }
+
+  function initTheme() {
+    applyTheme(localStorage.getItem(THEME_KEY) || 'light');
+  }
+
+  function toggleTheme() {
+    applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
   }
 
   function statusText(status) {
@@ -741,6 +788,7 @@
   refreshStatus();
   refreshSettings();
   setInterval(refreshStatus, 2000);
+  initTheme();
 </script>
 </body>
 </html>

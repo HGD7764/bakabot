@@ -10,6 +10,11 @@
     --text: #17324a; --muted: #6d8297; --accent: #2f80ed;
     --ok: #3fb96b; --warn: #e0a53c; --err: #e05c5c;
   }
+  :root[data-theme="dark"] {
+    --bg: #0f1722; --card: #162233; --border: #2a3a52;
+    --text: #e7eef8; --muted: #8ea3ba; --accent: #63a4ff;
+    --ok: #61d27a; --warn: #f0b34f; --err: #ef6b6b;
+  }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: radial-gradient(circle at top left, rgba(108,184,255,.24), transparent 24%), linear-gradient(180deg, #f9fcff, var(--bg)); color: var(--text); font-family: system-ui, "Microsoft YaHei", sans-serif; padding: 24px; }
   h1 { font-size: 22px; }
@@ -31,7 +36,7 @@
   .terminal { background: #ffffff; border: 1px solid var(--border); border-radius: 8px; padding: 10px; height: 280px; overflow-y: auto; font-family: Consolas, monospace; font-size: 12.5px; line-height: 1.7; box-shadow: inset 0 1px 0 rgba(255,255,255,.8); }
   .terminal .line { white-space: pre-wrap; word-break: break-all; }
   .terminal .line .time { color: #7b91a5; margin-right: 8px; }
-  .terminal .line.in { color: #d8dce6; }
+  .terminal .line.in { color: var(--text); }
   .terminal .line.out { color: var(--accent); }
   .terminal .line.whisper { color: var(--warn); }
   .terminal .line.system { color: var(--muted); font-style: italic; }
@@ -42,6 +47,7 @@
   button:disabled { opacity: .4; cursor: not-allowed; }
   button.secondary { background: #eaf3ff; color: var(--accent); }
   button.danger { background: var(--err); }
+  .theme-toggle { background: #eaf3ff; color: var(--accent); border: 1px solid var(--border); }
   .section { margin-top: 28px; }
   .hint { color: var(--muted); font-size: 12px; margin: 4px 0 10px; }
   textarea { width: 100%; background: #fbfdff; color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 10px; font-family: Consolas, monospace; font-size: 13px; resize: vertical; }
@@ -94,6 +100,40 @@
   #toast.show { display: block; }
   #toast.ok { border-color: var(--ok); color: var(--ok); }
   #toast.err { border-color: var(--err); color: var(--err); }
+  :root[data-theme="dark"] body { background: radial-gradient(circle at top left, rgba(99,164,255,.20), transparent 24%), linear-gradient(180deg, #101827, var(--bg)); }
+  :root[data-theme="dark"] .tile,
+  :root[data-theme="dark"] .modal-box,
+  :root[data-theme="dark"] #toast,
+  :root[data-theme="dark"] .terminal,
+  :root[data-theme="dark"] .inv-panel {
+    background: rgba(22,34,51,.96);
+    box-shadow: 0 16px 38px rgba(0,0,0,.24);
+  }
+  :root[data-theme="dark"] .ep-result,
+  :root[data-theme="dark"] .terminal-input input,
+  :root[data-theme="dark"] textarea,
+  :root[data-theme="dark"] select.ep-select,
+  :root[data-theme="dark"] .inv-slot,
+  :root[data-theme="dark"] .inv-ghost {
+    background: #122033;
+    color: var(--text);
+    border-color: var(--border);
+  }
+  :root[data-theme="dark"] .badge.ok,
+  :root[data-theme="dark"] .badge.warn,
+  :root[data-theme="dark"] .badge.muted {
+    background: rgba(255,255,255,.08);
+  }
+  :root[data-theme="dark"] .inv-slot {
+    border-color: #344862 #546a86 #546a86 #344862;
+  }
+  :root[data-theme="dark"] .inv-slot.selected { box-shadow: inset 0 0 0 2px var(--accent); }
+  :root[data-theme="dark"] .inv-tooltip {
+    background: rgba(22,34,51,.98);
+    color: var(--text);
+  }
+  :root[data-theme="dark"] .modal { background: rgba(0,0,0,.55); }
+  :root[data-theme="dark"] .theme-toggle { background: #203147; color: #d8e9ff; }
 </style>
 </head>
 <body>
@@ -103,6 +143,7 @@
     <span id="pm2Badge" class="badge ok" style="display:none">PM2 托管 · 重启后自动恢复</span>
     <span id="noSupervisorBadge" class="badge warn" style="display:none">未检测到进程管理器 · 重启后需手动启动</span>
     <div style="margin-left:auto; display:flex; gap:8px;">
+      <button class="theme-toggle" onclick="toggleTheme()">切换深色/浅色</button>
       <button onclick="refreshAll()">🔄 刷新</button>
       <button class="secondary" onclick="reloadAll()">📦 全部重载</button>
       <button class="danger" onclick="restartBot()">🔁 重启机器人</button>
@@ -217,6 +258,7 @@
 
 <script>
   const TOKEN_KEY = 'webManagerToken';
+  const THEME_KEY = 'bakabotTheme';
   let currentConfigName = null;
   let botConfigCache = null;
 
@@ -255,6 +297,20 @@
 
   function esc(s) {
     return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  function applyTheme(theme) {
+    const next = theme === 'dark' ? 'dark' : 'light';
+    document.documentElement.dataset.theme = next;
+    localStorage.setItem(THEME_KEY, next);
+  }
+
+  function initTheme() {
+    applyTheme(localStorage.getItem(THEME_KEY) || 'light');
+  }
+
+  function toggleTheme() {
+    applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
   }
 
   // ---- 状态栏 ----
@@ -852,6 +908,7 @@
 
   // ---- 初始化 ----
   buildInvSlots();
+  initTheme();
   refreshAll();
   setInterval(refreshStatus, 30000);
   setInterval(refreshTerminal, 2000);
