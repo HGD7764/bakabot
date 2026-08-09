@@ -173,6 +173,27 @@
     background: linear-gradient(90deg, var(--accent), var(--accent-2));
   }
   .progress-text { margin-top: 8px; font-size: 13px; color: var(--muted); }
+  .task-items {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .task-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 9px 11px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.55);
+    border: 1px solid rgba(216,230,245,.9);
+    font-size: 13px;
+  }
+  :root[data-theme="dark"] .task-item {
+    background: rgba(255,255,255,.04);
+    border-color: var(--line);
+  }
+  .task-item .meta { color: var(--muted); margin-top: 2px; font-size: 12px; }
   .error {
     margin-top: 10px;
     padding: 10px 12px;
@@ -485,12 +506,24 @@
 
     list.innerHTML = tasks.map((task) => {
       const percent = Math.max(0, Math.min(100, Math.round(task.progress * 100)));
-      const title = task.displayName && task.displayName !== task.itemName
+      const title = task.itemCount > 1
+        ? (task.displayName || task.itemName)
+        : (task.displayName && task.displayName !== task.itemName
         ? `${task.displayName} (${task.itemName})`
-        : task.itemName;
+        : task.itemName);
       const progressText = task.status === 'delivered'
         ? `已交付 ${task.requestedCount} / ${task.requestedCount}`
         : `当前 ${task.collectedCount} / ${task.requestedCount}，还差 ${task.remainingCount}`;
+      const queueText = task.queuePosition ? `第 ${task.queuePosition} 位` : '';
+      const itemRows = (task.items || []).map((item) => `
+        <div class="task-item">
+          <div>
+            <div>${esc(item.displayName || item.itemName)} <span class="meta">(${esc(item.itemName)})</span></div>
+            <div class="meta">目标 ${esc(item.requestedCount)} · 已备 ${esc(item.collectedCount)} · 还差 ${esc(item.remainingCount)}</div>
+          </div>
+          <div class="count">${esc(item.requestedCount)}</div>
+        </div>
+      `).join('');
       return `
         <div class="task">
           <div class="task-head" style="justify-content:space-between; align-items:flex-start;">
@@ -499,6 +532,8 @@
               <div class="task-meta">
                 <span>交付给 ${esc(task.targetPlayer)}</span>
                 <span>${task.autoDeliver ? '自动交付' : '手动交付'}</span>
+                ${task.itemCount > 1 ? `<span>合并 ${task.itemCount} 种物品</span>` : ''}
+                ${queueText ? `<span>${esc(queueText)}</span>` : ''}
                 ${task.stageLabel ? `<span>${esc(task.stageLabel)}</span>` : ''}
               </div>
             </div>
@@ -506,6 +541,7 @@
           </div>
           <div class="bar"><span style="width:${percent}%"></span></div>
           <div class="progress-text">${esc(progressText)}</div>
+          ${task.items && task.items.length ? `<div class="task-items">${itemRows}</div>` : ''}
           ${task.lastError ? `<div class="error">${esc(task.lastError)}</div>` : ''}
           <div class="task-actions" style="margin-top:14px;">
             ${(task.status === 'ready' || task.status === 'pending') ? `<button onclick="deliverTask(${task.id})" ${task.status === 'pending' ? 'class="warn"' : ''}>立即交付</button>` : ''}
@@ -725,12 +761,12 @@
     if (!item || !targetPlayer || !count) return toast('请把物品、数量、玩家都填完整', 'err');
 
     try {
-      await api(base + '/create', {
+      const result = await api(base + '/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ item, count, targetPlayer, autoDeliver }),
       });
-      toast('任务已创建');
+      toast(result.merged ? '任务已合并' : '任务已创建');
       document.getElementById('itemInput').value = '';
       document.getElementById('countInput').value = '64';
       refreshStatus();

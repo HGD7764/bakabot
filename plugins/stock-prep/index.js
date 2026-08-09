@@ -209,10 +209,6 @@ module.exports = (context) => {
     return null;
   };
 
-  const taskLabel = (task) => task.displayName && task.displayName !== task.itemName
-    ? `${task.displayName} (${task.itemName})`
-    : task.itemName;
-
   const taskById = (id) => st.tasks.find((task) => task.id === id);
 
   const itemPresets = () => {
@@ -224,6 +220,151 @@ module.exports = (context) => {
         displayName: preferredLabelForItem(item.name, item.displayName || item.name),
       }))
       .sort((a, b) => a.displayName.localeCompare(b.displayName, 'zh-CN'));
+  };
+
+  const taskTerminalStates = new Set(['delivered', 'cancelled', 'failed']);
+  const taskStateRank = (status) => ({
+    pending: 0,
+    collecting: 1,
+    ready: 2,
+    delivering: 3,
+    failed: 4,
+    cancelled: 5,
+    delivered: 6,
+  })[status] ?? 7;
+
+  const compareTasks = (a, b) => taskStateRank(a.status) - taskStateRank(b.status) ||
+    (a.createdAt || 0) - (b.createdAt || 0) ||
+    (a.id || 0) - (b.id || 0);
+
+  const isTaskTerminal = (task) => taskTerminalStates.has(String(task && task.status || ''));
+
+  const activeTasks = () => st.tasks.filter((task) => !isTaskTerminal(task)).sort(compareTasks);
+
+  const taskQueuePosition = (task) => {
+    const idx = activeTasks().findIndex((entry) => entry.id === task.id);
+    return idx >= 0 ? idx + 1 : null;
+  };
+
+  const normalizeTaskItems = (task) => {
+    if (!task) return [];
+    if (!Array.isArray(task.items) || !task.items.length) {
+      const itemName = String(task.itemName || '').trim();
+      const requestedCount = Math.max(0, Math.floor(Number(task.requestedCount || 0)));
+      if (itemName && requestedCount > 0) {
+        task.items = [{
+          itemName,
+          displayName: task.displayName || itemName,
+          requestedInput: task.requestedInput || itemName,
+          requestedCount,
+          collectedCount: Math.max(0, Math.floor(Number(task.collectedCount || 0))),
+        }];
+      } else {
+        task.items = [];
+      }
+    }
+
+    const merged = new Map();
+    for (const item of task.items) {
+      const itemName = String(item && (item.itemName || item.name) || '').trim();
+      const requestedCount = Math.max(0, Math.floor(Number(item && (item.requestedCount ?? item.count) || 0)));
+      if (!itemName || requestedCount <= 0) continue;
+      const existing = merged.get(itemName) || {
+        itemName,
+        displayName: String(item.displayName || item.label || itemName),
+        requestedInput: String(item.requestedInput || item.input || itemName),
+        requestedCount: 0,
+        collectedCount: 0,
+      };
+      existing.requestedCount += requestedCount;
+      existing.collectedCount += Math.max(0, Math.floor(Number(item && item.collectedCount || 0)));
+      if (!existing.displayName && (item.displayName || item.label)) existing.displayName = String(item.displayName || item.label);
+      if (!existing.requestedInput && (item.requestedInput || item.input)) existing.requestedInput = String(item.requestedInput || item.input);
+      merged.set(itemName, existing);
+    }
+
+    task.items = Array.from(merged.values());
+    return task.items;
+  };
+
+  const refreshTaskCounts = (task) => {
+    const items = normalizeTaskItems(task);
+    let requestedCount = 0;
+    let collectedCount = 0;
+
+    for (const item of items) {
+      const actualCount = Math.min(countInInventory(item.itemName), item.requestedCount);
+      item.collectedCount = actualCount;
+      requestedCount += item.requestedCount;
+      collectedCount += actualCount;
+    }
+
+    task.requestedCount = requestedCount;
+    task.collectedCount = collectedCount;
+    task.remainingCount = Math.max(0, requestedCount - collectedCount);
+    task.progress = requestedCount > 0 ? Math.min(1, collectedCount / requestedCount) : 0;
+
+    if (items.length) {
+      task.itemName = items[0].itemName;
+      task.requestedInput = items.length === 1
+        ? items[0].requestedInput
+        : items.map((item) => item.requestedInput).join(' + ');
+      const labels = items.slice(0, 3).map((item) => (
+        item.displayName && item.displayName !== item.itemName ? item.displayName : item.itemName
+      ));
+      task.displayName = items.length === 1
+        ? (items[0].displayName || items[0].itemName)
+        : `${labels.join('、')}${items.length > 3 ? '…' : ''}`;
+    }
+
+    return items;
+  };
+
+  const taskLabel = (task) => {
+    const items = refreshTaskCounts(task);
+    if (!items.length) return task.displayName && task.displayName !== task.itemName
+      ? `${task.displayName} (${task.itemName})`
+      : task.itemName || '未命名任务';
+    if (items.length === 1) {
+      return items[0].displayName && items[0].displayName !== items[0].itemName
+        ? `${items[0].displayName} (${items[0].itemName})`
+        : items[0].itemName;
+    }
+    const labels = items.slice(0, 3).map((item) => (
+      item.displayName && item.displayName !== item.itemName ? item.displayName : item.itemName
+    ));
+    return `${labels.join('、')}${items.length > 3 ? '…' : ''}（${items.length}种）`;
+  };
+
+  const taskDisplayLabel = (task) => taskLabel(task);
+
+  const findOpenTaskForPlayer = (playerName) => {
+    const target = String(playerName || '').trim();
+    if (!target) return null;
+    return activeTasks().find((task) => task.targetPlayer === target) || null;
+  };
+
+  const queueNoticeText = (task) => {
+    const queuePosition = taskQueuePosition(task);
+    if (!queuePosition || queuePosition <= 1) return `> 已收到你的备货申请：${taskDisplayLabel(task)} × ${task.requestedCount}。`;
+    return `> 已收到你的备货申请：${taskDisplayLabel(task)} × ${task.requestedCount}，你当前在队列第 ${queuePosition} 位。`;
+  };
+
+  const promptBeforeTpa = (task) => {
+    if (typeof bot.whisper !== 'function') return;
+    bot.whisper(task.targetPlayer, `> ${taskDisplayLabel(task)} 已备好，我准备发起传送送货，你现在方便接货吗？`);
+  };
+
+  const startTpaDelivery = (task, source = 'auto', force = false) => {
+    if (!task || task.status !== 'ready' || (!force && !task.autoDeliver)) return false;
+    if (task.tpaSentAt && task.stage === 'tpa') return false;
+    promptBeforeTpa(task);
+    sendTpaForTask(task);
+    task.tpaSentAt = Date.now();
+    task.tpaSource = source;
+    setTaskStage(task, 'tpa', '已发起传送，等待自动交付');
+    scheduleAutoDeliver(task.id, 1);
+    return true;
   };
 
   const insideWarehouse = (position) => {
@@ -289,9 +430,20 @@ module.exports = (context) => {
     collectedCount: task.collectedCount,
     remainingCount: Math.max(0, task.requestedCount - task.collectedCount),
     progress: task.requestedCount > 0 ? Math.min(1, task.collectedCount / task.requestedCount) : 0,
+    queuePosition: taskQueuePosition(task),
+    itemCount: Array.isArray(task.items) ? task.items.length : 0,
+    items: (task.items || []).map((item) => ({
+      itemName: item.itemName,
+      displayName: item.displayName,
+      requestedInput: item.requestedInput,
+      requestedCount: item.requestedCount,
+      collectedCount: Math.min(countInInventory(item.itemName), item.requestedCount),
+      remainingCount: Math.max(0, item.requestedCount - Math.min(countInInventory(item.itemName), item.requestedCount)),
+    })),
     status: task.status,
     stage: task.stage || null,
     stageLabel: task.stageLabel || null,
+    deliveryMode: task.deliveryMode || 'direct',
     autoDeliver: !!task.autoDeliver,
     lastError: task.lastError || null,
     createdAt: task.createdAt,
@@ -309,37 +461,52 @@ module.exports = (context) => {
   const reconcileTask = (task) => {
     if (!task || task.status === 'cancelled' || task.status === 'delivered' || task.status === 'failed') return;
 
-    task.collectedCount = countInInventory(task.itemName);
+    refreshTaskCounts(task);
     task.updatedAt = Date.now();
-    const enough = task.collectedCount >= task.requestedCount;
+    const enough = task.collectedCount >= task.requestedCount && task.requestedCount > 0;
+    const queuePosition = taskQueuePosition(task);
 
     if (st.activeDeliveryId === task.id) {
       task.status = 'delivering';
+      setTaskStage(task, 'delivering', '正在交付');
       return;
     }
 
     if (st.activeFulfillmentId === task.id || st.activeRequestId === task.id) {
       task.status = 'collecting';
+      setTaskStage(task, 'collect', '正在补货');
       return;
     }
 
     if (enough) {
       if (task.status !== 'ready') task.readyAt = Date.now();
       task.status = 'ready';
-      setTaskStage(task, 'ready', '已备齐，等待交付');
+      if (task.autoDeliver && task.deliveryMode === 'tpa' && !task.tpaSentAt) {
+        setTaskStage(task, 'queue', queuePosition && queuePosition > 1
+          ? `已备齐，排队第 ${queuePosition} 位`
+          : '已备齐，等待传送');
+      } else {
+        setTaskStage(task, 'ready', queuePosition && queuePosition > 1
+          ? `已备齐，排队第 ${queuePosition} 位`
+          : '已备齐，等待交付');
+      }
       return;
     }
 
     task.readyAt = null;
     task.status = 'pending';
-    if (!task.stage) setTaskStage(task, 'pending', '等待补货');
+    if (queuePosition && queuePosition > 1) {
+      setTaskStage(task, 'queue', `排队中，第 ${queuePosition} 位`);
+    } else if (!task.stage || task.stage === 'queue') {
+      setTaskStage(task, 'pending', '等待补货');
+    }
   };
 
   const reconcileAll = () => {
     for (const task of st.tasks) reconcileTask(task);
 
     if (!st.fulfillmentPromise) {
-      const nextNeed = st.tasks.find((task) => task.status === 'pending' || task.status === 'collecting');
+      const nextNeed = activeTasks().find((task) => task.status === 'pending' || task.status === 'collecting');
       if (nextNeed) {
         st.fulfillmentPromise = fulfillTask(nextNeed.id).catch((err) => {
           const task = taskById(nextNeed.id);
@@ -355,20 +522,35 @@ module.exports = (context) => {
     }
 
     if (!st.deliveryPromise) {
-      const next = st.tasks.find((task) => task.status === 'ready' && task.autoDeliver);
+      const next = activeTasks().find((task) => task.status === 'ready' && task.autoDeliver);
       if (next) {
-        const player = bot.players && bot.players[next.targetPlayer];
-        if ((!player || !player.entity) && next.stage !== 'tpa') {
-          next.lastError = null;
-          setTaskStage(next, 'tpa', '目标不在视线内，已发起传送');
-          try {
-            sendTpaForTask(next);
-            scheduleAutoDeliver(next.id, 1);
-          } catch (err) {
-            next.lastError = err.message;
-            setTaskStage(next, 'ready', '发起传送失败，等待重试');
+        if (next.stage === 'tpa') return;
+        if (next.deliveryMode === 'tpa') {
+          if (!next.tpaSentAt) {
+            next.lastError = null;
+            try {
+              startTpaDelivery(next, 'queue');
+            } catch (err) {
+              next.lastError = err.message;
+              setTaskStage(next, 'ready', '发起传送失败，等待重试');
+            }
+            return;
           }
-          return;
+        } else {
+          const player = bot.players && bot.players[next.targetPlayer];
+          if ((!player || !player.entity) && next.stage !== 'tpa') {
+            next.lastError = null;
+            setTaskStage(next, 'tpa', '目标不在视线内，已发起传送');
+            try {
+              promptBeforeTpa(next);
+              sendTpaForTask(next);
+              scheduleAutoDeliver(next.id, 1);
+            } catch (err) {
+              next.lastError = err.message;
+              setTaskStage(next, 'ready', '发起传送失败，等待重试');
+            }
+            return;
+          }
         }
         st.deliveryPromise = deliverTask(next.id, 'auto').finally(() => {
           st.deliveryPromise = null;
@@ -584,7 +766,7 @@ module.exports = (context) => {
     return Array.isArray(container.slots) ? container.slots.filter(Boolean) : [];
   };
 
-  const withdrawFromStorage = async (task, needed, allowRetry = true) => {
+  const withdrawFromStorage = async (task, item, needed, allowRetry = true) => {
     const positions = warehouseContainerPositions();
     if (!positions.length) return 0;
 
@@ -595,14 +777,14 @@ module.exports = (context) => {
       if (!block) continue;
 
       try {
-        setTaskStage(task, 'storage', `前往 ${block.name} 取货`);
+        setTaskStage(task, 'storage', `前往 ${block.name} 取 ${item.displayName || item.itemName}`);
         await approachBlock(block, 2);
         const container = await openContainerBlock(block);
         try {
-          const stack = containerItems(container).find((item) => item && item.name === task.itemName);
+          const stack = containerItems(container).find((slot) => slot && slot.name === item.itemName);
           if (!stack) continue;
           const amount = Math.min(needed - taken, stack.count);
-          setTaskStage(task, 'storage', `从 ${block.name} 取出 ${task.itemName} × ${amount}`);
+          setTaskStage(task, 'storage', `从 ${block.name} 取出 ${item.displayName || item.itemName} × ${amount}`);
           await container.withdraw(stack.type, stack.metadata, amount);
           taken += amount;
           await sleep(cfg.collectPauseMs);
@@ -615,9 +797,9 @@ module.exports = (context) => {
         if (allowRetry && isWarehouseStuckError(err)) {
           task.lastError = `仓库流程卡住，已执行回仓并重试: ${err.message}`;
           await recoverWarehouseStuck(task, '仓库取货卡住');
-          return taken + await withdrawFromStorage(task, needed - taken, false);
+          return taken + await withdrawFromStorage(task, item, needed - taken, false);
         }
-        task.lastError = `仓库取货失败: ${err.message}`;
+        task.lastError = `仓库取货失败: ${item.displayName || item.itemName} - ${err.message}`;
       }
     }
     return taken;
@@ -636,22 +818,22 @@ module.exports = (context) => {
     await moveToWarehouseCenter(task);
     if (task.status === 'cancelled') return summarizeTask(task);
 
-    const need = () => Math.max(0, task.requestedCount - countInInventory(task.itemName));
-
-    while (need() > 0) {
+    const items = normalizeTaskItems(task).slice();
+    for (const item of items) {
       if (task.status === 'cancelled') return summarizeTask(task);
-      const missing = need();
-      const pulled = await withdrawFromStorage(task, missing);
-      if (pulled > 0) {
-        task.collectedCount = countInInventory(task.itemName);
-        setTaskStage(task, 'storage', `已从仓库补到 ${task.collectedCount}/${task.requestedCount}`);
+      const need = () => Math.max(0, item.requestedCount - Math.min(countInInventory(item.itemName), item.requestedCount));
+      while (need() > 0) {
+        if (task.status === 'cancelled') return summarizeTask(task);
+        const missing = need();
+        const pulled = await withdrawFromStorage(task, item, missing);
+        refreshTaskCounts(task);
+        if (pulled > 0) {
+          setTaskStage(task, 'storage', `已从仓库补到 ${taskLabel(task)} ${task.collectedCount}/${task.requestedCount}`);
+        }
+        if (task.status === 'cancelled') return summarizeTask(task);
+        if (need() <= 0) break;
+        throw new Error(`仓库内没有足够的 ${item.displayName || item.itemName}，当前仍缺少 ${need()} 个`);
       }
-
-      if (task.status === 'cancelled') return summarizeTask(task);
-      if (need() <= 0) break;
-      throw new Error(`仓库内没有足够的 ${task.itemName}，当前仍缺少 ${need()} 个`);
-
-      await sleep(cfg.collectPauseMs);
     }
 
     reconcileTask(task);
@@ -678,8 +860,10 @@ module.exports = (context) => {
       if (typeof bot.lookAt === 'function') {
         await bot.lookAt(targetEntity.position.offset(0, 1.2, 0), true);
       }
-      await tossExact(task.itemName, task.requestedCount);
-      task.collectedCount = 0;
+      for (const item of normalizeTaskItems(task)) {
+        await tossExact(item.itemName, item.requestedCount);
+      }
+      task.collectedCount = task.requestedCount;
       task.status = 'delivered';
       setTaskStage(task, 'delivered', '已交付完成');
       task.deliveredAt = Date.now();
@@ -703,8 +887,7 @@ module.exports = (context) => {
       if (shouldFallbackToTpa) {
         task.lastError = null;
         setTaskStage(task, 'tpa', '寻路超时，已改为传送送货');
-        sendTpaForTask(task);
-        scheduleAutoDeliver(task.id, 1);
+        startTpaDelivery(task, 'fallback', true);
         if (typeof bot.whisper === 'function') {
           bot.whisper(task.targetPlayer, `> 送货路上卡住了，已改为向你发起传送并继续自动交付 ${taskLabel(task)} × ${task.requestedCount}。`);
         }
@@ -721,10 +904,6 @@ module.exports = (context) => {
   }
 
   const createTask = (payload) => {
-    if (st.tasks.filter((task) => task.status !== 'delivered' && task.status !== 'cancelled').length >= cfg.maxTasks) {
-      throw new Error(`任务过多，最多保留 ${cfg.maxTasks} 个未结束任务`);
-    }
-
     const item = resolveItem(payload.item);
     if (!item) throw new Error('无法识别物品，请填写原版物品 ID 或在配置里增加别名');
 
@@ -736,29 +915,87 @@ module.exports = (context) => {
     const targetPlayer = String(payload.targetPlayer || '').trim();
     if (!targetPlayer) throw new Error('目标玩家不能为空');
 
-    const task = {
-      id: st.nextId++,
-      itemName: item.name,
-      displayName: item.displayName,
-      requestedInput: item.input,
-      targetPlayer,
-      requestedCount,
-      collectedCount: 0,
-      status: 'pending',
-      stage: 'pending',
-      stageLabel: '等待补货',
-      autoDeliver: payload.autoDeliver == null ? !!cfg.autoDeliverByDefault : !!payload.autoDeliver,
-      lastError: null,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-      readyAt: null,
-      deliveredAt: null,
-    };
+    const autoDeliver = payload.autoDeliver == null ? !!cfg.autoDeliverByDefault : !!payload.autoDeliver;
+    const deliveryMode = String(payload.deliveryMode || 'direct').trim().toLowerCase() === 'tpa' ? 'tpa' : 'direct';
+    const existingTask = findOpenTaskForPlayer(targetPlayer);
+    const canMerge = !!existingTask && existingTask.status !== 'delivering';
+    let task = existingTask;
+    let merged = false;
 
-    reconcileTask(task);
-    st.tasks.unshift(task);
-    console.log(`[stock-prep] 新任务 #${task.id}: ${taskLabel(task)} x${task.requestedCount} -> ${task.targetPlayer}`);
-    return summarizeTask(task);
+    if (canMerge) {
+      const items = normalizeTaskItems(task);
+      const sameItem = items.find((entry) => entry.itemName === item.name);
+      if (sameItem) {
+        sameItem.requestedCount += requestedCount;
+      } else {
+        items.push({
+          itemName: item.name,
+          displayName: item.displayName,
+          requestedInput: item.input,
+          requestedCount,
+          collectedCount: 0,
+        });
+      }
+      task.autoDeliver = task.autoDeliver || autoDeliver;
+      task.deliveryMode = task.deliveryMode === 'tpa' || deliveryMode === 'tpa' ? 'tpa' : 'direct';
+      task.lastError = null;
+      task.updatedAt = Date.now();
+      refreshTaskCounts(task);
+      reconcileTask(task);
+      merged = true;
+    } else {
+      const openTaskCount = st.tasks.filter((entry) => !isTaskTerminal(entry) && entry.status !== 'delivering').length;
+      if (openTaskCount >= cfg.maxTasks) {
+        throw new Error(`任务过多，最多保留 ${cfg.maxTasks} 个未结束任务`);
+      }
+
+      task = {
+        id: st.nextId++,
+        itemName: item.name,
+        displayName: item.displayName,
+        requestedInput: item.input,
+        targetPlayer,
+        items: [{
+          itemName: item.name,
+          displayName: item.displayName,
+          requestedInput: item.input,
+          requestedCount,
+          collectedCount: 0,
+        }],
+        requestedCount,
+        collectedCount: 0,
+        remainingCount: requestedCount,
+        progress: 0,
+        status: 'pending',
+        stage: 'pending',
+        stageLabel: '等待补货',
+        autoDeliver,
+        deliveryMode,
+        lastError: null,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        readyAt: null,
+        deliveredAt: null,
+        tpaSentAt: null,
+      };
+
+      st.tasks.unshift(task);
+      refreshTaskCounts(task);
+      reconcileTask(task);
+    }
+
+    const queuePosition = taskQueuePosition(task);
+    const display = taskDisplayLabel(task);
+    console.log(`[stock-prep] ${merged ? '合并任务' : '新任务'} #${task.id}: ${display} x${task.requestedCount} -> ${task.targetPlayer}`);
+
+    if (payload.notifyPlayer && typeof bot.whisper === 'function') {
+      bot.whisper(targetPlayer, merged
+        ? `> 已把 ${display} 合并到你的任务里，当前总计 ${task.requestedCount} 个。${queuePosition && queuePosition > 1 ? `你当前在队列第 ${queuePosition} 位。` : ''}`
+        : queueNoticeText(task));
+    }
+
+    reconcileAll();
+    return { task: summarizeTask(task), merged, queuePosition };
   };
 
   const removeTask = (id) => {
@@ -794,7 +1031,7 @@ module.exports = (context) => {
           visible: !!p.entity,
         }))
         .sort((a, b) => a.username.localeCompare(b.username)),
-      tasks: st.tasks.map(summarizeTask),
+      tasks: st.tasks.slice().sort(compareTasks).map(summarizeTask),
       aliases: cfg.aliases,
       warehouseMode: cfg.warehouseMode,
       warehouseBlocks: cfg.warehouseBlocks,
@@ -884,6 +1121,7 @@ module.exports = (context) => {
           setTaskStage(task, 'tpa', `已发起传送，等待交付（重试 ${attempt}/${cfg.postTpaAutoDeliverMaxAttempts}）`);
           scheduleAutoDeliver(taskId, attempt + 1);
         } else {
+          task.tpaSentAt = null;
           setTaskStage(task, 'ready', '传送后自动交付超时，请手动补发');
         }
       });
@@ -891,52 +1129,20 @@ module.exports = (context) => {
   };
 
   const requestByCommand = async (username, itemInput, countInput) => {
-    const item = resolveItem(itemInput);
-    if (!item) throw new Error('无法识别物品，请使用原版物品 ID');
-    const count = Math.floor(Number(countInput));
-    if (!Number.isInteger(count) || count <= 0) throw new Error('数量必须是正整数');
-
-    const task = {
-      id: st.nextId++,
-      itemName: item.name,
-      displayName: item.displayName,
-      requestedInput: item.input,
-      targetPlayer: username,
-      requestedCount: count,
-      collectedCount: 0,
-      status: 'collecting',
-      stage: 'storage',
-      stageLabel: '正在仓库查找',
-      autoDeliver: true,
-      lastError: null,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-      readyAt: null,
-      deliveredAt: null,
-    };
-
-    st.tasks.unshift(task);
-    st.activeRequestId = task.id;
     try {
-      await fulfillTask(task.id);
-      task.collectedCount = countInInventory(task.itemName);
-      task.status = 'ready';
-      task.readyAt = Date.now();
-      setTaskStage(task, 'ready', '已找到物品，准备发起 TPA');
-      await sleep(Math.max(0, Number(cfg.postCollectTpaDelayMs || 0)));
-      sendTpaForTask(task);
-      setTaskStage(task, 'tpa', '已发起传送，等待自动交付');
-      scheduleAutoDeliver(task.id, 1);
-      bot.whisper(username, `> 已在仓库找到 ${task.displayName} × ${task.requestedCount}，已向你发起传送并准备自动交付。`);
-      return summarizeTask(task);
+      return createTask({
+        item: itemInput,
+        count: countInput,
+        targetPlayer: username,
+        autoDeliver: true,
+        deliveryMode: 'tpa',
+        notifyPlayer: true,
+      });
     } catch (err) {
-      task.status = 'failed';
-      task.lastError = err.message;
-      setTaskStage(task, 'failed', `仓库未找到足够物品：${err.message}`);
-      bot.whisper(username, `> 仓库里暂时没有足够的 ${item.name} × ${count}。${err.message}`);
+      if (typeof bot.whisper === 'function') {
+        bot.whisper(username, `> ${err.message}`);
+      }
       throw err;
-    } finally {
-      st.activeRequestId = null;
     }
   };
 
@@ -1027,8 +1233,8 @@ module.exports = (context) => {
   });
 
   ep('POST', 'create', (req, res, url, body) => {
-    const task = createTask(jsonBody(body) || {});
-    ok(res, { task });
+    const result = createTask(jsonBody(body) || {});
+    ok(res, result);
   });
 
   ep('POST', 'cancel', (req, res, url, body) => {
@@ -1078,7 +1284,6 @@ module.exports = (context) => {
     description: '仓库申请物品: !iwant <物品id> <数量>',
     execute: (username, args) => {
       if (args.length < 2) return bot.whisper(username, '> 用法: !iwant <物品id> <数量>');
-      if (st.activeRequestId) return bot.whisper(username, '> 当前已有一个仓库申请正在处理中，请稍后再试。');
       requestByCommand(username, args[0], args[1]).catch(() => {});
     },
   });
