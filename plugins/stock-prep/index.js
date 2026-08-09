@@ -22,6 +22,7 @@ module.exports = (context) => {
     warehouseCenter: { x: 0, y: 64, z: 0 },
     warehouseSize: { x: 16, y: 8, z: 16 },
     tpaCommand: '/tpa {player}',
+    homeCommand: '/home',
     fallbackToTpaOnDeliveryTimeout: true,
     postTpaAutoDeliverDelayMs: 3000,
     postTpaAutoDeliverRetryMs: 4000,
@@ -88,6 +89,7 @@ module.exports = (context) => {
       warehouseCenter: cfg.warehouseCenter,
       warehouseSize: cfg.warehouseSize,
       tpaCommand: cfg.tpaCommand,
+      homeCommand: cfg.homeCommand,
       fallbackToTpaOnDeliveryTimeout: cfg.fallbackToTpaOnDeliveryTimeout,
       aliases: cfg.aliases,
     }, null, 2));
@@ -583,6 +585,7 @@ module.exports = (context) => {
         await bot.lookAt(targetEntity.position.offset(0, 1.2, 0), true);
       }
       await tossExact(task.itemName, task.requestedCount);
+      sendHome();
       task.collectedCount = 0;
       task.status = 'delivered';
       setTaskStage(task, 'delivered', '已交付完成');
@@ -712,6 +715,7 @@ module.exports = (context) => {
     warehouseSize: cfg.warehouseSize,
     warehouseBlocks: cfg.warehouseBlocks,
     tpaCommand: cfg.tpaCommand,
+    homeCommand: cfg.homeCommand,
     fallbackToTpaOnDeliveryTimeout: cfg.fallbackToTpaOnDeliveryTimeout,
     maxStorageBlocksScan: cfg.maxStorageBlocksScan,
   });
@@ -734,6 +738,13 @@ module.exports = (context) => {
     if (!tpaCommand) throw new Error('tpaCommand 未配置');
     bot.chat(tpaCommand);
     return tpaCommand;
+  };
+
+  const sendHome = () => {
+    const homeCommand = String(cfg.homeCommand || '/home').trim();
+    if (!homeCommand) throw new Error('homeCommand 未配置');
+    bot.chat(homeCommand);
+    return homeCommand;
   };
 
   const scheduleAutoDeliver = (taskId, attempt = 1) => {
@@ -846,7 +857,7 @@ module.exports = (context) => {
 
   ep('PUT', 'settings', (req, res, url, body) => {
     const payload = jsonBody(body) || {};
-    const { warehouseCenter, warehouseSize, warehouseBlocks, tpaCommand, fallbackToTpaOnDeliveryTimeout, maxStorageBlocksScan } = payload;
+    const { warehouseCenter, warehouseSize, warehouseBlocks, tpaCommand, homeCommand, fallbackToTpaOnDeliveryTimeout, maxStorageBlocksScan } = payload;
 
     const parseAxisGroup = (value, label) => {
       if (!value || typeof value !== 'object') throw new Error(`${label} 必须是对象`);
@@ -872,6 +883,10 @@ module.exports = (context) => {
     if (tpaCommand !== undefined) {
       if (typeof tpaCommand !== 'string' || !tpaCommand.trim()) throw new Error('tpaCommand 不能为空');
       cfg.tpaCommand = tpaCommand.trim();
+    }
+    if (homeCommand !== undefined) {
+      if (typeof homeCommand !== 'string' || !homeCommand.trim()) throw new Error('homeCommand 不能为空');
+      cfg.homeCommand = homeCommand.trim();
     }
     if (fallbackToTpaOnDeliveryTimeout !== undefined) {
       cfg.fallbackToTpaOnDeliveryTimeout = !!fallbackToTpaOnDeliveryTimeout;

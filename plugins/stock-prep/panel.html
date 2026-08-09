@@ -279,6 +279,8 @@
         <input id="maxStorageBlocksScanInput" type="number" min="1" step="1">
         <label for="tpaCommandInput">TPA 指令模板</label>
         <input id="tpaCommandInput" placeholder="/tpa {player}">
+        <label for="homeCommandInput">回仓指令</label>
+        <input id="homeCommandInput" placeholder="/home">
         <div class="task-actions" style="margin-top:14px;">
           <button onclick="saveSettings()">保存仓库设置</button>
         </div>
@@ -515,6 +517,7 @@
     document.getElementById('sizeZ').value = settings.warehouseSize.z;
     document.getElementById('warehouseBlocksInput').value = (settings.warehouseBlocks || []).join(', ');
     document.getElementById('tpaCommandInput').value = settings.tpaCommand || '';
+    document.getElementById('homeCommandInput').value = settings.homeCommand || '/home';
     document.getElementById('maxStorageBlocksScanInput').value = settings.maxStorageBlocksScan || 1;
   }
 
@@ -561,6 +564,7 @@
         .map((v) => v.trim())
         .filter(Boolean),
       tpaCommand: document.getElementById('tpaCommandInput').value.trim(),
+      homeCommand: document.getElementById('homeCommandInput').value.trim(),
       maxStorageBlocksScan: Number(document.getElementById('maxStorageBlocksScanInput').value),
     };
 
