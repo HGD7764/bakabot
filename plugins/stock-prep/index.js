@@ -16,6 +16,7 @@ module.exports = (context) => {
     deliveryMoveTimeoutMs: 25000,
     blockApproachDistance: 2,
     collectPauseMs: 400,
+    containerOpenTimeoutMs: 8000,
     maxTasks: 50,
     maxStorageBlocksScan: 128,
     warehouseMode: 'area',
@@ -26,6 +27,7 @@ module.exports = (context) => {
     tpaCommand: '/tpa {player}',
     homeCommand: '/home',
     fallbackToTpaOnDeliveryTimeout: true,
+    postCollectTpaDelayMs: 800,
     postTpaAutoDeliverDelayMs: 3000,
     postTpaAutoDeliverRetryMs: 4000,
     postTpaAutoDeliverMaxAttempts: 8,
@@ -85,6 +87,7 @@ module.exports = (context) => {
       deliveryMoveTimeoutMs: cfg.deliveryMoveTimeoutMs,
       blockApproachDistance: cfg.blockApproachDistance,
       collectPauseMs: cfg.collectPauseMs,
+      containerOpenTimeoutMs: cfg.containerOpenTimeoutMs,
       maxTasks: cfg.maxTasks,
       maxStorageBlocksScan: cfg.maxStorageBlocksScan,
       warehouseMode: cfg.warehouseMode,
@@ -95,6 +98,7 @@ module.exports = (context) => {
       tpaCommand: cfg.tpaCommand,
       homeCommand: cfg.homeCommand,
       fallbackToTpaOnDeliveryTimeout: cfg.fallbackToTpaOnDeliveryTimeout,
+      postCollectTpaDelayMs: cfg.postCollectTpaDelayMs,
       aliases: cfg.aliases,
     }, null, 2));
   };
@@ -348,6 +352,19 @@ module.exports = (context) => {
     if (!st.deliveryPromise) {
       const next = st.tasks.find((task) => task.status === 'ready' && task.autoDeliver);
       if (next) {
+        const player = bot.players && bot.players[next.targetPlayer];
+        if ((!player || !player.entity) && next.stage !== 'tpa') {
+          next.lastError = null;
+          setTaskStage(next, 'tpa', '目标不在视线内，已发起传送');
+          try {
+            sendTpaForTask(next);
+            scheduleAutoDeliver(next.id, 1);
+          } catch (err) {
+            next.lastError = err.message;
+            setTaskStage(next, 'ready', '发起传送失败，等待重试');
+          }
+          return;
+        }
         st.deliveryPromise = deliverTask(next.id, 'auto').finally(() => {
           st.deliveryPromise = null;
         });
@@ -465,6 +482,7 @@ module.exports = (context) => {
   };
 
   const scanWarehouseInventory = async (reason = 'manual') => {
+    const allowRetry = !String(reason).includes(':retry');
     if (st.stock.scanning) {
       return {
         items: st.stock.items,
@@ -505,6 +523,7 @@ module.exports = (context) => {
             }
           }
         } catch (err) {
+          if (isWarehouseStuckError(err)) throw err;
           st.stock.lastError = `扫描 ${block.name} 失败: ${err.message}`;
         }
       }
@@ -517,6 +536,13 @@ module.exports = (context) => {
         scannedAt: st.stock.scannedAt,
         lastError: st.stock.lastError,
       };
+    } catch (err) {
+      if (allowRetry && isWarehouseStuckError(err)) {
+        st.stock.lastError = `扫描卡住，已执行回仓并重试: ${err.message}`;
+        await recoverWarehouseStuck(null, '仓库扫描卡住');
+        return scanWarehouseInventory(`${reason}:retry`);
+      }
+      throw err;
     } finally {
       st.stock.scanning = false;
     }
@@ -535,9 +561,15 @@ module.exports = (context) => {
   };
 
   const openContainerBlock = async (block) => {
-    if (typeof bot.openContainer === 'function') return bot.openContainer(block);
-    if (typeof bot.openChest === 'function') return bot.openChest(block);
-    throw new Error('当前机器人不支持打开容器');
+    const opener = typeof bot.openContainer === 'function'
+      ? () => bot.openContainer(block)
+      : (typeof bot.openChest === 'function' ? () => bot.openChest(block) : null);
+    if (!opener) throw new Error('当前机器人不支持打开容器');
+    const timeoutMs = Math.max(1000, Number(cfg.containerOpenTimeoutMs || 8000));
+    return Promise.race([
+      opener(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error(`打开容器超时（>${Math.round(timeoutMs / 1000)} 秒）`)), timeoutMs)),
+    ]);
   };
 
   const containerItems = (container) => {
@@ -547,7 +579,7 @@ module.exports = (context) => {
     return Array.isArray(container.slots) ? container.slots.filter(Boolean) : [];
   };
 
-  const withdrawFromStorage = async (task, needed) => {
+  const withdrawFromStorage = async (task, needed, allowRetry = true) => {
     const positions = warehouseContainerPositions();
     if (!positions.length) return 0;
 
@@ -575,6 +607,11 @@ module.exports = (context) => {
           }
         }
       } catch (err) {
+        if (allowRetry && isWarehouseStuckError(err)) {
+          task.lastError = `仓库流程卡住，已执行回仓并重试: ${err.message}`;
+          await recoverWarehouseStuck(task, '仓库取货卡住');
+          return taken + await withdrawFromStorage(task, needed - taken, false);
+        }
         task.lastError = `仓库取货失败: ${err.message}`;
       }
     }
@@ -592,10 +629,12 @@ module.exports = (context) => {
     setTaskStage(task, 'collect', '开始补货');
     reconcileTask(task);
     await moveToWarehouseCenter(task);
+    if (task.status === 'cancelled') return summarizeTask(task);
 
     const need = () => Math.max(0, task.requestedCount - countInInventory(task.itemName));
 
     while (need() > 0) {
+      if (task.status === 'cancelled') return summarizeTask(task);
       const missing = need();
       const pulled = await withdrawFromStorage(task, missing);
       if (pulled > 0) {
@@ -603,6 +642,7 @@ module.exports = (context) => {
         setTaskStage(task, 'storage', `已从仓库补到 ${task.collectedCount}/${task.requestedCount}`);
       }
 
+      if (task.status === 'cancelled') return summarizeTask(task);
       if (need() <= 0) break;
       throw new Error(`仓库内没有足够的 ${task.itemName}，当前仍缺少 ${need()} 个`);
 
@@ -634,12 +674,16 @@ module.exports = (context) => {
         await bot.lookAt(targetEntity.position.offset(0, 1.2, 0), true);
       }
       await tossExact(task.itemName, task.requestedCount);
-      sendHome();
       task.collectedCount = 0;
       task.status = 'delivered';
       setTaskStage(task, 'delivered', '已交付完成');
       task.deliveredAt = Date.now();
       task.updatedAt = task.deliveredAt;
+      try {
+        sendHome();
+      } catch (homeErr) {
+        task.lastError = `已送达，但回仓失败: ${homeErr.message}`;
+      }
       console.log(`[stock-prep] 任务 #${task.id} 已交付给 ${task.targetPlayer}: ${taskLabel(task)} x${task.requestedCount} (${source})`);
       if (typeof bot.whisper === 'function') {
         bot.whisper(task.targetPlayer, `> 你的备货已送达：${taskLabel(task)} × ${task.requestedCount}`);
@@ -724,6 +768,8 @@ module.exports = (context) => {
     const task = taskById(id);
     if (!task) throw new Error('任务不存在');
     if (st.activeDeliveryId === id) throw new Error('任务正在交付中，不能取消');
+    if (st.activeFulfillmentId === id) st.activeFulfillmentId = null;
+    if (st.activeRequestId === id) st.activeRequestId = null;
     task.status = 'cancelled';
     setTaskStage(task, 'cancelled', '任务已取消');
     task.lastError = null;
@@ -781,6 +827,21 @@ module.exports = (context) => {
     return result;
   };
 
+  const runChatCommand = (command, label) => {
+    const text = String(command || '').trim();
+    if (!text) throw new Error(`${label} 未配置`);
+    if (typeof bot.chat !== 'function') throw new Error(`当前机器人无法执行${label}`);
+    bot.chat(text);
+    return text;
+  };
+
+  const isWarehouseStuckError = (err) => {
+    const message = String((err && err.message) || '');
+    return message.includes('前往仓库超时') ||
+      message.includes('接近容器超时') ||
+      message.includes('打开容器超时');
+  };
+
   const sendTpaForTask = (task) => {
     const tpaCommand = fillTemplate(cfg.tpaCommand, {
       player: task.targetPlayer,
@@ -788,16 +849,19 @@ module.exports = (context) => {
       item: task.itemName,
       count: task.requestedCount,
     }).trim();
-    if (!tpaCommand) throw new Error('tpaCommand 未配置');
-    bot.chat(tpaCommand);
-    return tpaCommand;
+    task.updatedAt = Date.now();
+    return runChatCommand(tpaCommand, 'TPA 指令');
   };
 
   const sendHome = () => {
     const homeCommand = String(cfg.homeCommand || '/home').trim();
-    if (!homeCommand) throw new Error('homeCommand 未配置');
-    bot.chat(homeCommand);
-    return homeCommand;
+    return runChatCommand(homeCommand, '回仓指令');
+  };
+
+  const recoverWarehouseStuck = async (task = null, label = '仓库流程卡住') => {
+    if (task) setTaskStage(task, 'home', `${label}，正在回仓`);
+    sendHome();
+    await sleep(2000);
   };
 
   const scheduleAutoDeliver = (taskId, attempt = 1) => {
@@ -850,8 +914,11 @@ module.exports = (context) => {
     st.activeRequestId = task.id;
     try {
       await fulfillTask(task.id);
+      task.collectedCount = countInInventory(task.itemName);
       task.status = 'ready';
-      setTaskStage(task, 'tpa', '已找到物品，准备 TPA');
+      task.readyAt = Date.now();
+      setTaskStage(task, 'ready', '已找到物品，准备发起 TPA');
+      await sleep(Math.max(0, Number(cfg.postCollectTpaDelayMs || 0)));
       sendTpaForTask(task);
       setTaskStage(task, 'tpa', '已发起传送，等待自动交付');
       scheduleAutoDeliver(task.id, 1);
