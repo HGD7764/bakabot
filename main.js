@@ -1,4 +1,4 @@
-// main.js (新版本)
+// main.js
 
 const mineflayer = require('mineflayer');
 const fs = require('fs');
@@ -78,6 +78,15 @@ const context = {
 };
 context.permissions = new PermissionManager(path.join(__dirname, 'permissions.json'));
 
+const configPath = path.join(__dirname, 'config.json');
+let bot = null;
+const botLifecycle = {
+  loading: false,
+  pendingReconnect: null,
+  manualDisconnect: false,
+  currentBot: null,
+};
+
 // --- 新增: 预创建 Web 管理注册表 ---
 // 在插件加载前创建，保证任何插件（无论加载顺序）都能通过 context.webManager
 // 注册自己的磁贴和自定义 API 端点；web-manager 插件启动后统一挂载。
@@ -129,147 +138,208 @@ context.webManager = {
   },
 };
 
-// --- 3. 创建 Mineflayer Bot 实例（支持自动重连重建） ---
 const pluginsDir = path.join(__dirname, 'plugins');
 
-// 清空全部插件的 require 缓存：自动重连重建时让插件以新 bot 重新执行；
-// 首次加载时缓存为空，无副作用。
-function clearPluginCache() {
-  if (!Array.isArray(config.plugins)) return;
-  for (const name of config.plugins) {
-    const prefix = path.resolve(path.join(pluginsDir, name)) + path.sep;
-    for (const key of Object.keys(require.cache)) {
-      if (key.startsWith(prefix)) delete require.cache[key];
-    }
-    try { delete require.cache[require.resolve(path.join(pluginsDir, name, 'index.js'))]; } catch (err) { /* 插件目录可能不存在 */ }
+const clearPluginCache = (pluginName) => {
+  const dirPrefix = path.resolve(pluginsDir, pluginName) + path.sep;
+  for (const key of Object.keys(require.cache)) {
+    if (key.startsWith(dirPrefix)) delete require.cache[key];
   }
-}
-
-// 创建 bot 并挂接框架各部件（补丁 → 日志钩子 → 命令管理器 → 插件 → 核心事件）。
-// 自动重连时重复调用：旧 bot 已 'end'，新 bot 重新走完整流程。
-function startBot() {
-console.log('正在连接到服务器...');
-try {
-  context.bot = mineflayer.createBot(config.bot);
-} catch (err) {
-  logger.error('boot', `创建机器人时出错: ${err.stack || err}`);
-  console.error('创建机器人时出错:', err);
-  process.exit(1);
-}
-const bot = context.bot;
-
-// 修复 1.21.11 协议 bug：minecraft-data 把 chat_command_signed 的 checksum 标成 i8
-// （-128..127），但 minecraft-protocol 计算的校验值是 0-255（如 136），写包抛
-// RangeError → 连接损坏 → 服务器以 "An internal error occurred" 踢出（/tpa 等指令
-// 必触发）。真实线上字段就是一个字节，转成有符号字节后线上字节完全不变。
-{
-  const origWrite = bot._client.write.bind(bot._client);
-  bot._client.write = (name, params) => {
-    if (name === 'chat_command_signed' && params && typeof params.checksum === 'number' && params.checksum > 127) {
-      params.checksum -= 256; // 0x88(136) 与 0x88(-120) 在线上是同一个字节
-    }
-    return origWrite(name, params);
-  };
-}
-
-// 挂接日志钩子：记录所有消息收发（公屏/私信/系统）与可选的包级调试日志
-logger.installBotHooks(bot);
-
-// --- 新增: 实例化并挂载命令管理器 ---
-// 在 bot 实例化后，插件加载前，创建 CommandManager
-// 触发方式由 config.commandTrigger 控制: 'whisper'（私信，默认）/ 'chat'（公屏）
-const commandTrigger = config.commandTrigger === 'chat' ? 'chat' : 'whisper';
-context.commands = new CommandManager(bot, context.permissions, config.commandPrefix || '!', commandTrigger);
-
-// --- 4. 插件加载器 (新版本) ---
-// 自动重连重建时先清缓存，确保插件以新 bot 重新执行
-clearPluginCache();
-console.log('正在加载插件...');
-if (config.plugins && Array.isArray(config.plugins)) {
-  config.plugins.forEach(pluginName => {
-    const pluginDir = path.join(pluginsDir, pluginName);
-    const pluginIndexFile = path.join(pluginDir, 'index.js');
-    const pluginConfigFile = path.join(pluginDir, 'config.json');
-
-    if (fs.existsSync(pluginIndexFile)) {
-      try {
-        // --- 新增：加载插件的独立配置 ---
-        let pluginConfig = {};
-        if (fs.existsSync(pluginConfigFile)) {
-          try {
-            pluginConfig = JSON.parse(fs.readFileSync(pluginConfigFile, 'utf8'));
-            console.log(`[PluginLoader] 已为插件 '${pluginName}' 加载配置文件。`);
-          } catch (configErr) {
-            logger.error('plugin', `解析插件 '${pluginName}' 的 config.json 时出错: ${configErr.stack || configErr}`);
-            console.error(`[PluginLoader] 解析插件 '${pluginName}' 的 config.json 时出错:`, configErr);
-          }
-        }
-
-        // 将插件配置添加到传递给插件的上下文中
-        const pluginContext = {
-          ...context, // 继承主上下文
-          pluginConfig: pluginConfig, // 添加插件自己的配置
-          pluginName: pluginName // 方便插件知道自己的名字
-        };
-
-        const plugin = require(pluginIndexFile);
-        if (typeof plugin === 'function') {
-          plugin(pluginContext); // 将包含独立配置的上下文注入插件
-          logger.info('plugin', `已成功加载插件: ${pluginName}`);
-          console.log(`[PluginLoader] 已成功加载插件: ${pluginName}`);
-        } else {
-          logger.warn('plugin', `插件 '${pluginName}' 未导出函数，已跳过。`);
-          console.warn(`[PluginLoader] 警告: 插件 '${pluginName}' 未导出函数，已跳过。`);
-        }
-      } catch (err) {
-        logger.error('plugin', `加载插件 ${pluginName} 时发生错误: ${err.stack || err}`);
-        console.error(`[PluginLoader] 加载插件 ${pluginName} 时发生错误:`, err);
-      }
-    } else {
-      logger.error('plugin', `找不到插件目录或 index.js: ${pluginName}`);
-      console.error(`[PluginLoader] 错误: 找不到插件目录或 index.js: ${pluginName}`);
-    }
-  });
-} else {
-  console.log('[PluginLoader] 配置文件中没有找到插件列表，不加载任何插件。');
-}
-console.log('所有插件加载完毕。');
-
-
-// --- 5. 核心事件监听 ---
-bot.on('login', () => {
-  logger.info('bot', `机器人 ${bot.username} 已成功登录`);
-  console.log(`机器人 ${bot.username} 已成功登录！`);
-});
-
-bot.once('spawn', () => {
-  logger.info('bot', `机器人已进入世界，框架启动完成`);
-  console.log('机器人已进入世界，框架启动完成！');
-  context.eventBus.emit('framework:ready');
-});
-
-bot.on('kicked', (reason, loggedIn) => {
-  const text = reasonToText(reason);
-  logger.error('bot', `被踢出服务器: ${text} (已登录: ${loggedIn})`);
-  console.error('机器人被踢出服务器:', text);
-});
-bot.on('error', (err) => {
-  logger.error('bot', `连接错误: ${err.stack || err}`);
-  console.error('机器人发生错误:', err);
-});
-bot.on('end', (reason) => {
-  const text = reasonToText(reason);
-  logger.info('bot', `连接已断开，原因: ${text}`);
-  console.log(`机器人连接已断开，原因: ${text}`);
-});
-} // end startBot()
-
-// 供 auto-reconnect 插件调用的全量重建入口（插件在 bot 'end' 后延迟触发）
-context.restartBot = (reason) => {
-  logger.info('bot', `自动重连中,原因: ${reasonToText(reason) || '未知'}`);
-  console.log('自动重连中...');
-  startBot();
 };
 
-// 启动框架
-startBot();
+const loadPlugin = (currentBot, pluginName) => {
+  const pluginDir = path.join(pluginsDir, pluginName);
+  const pluginIndexFile = path.join(pluginDir, 'index.js');
+  const pluginConfigFile = path.join(pluginDir, 'config.json');
+
+  if (!fs.existsSync(pluginIndexFile)) {
+    logger.error('plugin', `找不到插件目录或 index.js: ${pluginName}`);
+    console.error(`[PluginLoader] 错误: 找不到插件目录或 index.js: ${pluginName}`);
+    return;
+  }
+
+  try {
+    let pluginConfig = {};
+    if (fs.existsSync(pluginConfigFile)) {
+      try {
+        pluginConfig = JSON.parse(fs.readFileSync(pluginConfigFile, 'utf8'));
+        console.log(`[PluginLoader] 已为插件 '${pluginName}' 加载配置文件。`);
+      } catch (configErr) {
+        logger.error('plugin', `解析插件 '${pluginName}' 的 config.json 时出错: ${configErr.stack || configErr}`);
+        console.error(`[PluginLoader] 解析插件 '${pluginName}' 的 config.json 时出错:`, configErr);
+      }
+    }
+
+    clearPluginCache(pluginName);
+    delete require.cache[require.resolve(pluginIndexFile)];
+
+    const pluginContext = {
+      ...context,
+      bot: currentBot,
+      pluginConfig,
+      pluginName,
+    };
+
+    const plugin = require(pluginIndexFile);
+    if (typeof plugin === 'function') {
+      plugin(pluginContext);
+      logger.info('plugin', `已成功加载插件: ${pluginName}`);
+      console.log(`[PluginLoader] 已成功加载插件: ${pluginName}`);
+    } else {
+      logger.warn('plugin', `插件 '${pluginName}' 未导出函数，已跳过。`);
+      console.warn(`[PluginLoader] 警告: 插件 '${pluginName}' 未导出函数，已跳过。`);
+    }
+  } catch (err) {
+    logger.error('plugin', `加载插件 ${pluginName} 时发生错误: ${err.stack || err}`);
+    console.error(`[PluginLoader] 加载插件 ${pluginName} 时发生错误:`, err);
+  }
+};
+
+const loadPluginsForBot = (currentBot) => {
+  console.log('正在加载插件...');
+  if (config.plugins && Array.isArray(config.plugins)) {
+    config.plugins.forEach((pluginName) => loadPlugin(currentBot, pluginName));
+  } else {
+    console.log('[PluginLoader] 配置文件中没有找到插件列表，不加载任何插件。');
+  }
+  console.log('所有插件加载完毕。');
+};
+
+const wireBot = (currentBot) => {
+  // 修复 1.21.11 协议 bug：minecraft-data 把 chat_command_signed 的 checksum 标成 i8
+  // （-128..127），但 minecraft-protocol 计算的校验值是 0-255（如 136），写包抛
+  // RangeError → 连接损坏 → 服务器以 "An internal error occurred" 踢出（/tpa 等指令
+  // 必触发）。真实线上字段就是一个字节，转成有符号字节后线上字节完全不变。
+  {
+    const origWrite = currentBot._client.write.bind(currentBot._client);
+    currentBot._client.write = (name, params) => {
+      if (name === 'chat_command_signed' && params && typeof params.checksum === 'number' && params.checksum > 127) {
+        params.checksum -= 256;
+      }
+      return origWrite(name, params);
+    };
+  }
+
+  logger.installBotHooks(currentBot);
+
+  const commandTrigger = config.commandTrigger === 'chat' ? 'chat' : 'whisper';
+  context.commands = new CommandManager(currentBot, context.permissions, config.commandPrefix || '!', commandTrigger);
+
+  currentBot.on('login', () => {
+    if (bot !== currentBot) return;
+    logger.info('bot', `机器人 ${currentBot.username} 已成功登录`);
+    console.log(`机器人 ${currentBot.username} 已成功登录！`);
+  });
+
+  currentBot.once('spawn', () => {
+    if (bot !== currentBot) return;
+    logger.info('bot', `机器人已进入世界，框架启动完成`);
+    console.log('机器人已进入世界，框架启动完成！');
+    context.eventBus.emit('framework:ready');
+  });
+
+  currentBot.on('kicked', (reason, loggedIn) => {
+    if (bot !== currentBot) return;
+    const text = reasonToText(reason);
+    logger.error('bot', `被踢出服务器: ${text} (已登录: ${loggedIn})`);
+    console.error('机器人被踢出服务器:', text);
+  });
+  currentBot.on('error', (err) => {
+    if (bot !== currentBot) return;
+    logger.error('bot', `连接错误: ${err.stack || err}`);
+    console.error('机器人发生错误:', err);
+  });
+  currentBot.on('end', (reason) => {
+    if (bot !== currentBot) return;
+    const text = reasonToText(reason);
+    logger.info('bot', `连接已断开，原因: ${text}`);
+    console.log(`机器人连接已断开，原因: ${text}`);
+    if (botLifecycle.pendingReconnect) {
+      const nextConfig = botLifecycle.pendingReconnect;
+      botLifecycle.pendingReconnect = null;
+      setTimeout(() => startBotSession(nextConfig), 1000);
+    }
+  });
+};
+
+const startBotSession = (botConfig = config.bot) => {
+  if (botLifecycle.loading) return bot;
+  botLifecycle.loading = true;
+  console.log('正在连接到服务器...');
+  try {
+    bot = mineflayer.createBot(botConfig);
+    botLifecycle.currentBot = bot;
+    context.bot = bot;
+  } catch (err) {
+    botLifecycle.loading = false;
+    logger.error('boot', `创建机器人时出错: ${err.stack || err}`);
+    console.error('创建机器人时出错:', err);
+    process.exit(1);
+  }
+
+  wireBot(bot);
+  loadPluginsForBot(bot);
+  botLifecycle.loading = false;
+  return bot;
+};
+
+context.botManager = {
+  getStatus() {
+    const current = botLifecycle.currentBot;
+    return {
+      loading: botLifecycle.loading,
+      connected: !!(current && current._client && !current._client.destroyed && current._client.state === 'play'),
+      spawned: !!(current && current.entity),
+      username: current ? (current.username || null) : null,
+      host: config.bot && config.bot.host ? config.bot.host : null,
+      port: config.bot && config.bot.port ? config.bot.port : null,
+      pendingReconnect: !!botLifecycle.pendingReconnect,
+    };
+  },
+  disconnect(reason = '手动离线') {
+    if (!bot) return { ok: false, error: '机器人未连接' };
+    botLifecycle.pendingReconnect = null;
+    try {
+      if (typeof bot.quit === 'function') bot.quit(reason);
+      else if (bot._client && typeof bot._client.end === 'function') bot._client.end(reason);
+      else return { ok: false, error: '当前机器人不支持离线' };
+      return { ok: true };
+    } catch (err) {
+      return { ok: false, error: err.message };
+    }
+  },
+  connect(newConfig = null) {
+    if (bot && !bot._client?.destroyed) return { ok: false, error: '机器人已在线' };
+    if (newConfig && typeof newConfig === 'object') {
+      config.bot = { ...config.bot, ...newConfig };
+      fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+    }
+    startBotSession(config.bot);
+    return { ok: true };
+  },
+  reconnect(newConfig = null) {
+    if (newConfig && typeof newConfig === 'object') {
+      config.bot = { ...config.bot, ...newConfig };
+      fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+    }
+    botLifecycle.pendingReconnect = { ...config.bot };
+    if (!bot) {
+      startBotSession(config.bot);
+      botLifecycle.pendingReconnect = null;
+      return { ok: true };
+    }
+    this.disconnect('重新连接');
+    return { ok: true };
+  },
+  updateConfig(patch = {}) {
+    if (!patch || typeof patch !== 'object' || Array.isArray(patch)) return { ok: false, error: '配置必须是对象' };
+    config.bot = { ...config.bot, ...patch };
+    fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+    return { ok: true, bot: config.bot };
+  },
+  getConfig() {
+    return config.bot;
+  },
+};
+
+startBotSession(config.bot);

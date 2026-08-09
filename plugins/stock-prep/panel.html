@@ -6,32 +6,33 @@
 <title>备货中心</title>
 <style>
   :root {
-    --bg: #0e1511;
-    --panel: #18231d;
-    --panel-2: #223127;
-    --line: #33473a;
-    --text: #eef5ef;
-    --muted: #9db1a2;
-    --accent: #74c365;
-    --warn: #f0b34f;
-    --err: #ef6b6b;
+    --bg: #eef6ff;
+    --panel: #ffffff;
+    --panel-2: #f7fbff;
+    --line: #d8e6f5;
+    --text: #17324a;
+    --muted: #6d8297;
+    --accent: #2f80ed;
+    --accent-2: #6cb8ff;
+    --warn: #d99b2b;
+    --err: #e05c5c;
   }
   * { box-sizing: border-box; }
   body {
     margin: 0;
     padding: 20px;
     background:
-      radial-gradient(circle at top left, rgba(116,195,101,.16), transparent 24%),
-      linear-gradient(180deg, #0c120e, var(--bg));
+      radial-gradient(circle at top left, rgba(108,184,255,.24), transparent 24%),
+      linear-gradient(180deg, #f9fcff, var(--bg));
     color: var(--text);
     font-family: system-ui, "Microsoft YaHei", sans-serif;
   }
   .wrap { max-width: 1080px; margin: 0 auto; }
   .hero, .card {
-    background: rgba(24, 35, 29, .92);
+    background: rgba(255, 255, 255, .94);
     border: 1px solid var(--line);
     border-radius: 16px;
-    box-shadow: 0 16px 38px rgba(0,0,0,.28);
+    box-shadow: 0 16px 38px rgba(35,84,126,.08);
   }
   .hero { padding: 20px; margin-bottom: 18px; }
   .hero h1 { margin: 0 0 8px; font-size: 26px; }
@@ -42,8 +43,8 @@
     min-width: 130px;
     padding: 12px 14px;
     border-radius: 12px;
-    background: rgba(255,255,255,.03);
-    border: 1px solid rgba(255,255,255,.05);
+    background: #f5faff;
+    border: 1px solid #e1edf8;
   }
   .stat b { display: block; font-size: 21px; margin-bottom: 4px; }
   .layout { display: grid; grid-template-columns: 360px 1fr; gap: 18px; }
@@ -55,7 +56,7 @@
     padding: 11px 12px;
     border-radius: 10px;
     border: 1px solid var(--line);
-    background: #101813;
+    background: #fbfdff;
     color: var(--text);
     font-size: 14px;
   }
@@ -66,17 +67,17 @@
     padding: 10px 14px;
     cursor: pointer;
     background: var(--accent);
-    color: #10200f;
+    color: #fff;
     font-weight: 700;
     font-size: 14px;
   }
   button.secondary {
-    background: #29382d;
-    color: var(--text);
+    background: #eaf3ff;
+    color: var(--accent);
   }
   button.warn {
     background: var(--warn);
-    color: #2d2209;
+    color: #fff;
   }
   button.danger {
     background: var(--err);
@@ -105,8 +106,8 @@
     gap: 12px;
     padding: 10px 12px;
     border-radius: 12px;
-    background: rgba(255,255,255,.03);
-    border: 1px solid rgba(255,255,255,.06);
+    background: #f7fbff;
+    border: 1px solid #e3edf8;
   }
   .stock-item .name {
     font-weight: 700;
@@ -138,10 +139,10 @@
     font-weight: 700;
   }
   .badge.pending { background: rgba(240,179,79,.16); color: var(--warn); }
-  .badge.collecting { background: rgba(116,195,101,.12); color: #a8e19d; }
-  .badge.ready { background: rgba(116,195,101,.16); color: var(--accent); }
-  .badge.delivering { background: rgba(116,195,101,.2); color: #c7f7be; }
-  .badge.delivered { background: rgba(255,255,255,.09); color: #d9e2dc; }
+  .badge.collecting { background: rgba(47,128,237,.12); color: var(--accent); }
+  .badge.ready { background: rgba(47,128,237,.16); color: #1d63be; }
+  .badge.delivering { background: rgba(47,128,237,.2); color: #1653a0; }
+  .badge.delivered { background: rgba(108,184,255,.14); color: #476d8d; }
   .badge.cancelled { background: rgba(239,107,107,.16); color: var(--err); }
   .badge.failed { background: rgba(239,107,107,.16); color: var(--err); }
   .task-meta { color: var(--muted); font-size: 13px; margin: 10px 0 12px; }
@@ -150,20 +151,20 @@
     height: 10px;
     border-radius: 999px;
     overflow: hidden;
-    background: #101813;
-    border: 1px solid rgba(255,255,255,.06);
+    background: #eef5fb;
+    border: 1px solid #ddeaf6;
   }
   .bar > span {
     display: block;
     height: 100%;
-    background: linear-gradient(90deg, #5cb856, #9ce16b);
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
   }
   .progress-text { margin-top: 8px; font-size: 13px; color: var(--muted); }
   .error {
     margin-top: 10px;
     padding: 10px 12px;
     border-radius: 10px;
-    background: rgba(239,107,107,.12);
+    background: rgba(224,92,92,.10);
     color: #ffc2c2;
     font-size: 13px;
   }
@@ -172,11 +173,28 @@
     margin: 6px 6px 0 0;
     padding: 6px 10px;
     border-radius: 999px;
-    background: rgba(255,255,255,.04);
-    border: 1px solid rgba(255,255,255,.06);
+    background: #f4f9ff;
+    border: 1px solid #e0ebf7;
     color: var(--muted);
     font-size: 12px;
   }
+  .coord-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .coord-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 8px;
+    align-items: end;
+  }
+  .coord-row button {
+    padding: 10px 12px;
+    white-space: nowrap;
+  }
+  .hidden { display: none !important; }
   #toast {
     position: fixed;
     right: 20px;
@@ -186,10 +204,10 @@
     padding: 12px 14px;
     border-radius: 12px;
     border: 1px solid var(--line);
-    background: #132018;
+    background: #ffffff;
   }
   #toast.show { display: block; }
-  #toast.err { background: #2a1818; border-color: rgba(239,107,107,.35); }
+  #toast.err { background: #fff4f4; border-color: rgba(224,92,92,.35); }
   @media (max-width: 900px) {
     .layout { grid-template-columns: 1fr; }
   }
@@ -242,7 +260,14 @@
           <br>如果你点过仓库扫描，库存里的中文名也会优先补全出来。
         </div>
 
-        <h2 style="margin-top:20px;">仓库范围设置</h2>
+        <h2 style="margin-top:20px;">仓库设置</h2>
+        <label for="warehouseModeInput">扫描模式</label>
+        <select id="warehouseModeInput" onchange="toggleWarehouseMode()">
+          <option value="area">范围扫描</option>
+          <option value="list">指定箱子坐标</option>
+        </select>
+        <div class="hint">范围扫描会在中心点附近找箱子。指定坐标模式只扫你填进去的箱子坐标。</div>
+        <div id="warehouseAreaBox">
         <div class="row">
           <div>
             <label for="centerX">中心 X</label>
@@ -277,6 +302,14 @@
         <input id="warehouseBlocksInput" placeholder="chest, trapped_chest, barrel">
         <label for="maxStorageBlocksScanInput">最多扫描容器数</label>
         <input id="maxStorageBlocksScanInput" type="number" min="1" step="1">
+        </div>
+        <div id="warehouseListBox" class="hidden">
+          <div class="hint" style="margin-top:10px;">这里填你要扫描的每个箱子坐标，机器人只会检查这些坐标。</div>
+          <div id="warehouseContainerList" class="coord-list"></div>
+          <div class="task-actions" style="margin-top:10px;">
+            <button class="secondary" onclick="addWarehouseContainerRow()">添加箱子坐标</button>
+          </div>
+        </div>
         <label for="tpaCommandInput">TPA 指令模板</label>
         <input id="tpaCommandInput" placeholder="/tpa {player}">
         <label for="homeCommandInput">回仓指令</label>
@@ -507,8 +540,51 @@
     document.getElementById('itemInput').value = name;
   }
 
+  function toggleWarehouseMode() {
+    const mode = document.getElementById('warehouseModeInput').value;
+    document.getElementById('warehouseAreaBox').classList.toggle('hidden', mode === 'list');
+    document.getElementById('warehouseListBox').classList.toggle('hidden', mode !== 'list');
+  }
+
+  function createWarehouseContainerRow(item = {}) {
+    const row = document.createElement('div');
+    row.className = 'coord-row';
+    row.innerHTML = `
+      <div><label>X</label><input type="number" step="1" value="${esc(item.x ?? 0)}"></div>
+      <div><label>Y</label><input type="number" step="1" value="${esc(item.y ?? 64)}"></div>
+      <div><label>Z</label><input type="number" step="1" value="${esc(item.z ?? 0)}"></div>
+      <button class="danger" type="button">删除</button>
+    `;
+    row.querySelector('button').onclick = () => row.remove();
+    return row;
+  }
+
+  function renderWarehouseContainerRows(items) {
+    const box = document.getElementById('warehouseContainerList');
+    box.innerHTML = '';
+    const list = Array.isArray(items) && items.length ? items : [{}];
+    for (const item of list) box.appendChild(createWarehouseContainerRow(item));
+  }
+
+  function addWarehouseContainerRow(item = {}) {
+    document.getElementById('warehouseContainerList').appendChild(createWarehouseContainerRow(item));
+  }
+
+  function readWarehouseContainerRows() {
+    return Array.from(document.querySelectorAll('#warehouseContainerList .coord-row')).map((row) => {
+      const inputs = row.querySelectorAll('input');
+      return {
+        x: Number(inputs[0].value),
+        y: Number(inputs[1].value),
+        z: Number(inputs[2].value),
+      };
+    }).filter((pos) => [pos.x, pos.y, pos.z].every(Number.isFinite));
+  }
+
   function applySettings(settings) {
     currentSettings = settings;
+    document.getElementById('warehouseModeInput').value = settings.warehouseMode || 'area';
+    toggleWarehouseMode();
     document.getElementById('centerX').value = settings.warehouseCenter.x;
     document.getElementById('centerY').value = settings.warehouseCenter.y;
     document.getElementById('centerZ').value = settings.warehouseCenter.z;
@@ -519,6 +595,7 @@
     document.getElementById('tpaCommandInput').value = settings.tpaCommand || '';
     document.getElementById('homeCommandInput').value = settings.homeCommand || '/home';
     document.getElementById('maxStorageBlocksScanInput').value = settings.maxStorageBlocksScan || 1;
+    renderWarehouseContainerRows(settings.warehouseContainers || []);
   }
 
   async function refreshStatus() {
@@ -549,6 +626,7 @@
 
   async function saveSettings() {
     const payload = {
+      warehouseMode: document.getElementById('warehouseModeInput').value,
       warehouseCenter: {
         x: Number(document.getElementById('centerX').value),
         y: Number(document.getElementById('centerY').value),
@@ -563,6 +641,7 @@
         .split(',')
         .map((v) => v.trim())
         .filter(Boolean),
+      warehouseContainers: readWarehouseContainerRows(),
       tpaCommand: document.getElementById('tpaCommandInput').value.trim(),
       homeCommand: document.getElementById('homeCommandInput').value.trim(),
       maxStorageBlocksScan: Number(document.getElementById('maxStorageBlocksScanInput').value),

@@ -6,7 +6,7 @@ const path = require('path');
 const { resolveTex } = require('./texture-map'); // 物品 → 纹理文件名映射（1.21.11 仓库验证）
 
 module.exports = (context) => {
-  const { bot, config, state, permissions, pluginConfig, webManager, commands } = context;
+  const { bot, config, state, permissions, pluginConfig, webManager, commands, botManager } = context;
 
   const pluginsDir = path.join(__dirname, '..');
   const cfg = { host: '127.0.0.1', port: 8123, token: '', ...(pluginConfig || {}) };
@@ -241,6 +241,66 @@ module.exports = (context) => {
       pm2: !!process.env.PM2_HOME,
       uptime: Math.round(process.uptime()),
     });
+  });
+
+  addRoute('GET', '/api/bot/status', (req, res) => {
+    if (!botManager || typeof botManager.getStatus !== 'function') {
+      return sendJSON(res, 503, { ok: false, error: '机器人控制模块未就绪' });
+    }
+    sendJSON(res, 200, { ok: true, status: botManager.getStatus(), config: botManager.getConfig ? botManager.getConfig() : (config.bot || {}) });
+  });
+
+  addRoute('GET', '/api/bot/config', (req, res) => {
+    if (!botManager || typeof botManager.getConfig !== 'function') {
+      return sendJSON(res, 503, { ok: false, error: '机器人控制模块未就绪' });
+    }
+    sendJSON(res, 200, { ok: true, config: botManager.getConfig() });
+  });
+
+  addRoute('PUT', '/api/bot/config', async (req, res, params, body) => {
+    if (!botManager || typeof botManager.updateConfig !== 'function') {
+      return sendJSON(res, 503, { ok: false, error: '机器人控制模块未就绪' });
+    }
+    let obj;
+    try {
+      obj = JSON.parse(body || 'null');
+    } catch (err) {
+      return sendJSON(res, 400, { ok: false, error: '无效 JSON' });
+    }
+    const result = botManager.updateConfig(obj || {});
+    if (!result || result.ok === false) return sendJSON(res, 400, result || { ok: false, error: '保存失败' });
+    sendJSON(res, 200, result);
+  });
+
+  addRoute('POST', '/api/bot/connect', (req, res, params, body) => {
+    if (!botManager || typeof botManager.connect !== 'function') {
+      return sendJSON(res, 503, { ok: false, error: '机器人控制模块未就绪' });
+    }
+    let obj = {};
+    try { obj = JSON.parse(body || 'null') || {}; } catch (err) {}
+    const result = botManager.connect(obj.config || null);
+    if (!result || result.ok === false) return sendJSON(res, 400, result || { ok: false, error: '连接失败' });
+    sendJSON(res, 200, result);
+  });
+
+  addRoute('POST', '/api/bot/disconnect', (req, res) => {
+    if (!botManager || typeof botManager.disconnect !== 'function') {
+      return sendJSON(res, 503, { ok: false, error: '机器人控制模块未就绪' });
+    }
+    const result = botManager.disconnect('面板手动下线');
+    if (!result || result.ok === false) return sendJSON(res, 400, result || { ok: false, error: '下线失败' });
+    sendJSON(res, 200, result);
+  });
+
+  addRoute('POST', '/api/bot/reconnect', (req, res, params, body) => {
+    if (!botManager || typeof botManager.reconnect !== 'function') {
+      return sendJSON(res, 503, { ok: false, error: '机器人控制模块未就绪' });
+    }
+    let obj = {};
+    try { obj = JSON.parse(body || 'null') || {}; } catch (err) {}
+    const result = botManager.reconnect(obj.config || null);
+    if (!result || result.ok === false) return sendJSON(res, 400, result || { ok: false, error: '重连失败' });
+    sendJSON(res, 200, result);
   });
 
   addRoute('GET', '/api/plugins', (req, res) => {

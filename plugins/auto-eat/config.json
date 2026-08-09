@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "hungerThreshold": 16,
+  "emergencyThreshold": 8,
+  "scanIntervalMs": 5000,
+  "eatCooldownMs": 1200,
+  "withdrawCount": 8,
+  "moveTimeoutMs": 25000,
+  "blockApproachDistance": 2,
+  "warehouseMode": "area",
+  "warehouseBlocks": ["chest", "trapped_chest", "barrel"],
+  "warehouseCenter": { "x": 0, "y": 64, "z": 0 },
+  "warehouseSize": { "x": 16, "y": 8, "z": 16 },
+  "warehouseContainers": [],
+  "maxStorageBlocksScan": 128
+}

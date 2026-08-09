@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>自动吃饭</title>
+<style>
+  :root { --bg:#eef6ff; --card:#ffffff; --border:#d8e6f5; --text:#17324a; --muted:#6d8297; --accent:#2f80ed; --ok:#3fb96b; --err:#e05c5c; }
+  *{box-sizing:border-box}
+  body{margin:0;padding:20px;background:radial-gradient(circle at top left, rgba(108,184,255,.24), transparent 24%),linear-gradient(180deg,#f9fcff,var(--bg));color:var(--text);font-family:system-ui,"Microsoft YaHei",sans-serif}
+  .card{background:rgba(255,255,255,.95);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;box-shadow:0 16px 38px rgba(35,84,126,.08)}
+  h1,h2{margin:0 0 10px}
+  label{display:block;margin:10px 0 6px;color:var(--muted);font-size:13px}
+  input,select{width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:#fbfdff;color:var(--text)}
+  .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+  button{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:9px 12px;cursor:pointer}
+  button.secondary{background:#eaf3ff;color:var(--accent)}
+  button.danger{background:var(--err)}
+  .hint{color:var(--muted);font-size:12px}
+  .pill{display:inline-block;padding:4px 8px;margin:4px 4px 0 0;border-radius:999px;background:#f4f9ff;border:1px solid #e0ebf7;font-size:12px}
+  .error{margin-top:10px;padding:10px;border-radius:8px;background:rgba(224,92,92,.10);color:#b64a4a}
+  .coord-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+  .coord-row{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;align-items:end}
+  .hidden{display:none!important}
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>自动吃饭</h1>
+    <div class="hint" id="statusLine">加载中...</div>
+    <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+      <button onclick="scanNow()">手动扫描仓库</button>
+      <button class="secondary" onclick="eatNow()">立即吃一次</button>
+      <button class="secondary" onclick="refresh()">刷新</button>
+    </div>
+  </div>
+  <div class="card">
+    <h2>设置</h2>
+    <div class="row">
+      <div><label>开启</label><input id="enabled" type="text" placeholder="true / false"></div>
+      <div><label>饥饿阈值</label><input id="hungerThreshold" type="number"></div>
+      <div><label>扫描间隔(ms)</label><input id="scanIntervalMs" type="number"></div>
+      <div><label>取货数量</label><input id="withdrawCount" type="number"></div>
+    </div>
+    <div class="row">
+      <div><label>仓库中心 X</label><input id="cx" type="number"></div>
+      <div><label>仓库中心 Y</label><input id="cy" type="number"></div>
+      <div><label>仓库中心 Z</label><input id="cz" type="number"></div>
+      <div><label>回填箱子类型</label><input id="blocks" type="text" placeholder="chest, trapped_chest, barrel"></div>
+    </div>
+    <div style="margin-top:12px;">
+      <label>仓库模式</label>
+      <select id="mode" onchange="toggleMode()">
+        <option value="area">范围扫描</option>
+        <option value="list">指定箱子坐标</option>
+      </select>
+      <div class="hint">指定箱子坐标模式只扫你填的容器，不再扫整片范围。</div>
+    </div>
+    <div id="areaBox">
+      <div class="hint" style="margin-top:10px;">范围模式沿用中心点附近扫描。</div>
+    </div>
+    <div id="listBox" class="hidden">
+      <div class="hint" style="margin-top:10px;">每一行就是一个箱子坐标。</div>
+      <div id="containerList" class="coord-list"></div>
+      <div style="margin-top:10px;"><button class="secondary" onclick="addRow()">添加坐标</button></div>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+      <button onclick="save()">保存</button>
+    </div>
+  </div>
+  <div class="card">
+    <h2>背包食物</h2>
+    <div id="invFoods"></div>
+  </div>
+  <div class="card">
+    <h2>仓库食物</h2>
+    <div id="warehouseFoods"></div>
+    <div id="stockError" class="error" style="display:none"></div>
+  </div>
+  <script>
+    const base = '/api/plugins/auto-eat';
+    async function api(path, opts = {}) {
+      const resp = await fetch(path, opts);
+      const data = await resp.json().catch(() => null);
+      if (!resp.ok) throw new Error((data && data.error) || ('HTTP ' + resp.status));
+      return data;
+    }
+    function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+    function toggleMode() {
+      const mode = document.getElementById('mode').value;
+      document.getElementById('areaBox').classList.toggle('hidden', mode === 'list');
+      document.getElementById('listBox').classList.toggle('hidden', mode !== 'list');
+    }
+    function row(item = {}) {
+      const div = document.createElement('div');
+      div.className = 'coord-row';
+      div.innerHTML = `
+        <div><label>X</label><input type="number" value="${esc(item.x ?? 0)}"></div>
+        <div><label>Y</label><input type="number" value="${esc(item.y ?? 64)}"></div>
+        <div><label>Z</label><input type="number" value="${esc(item.z ?? 0)}"></div>
+        <button class="danger" type="button">删除</button>
+      `;
+      div.querySelector('button').onclick = () => div.remove();
+      return div;
+    }
+    function renderRows(items) {
+      const box = document.getElementById('containerList');
+      box.innerHTML = '';
+      (items && items.length ? items : [{}]).forEach((item) => box.appendChild(row(item)));
+    }
+    function addRow(item = {}) { document.getElementById('containerList').appendChild(row(item)); }
+    function readRows() {
+      return Array.from(document.querySelectorAll('#containerList .coord-row')).map((el) => {
+        const inputs = el.querySelectorAll('input');
+        return { x: Number(inputs[0].value), y: Number(inputs[1].value), z: Number(inputs[2].value) };
+      }).filter((p) => [p.x, p.y, p.z].every(Number.isFinite));
+    }
+    function renderList(id, items) {
+      const box = document.getElementById(id);
+      if (!items || !items.length) return box.innerHTML = '<div class="hint">暂无</div>';
+      box.innerHTML = items.map(i => `<span class="pill">${esc(i.displayName || i.name)} × ${esc(i.count)}</span>`).join('');
+    }
+    async function refresh() {
+      const data = await api(base + '/status');
+      const s = data.status || {};
+      document.getElementById('statusLine').textContent = `状态：${s.enabled ? '开启' : '关闭'} · 饥饿 ${s.hunger ?? '-'} · ${s.lastStatus || 'idle'}`;
+      document.getElementById('enabled').value = String(s.enabled);
+      document.getElementById('hungerThreshold').value = s.hungerThreshold || 16;
+      document.getElementById('scanIntervalMs').value = s.scanIntervalMs || 5000;
+      document.getElementById('withdrawCount').value = s.withdrawCount || 8;
+      document.getElementById('mode').value = s.warehouseMode || 'area';
+      toggleMode();
+      document.getElementById('cx').value = (s.warehouseCenter && s.warehouseCenter.x) || 0;
+      document.getElementById('cy').value = (s.warehouseCenter && s.warehouseCenter.y) || 64;
+      document.getElementById('cz').value = (s.warehouseCenter && s.warehouseCenter.z) || 0;
+      document.getElementById('blocks').value = (s.warehouseBlocks || ['chest','trapped_chest','barrel']).join(', ');
+      renderRows(s.warehouseContainers || []);
+      renderList('invFoods', s.foodItems || []);
+      renderList('warehouseFoods', s.warehouseFood || []);
+      const err = document.getElementById('stockError');
+      if (s.lastError) { err.style.display=''; err.textContent=s.lastError; } else { err.style.display='none'; err.textContent=''; }
+    }
+    async function save() {
+      await api(base + '/settings', {
+        method:'PUT',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+          enabled: document.getElementById('enabled').value === 'true',
+          hungerThreshold: Number(document.getElementById('hungerThreshold').value),
+          scanIntervalMs: Number(document.getElementById('scanIntervalMs').value),
+          withdrawCount: Number(document.getElementById('withdrawCount').value),
+          warehouseMode: document.getElementById('mode').value,
+          warehouseCenter: { x: Number(document.getElementById('cx').value), y: Number(document.getElementById('cy').value), z: Number(document.getElementById('cz').value) },
+          warehouseBlocks: document.getElementById('blocks').value.split(',').map(s=>s.trim()).filter(Boolean),
+          warehouseContainers: readRows(),
+        }),
+      });
+      await refresh();
+    }
+    async function scanNow(){ await api(base + '/scan', {method:'POST'}); await refresh(); }
+    async function eatNow(){ await api(base + '/eat', {method:'POST'}); await refresh(); }
+    refresh();
+    setInterval(refresh, 3000);
+  </script>
+</body>
+</html>
