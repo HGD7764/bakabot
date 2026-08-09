@@ -18,9 +18,11 @@ module.exports = (context) => {
     collectPauseMs: 400,
     maxTasks: 50,
     maxStorageBlocksScan: 128,
+    warehouseMode: 'area',
     warehouseBlocks: ['chest', 'trapped_chest', 'barrel'],
     warehouseCenter: { x: 0, y: 64, z: 0 },
     warehouseSize: { x: 16, y: 8, z: 16 },
+    warehouseContainers: [],
     tpaCommand: '/tpa {player}',
     homeCommand: '/home',
     fallbackToTpaOnDeliveryTimeout: true,
@@ -85,9 +87,11 @@ module.exports = (context) => {
       collectPauseMs: cfg.collectPauseMs,
       maxTasks: cfg.maxTasks,
       maxStorageBlocksScan: cfg.maxStorageBlocksScan,
+      warehouseMode: cfg.warehouseMode,
       warehouseBlocks: cfg.warehouseBlocks,
       warehouseCenter: cfg.warehouseCenter,
       warehouseSize: cfg.warehouseSize,
+      warehouseContainers: cfg.warehouseContainers,
       tpaCommand: cfg.tpaCommand,
       homeCommand: cfg.homeCommand,
       fallbackToTpaOnDeliveryTimeout: cfg.fallbackToTpaOnDeliveryTimeout,
@@ -218,13 +222,52 @@ module.exports = (context) => {
   };
 
   const insideWarehouse = (position) => {
-    if (!position || !cfg.warehouseCenter || !cfg.warehouseSize) return false;
+    if (!position) return false;
+    if (String(cfg.warehouseMode || 'area') === 'list') {
+      return normalizedWarehouseContainers().some((target) => {
+        const dx = Math.abs(position.x - target.x);
+        const dy = Math.abs(position.y - target.y);
+        const dz = Math.abs(position.z - target.z);
+        return dx <= 3 && dy <= 3 && dz <= 3;
+      });
+    }
+    if (!cfg.warehouseCenter || !cfg.warehouseSize) return false;
     const dx = Math.abs(position.x - Number(cfg.warehouseCenter.x || 0));
     const dy = Math.abs(position.y - Number(cfg.warehouseCenter.y || 0));
     const dz = Math.abs(position.z - Number(cfg.warehouseCenter.z || 0));
     return dx <= Number(cfg.warehouseSize.x || 0) &&
-      dy <= Number(cfg.warehouseSize.y || 0) &&
+    dy <= Number(cfg.warehouseSize.y || 0) &&
       dz <= Number(cfg.warehouseSize.z || 0);
+  };
+
+  const normalizeAxisGroup = (value, label) => {
+    if (!value || typeof value !== 'object') throw new Error(`${label} 必须是对象`);
+    const x = Number(value.x);
+    const y = Number(value.y);
+    const z = Number(value.z);
+    if (![x, y, z].every(Number.isFinite)) throw new Error(`${label} 的 x/y/z 必须是数字`);
+    return { x, y, z };
+  };
+
+  const normalizedWarehouseContainers = () => {
+    if (!Array.isArray(cfg.warehouseContainers)) return [];
+    return cfg.warehouseContainers
+      .map((entry) => {
+        try {
+          return normalizeAxisGroup(entry, 'warehouseContainers');
+        } catch (err) {
+          return null;
+        }
+      })
+      .filter(Boolean);
+  };
+
+  const warehouseFocusPoint = () => {
+    if (String(cfg.warehouseMode || 'area') === 'list') {
+      const targets = normalizedWarehouseContainers();
+      return targets[0] || null;
+    }
+    return cfg.warehouseCenter || null;
   };
 
   const summarizeTask = (task) => ({
@@ -333,15 +376,15 @@ module.exports = (context) => {
   };
 
   const moveToWarehouseCenter = async (task = null) => {
-    if (!cfg.warehouseCenter) throw new Error('未配置仓库中心坐标');
+    const focus = warehouseFocusPoint();
+    if (!focus) throw new Error(String(cfg.warehouseMode || 'area') === 'list' ? '未配置仓库箱子坐标' : '未配置仓库中心坐标');
     if (!bot.entity) throw new Error('机器人尚未进入世界');
     if (!bot.pathfinder) throw new Error('未检测到寻路模块，请先启用 navigator 插件');
 
-    const center = cfg.warehouseCenter;
-    const targetPoint = { x: Number(center.x || 0), y: Number(center.y || 0), z: Number(center.z || 0) };
+    const targetPoint = { x: Number(focus.x || 0), y: Number(focus.y || 0), z: Number(focus.z || 0) };
     const radius = Math.max(1, Math.min(
-      Number(cfg.warehouseSize.x || 0),
-      Number(cfg.warehouseSize.z || 0),
+      Number(cfg.warehouseSize && cfg.warehouseMode !== 'list' ? cfg.warehouseSize.x || 0 : 0),
+      Number(cfg.warehouseSize && cfg.warehouseMode !== 'list' ? cfg.warehouseSize.z || 0 : 0),
       3
     ));
 
@@ -392,8 +435,14 @@ module.exports = (context) => {
   };
 
   const warehouseContainerPositions = () => {
-    if (typeof bot.findBlocks !== 'function') return [];
     const ids = blockIds(cfg.warehouseBlocks);
+    if (String(cfg.warehouseMode || 'area') === 'list') {
+      return normalizedWarehouseContainers().filter((pos) => {
+        const block = bot.blockAt(pos);
+        return !!(block && ids.includes(block.type));
+      });
+    }
+    if (typeof bot.findBlocks !== 'function') return [];
     if (!ids.length) return [];
     const maxDistance = Math.max(
       Number(cfg.warehouseSize.x || 0),
@@ -696,9 +745,11 @@ module.exports = (context) => {
         .sort((a, b) => a.username.localeCompare(b.username)),
       tasks: st.tasks.map(summarizeTask),
       aliases: cfg.aliases,
+      warehouseMode: cfg.warehouseMode,
       warehouseBlocks: cfg.warehouseBlocks,
       warehouseCenter: cfg.warehouseCenter,
       warehouseSize: cfg.warehouseSize,
+      warehouseContainers: normalizedWarehouseContainers(),
       tpaCommand: cfg.tpaCommand,
       itemPresets: itemPresets(),
       stock: {
@@ -711,8 +762,10 @@ module.exports = (context) => {
   };
 
   const settingsPayload = () => ({
+    warehouseMode: cfg.warehouseMode,
     warehouseCenter: cfg.warehouseCenter,
     warehouseSize: cfg.warehouseSize,
+    warehouseContainers: normalizedWarehouseContainers(),
     warehouseBlocks: cfg.warehouseBlocks,
     tpaCommand: cfg.tpaCommand,
     homeCommand: cfg.homeCommand,
@@ -857,22 +910,22 @@ module.exports = (context) => {
 
   ep('PUT', 'settings', (req, res, url, body) => {
     const payload = jsonBody(body) || {};
-    const { warehouseCenter, warehouseSize, warehouseBlocks, tpaCommand, homeCommand, fallbackToTpaOnDeliveryTimeout, maxStorageBlocksScan } = payload;
+    const { warehouseMode, warehouseCenter, warehouseSize, warehouseBlocks, warehouseContainers, tpaCommand, homeCommand, fallbackToTpaOnDeliveryTimeout, maxStorageBlocksScan } = payload;
 
-    const parseAxisGroup = (value, label) => {
-      if (!value || typeof value !== 'object') throw new Error(`${label} 必须是对象`);
-      const x = Number(value.x);
-      const y = Number(value.y);
-      const z = Number(value.z);
-      if (![x, y, z].every(Number.isFinite)) throw new Error(`${label} 的 x/y/z 必须是数字`);
-      return { x, y, z };
-    };
-
-    if (warehouseCenter !== undefined) cfg.warehouseCenter = parseAxisGroup(warehouseCenter, 'warehouseCenter');
+    if (warehouseMode !== undefined) {
+      const mode = String(warehouseMode || '').trim().toLowerCase();
+      if (!['area', 'list'].includes(mode)) throw new Error('warehouseMode 只能是 area 或 list');
+      cfg.warehouseMode = mode;
+    }
+    if (warehouseCenter !== undefined) cfg.warehouseCenter = normalizeAxisGroup(warehouseCenter, 'warehouseCenter');
     if (warehouseSize !== undefined) {
-      const nextSize = parseAxisGroup(warehouseSize, 'warehouseSize');
+      const nextSize = normalizeAxisGroup(warehouseSize, 'warehouseSize');
       if (nextSize.x < 0 || nextSize.y < 0 || nextSize.z < 0) throw new Error('warehouseSize 不能为负数');
       cfg.warehouseSize = nextSize;
+    }
+    if (warehouseContainers !== undefined) {
+      if (!Array.isArray(warehouseContainers)) throw new Error('warehouseContainers 必须是数组');
+      cfg.warehouseContainers = warehouseContainers.map((entry, index) => normalizeAxisGroup(entry, `warehouseContainers[${index}]`));
     }
     if (warehouseBlocks !== undefined) {
       if (!Array.isArray(warehouseBlocks) || warehouseBlocks.some((v) => typeof v !== 'string' || !v.trim())) {

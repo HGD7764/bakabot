@@ -7,6 +7,7 @@
   "collectPauseMs": 400,
   "maxTasks": 50,
   "maxStorageBlocksScan": 128,
+  "warehouseMode": "area",
   "warehouseBlocks": [
     "chest",
     "trapped_chest",
@@ -22,6 +23,7 @@
     "y": 8,
     "z": 16
   },
+  "warehouseContainers": [],
   "tpaCommand": "/tpa {player}",
   "fallbackToTpaOnDeliveryTimeout": true,
   "aliases": {

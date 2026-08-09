@@ -6,12 +6,12 @@
 <title>BakaBot 管理界面</title>
 <style>
   :root {
-    --bg: #0f1115; --card: #1a1d24; --border: #2a2e38;
-    --text: #e6e8ee; --muted: #8b90a0; --accent: #4f8cff;
+    --bg: #eef6ff; --card: #ffffff; --border: #d8e6f5;
+    --text: #17324a; --muted: #6d8297; --accent: #2f80ed;
     --ok: #3fb96b; --warn: #e0a53c; --err: #e05c5c;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: system-ui, "Microsoft YaHei", sans-serif; padding: 24px; }
+  body { background: radial-gradient(circle at top left, rgba(108,184,255,.24), transparent 24%), linear-gradient(180deg, #f9fcff, var(--bg)); color: var(--text); font-family: system-ui, "Microsoft YaHei", sans-serif; padding: 24px; }
   h1 { font-size: 22px; }
   h2 { font-size: 17px; margin-bottom: 12px; }
   header { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 22px; }
@@ -21,49 +21,49 @@
   .badge.warn { background: rgba(224,165,60,.15); color: var(--warn); }
   .badge.muted { background: rgba(139,144,160,.15); color: var(--muted); }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
-  .tile { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+  .tile { background: rgba(255,255,255,.95); border: 1px solid var(--border); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 16px 38px rgba(35,84,126,.08); }
   .tile-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   .tile-title { font-size: 15px; font-weight: 600; word-break: break-all; }
   .tile-name { color: var(--muted); font-size: 12px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
   .tile-desc { color: var(--muted); font-size: 12px; flex: 1; word-break: break-all; }
   .tile-btns { display: flex; gap: 6px; flex-wrap: wrap; }
-  .ep-result { font-family: Consolas, monospace; font-size: 11px; color: var(--muted); background: #12141a; border: 1px solid var(--border); border-radius: 6px; padding: 6px; max-height: 120px; overflow: auto; white-space: pre-wrap; word-break: break-all; }
-  .terminal { background: #0b0d11; border: 1px solid var(--border); border-radius: 8px; padding: 10px; height: 280px; overflow-y: auto; font-family: Consolas, monospace; font-size: 12.5px; line-height: 1.7; }
+  .ep-result { font-family: Consolas, monospace; font-size: 11px; color: var(--muted); background: #f7fbff; border: 1px solid var(--border); border-radius: 6px; padding: 6px; max-height: 120px; overflow: auto; white-space: pre-wrap; word-break: break-all; }
+  .terminal { background: #ffffff; border: 1px solid var(--border); border-radius: 8px; padding: 10px; height: 280px; overflow-y: auto; font-family: Consolas, monospace; font-size: 12.5px; line-height: 1.7; box-shadow: inset 0 1px 0 rgba(255,255,255,.8); }
   .terminal .line { white-space: pre-wrap; word-break: break-all; }
-  .terminal .line .time { color: #565b68; margin-right: 8px; }
+  .terminal .line .time { color: #7b91a5; margin-right: 8px; }
   .terminal .line.in { color: #d8dce6; }
   .terminal .line.out { color: var(--accent); }
   .terminal .line.whisper { color: var(--warn); }
   .terminal .line.system { color: var(--muted); font-style: italic; }
   .terminal-input { display: flex; gap: 8px; margin-top: 8px; }
-  .terminal-input input { flex: 1; background: #12141a; color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; font-size: 13px; }
+  .terminal-input input { flex: 1; background: #fbfdff; color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; font-size: 13px; }
   button { background: var(--accent); color: #fff; border: none; border-radius: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer; }
   button:hover { filter: brightness(1.15); }
   button:disabled { opacity: .4; cursor: not-allowed; }
-  button.secondary { background: #2a2e38; color: var(--text); }
+  button.secondary { background: #eaf3ff; color: var(--accent); }
   button.danger { background: var(--err); }
   .section { margin-top: 28px; }
   .hint { color: var(--muted); font-size: 12px; margin: 4px 0 10px; }
-  textarea { width: 100%; background: #12141a; color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 10px; font-family: Consolas, monospace; font-size: 13px; resize: vertical; }
+  textarea { width: 100%; background: #fbfdff; color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 10px; font-family: Consolas, monospace; font-size: 13px; resize: vertical; }
   #permEditor { min-height: 160px; }
   #configEditor { min-height: 420px; }
-  select.ep-select { background: #2a2e38; color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 5px 8px; font-size: 13px; max-width: 130px; }
+  select.ep-select { background: #eaf3ff; color: var(--accent); border: 1px solid var(--border); border-radius: 6px; padding: 5px 8px; font-size: 13px; max-width: 130px; }
   /* ---- 背包(仿原版界面) ---- */
-  .inv-panel { display: flex; gap: 12px; padding: 10px; background: #c6c6c6; border-radius: 2px; width: fit-content; box-shadow: 0 2px 8px rgba(0,0,0,.45); }
+  .inv-panel { display: flex; gap: 12px; padding: 10px; background: #eef4fb; border-radius: 2px; width: fit-content; box-shadow: 0 2px 8px rgba(35,84,126,.18); border: 1px solid #d8e6f5; }
   .inv-armor { display: flex; flex-direction: column; gap: 2px; }
   .inv-center { display: flex; flex-direction: column; gap: 8px; }
   .inv-grid { display: grid; grid-template-columns: repeat(9, 40px); gap: 2px; }
   .inv-bottom { display: flex; gap: 12px; align-items: center; }
   .inv-slot {
-    width: 40px; height: 40px; background: #8b8b8b; cursor: pointer; user-select: none;
-    border: 2px solid; border-color: #373737 #ffffff #ffffff #373737;
+    width: 40px; height: 40px; background: #dfeaf5; cursor: pointer; user-select: none;
+    border: 2px solid; border-color: #b6cbe0 #ffffff #ffffff #b6cbe0;
     position: relative; image-rendering: pixelated;
   }
   .inv-slot:hover { filter: brightness(1.12); }
-  .inv-slot.selected { box-shadow: inset 0 0 0 2px #ffffff; }
+  .inv-slot.selected { box-shadow: inset 0 0 0 2px var(--accent); }
   .inv-slot img { width: 32px; height: 32px; position: absolute; left: 2px; top: 2px; image-rendering: pixelated; }
-  .inv-slot .inv-count { position: absolute; right: 2px; bottom: 1px; font-size: 12px; font-weight: 700; color: #fff; text-shadow: 1px 1px 0 #3f3f3f; line-height: 1; }
-  .inv-slot.noicon::after { content: attr(data-label); position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; color: #3f3f3f; }
+  .inv-slot .inv-count { position: absolute; right: 2px; bottom: 1px; font-size: 12px; font-weight: 700; color: #17324a; text-shadow: 1px 1px 0 rgba(255,255,255,.75); line-height: 1; }
+  .inv-slot.noicon::after { content: attr(data-label); position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; color: #476985; }
   .inv-slot.ench::before {
     content: ''; position: absolute; inset: 0; pointer-events: none;
     background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,.45) 50%, transparent 60%);
@@ -73,23 +73,24 @@
   @keyframes inv-glint { 0% { background-position: 130% 0; } 100% { background-position: -30% 0; } }
   .inv-tooltip {
     position: fixed; z-index: 50; display: none; pointer-events: none;
-    background: rgba(16, 0, 16, .94); color: #fff; border: 1px solid #2a2a2a;
+    background: rgba(255,255,255,.98); color: var(--text); border: 1px solid var(--border);
     padding: 5px 9px; font-size: 12px; max-width: 320px; white-space: nowrap;
+    box-shadow: 0 8px 24px rgba(35,84,126,.12);
   }
   .inv-tooltip.show { display: block; }
   .inv-ghost {
     position: fixed; width: 40px; height: 40px; pointer-events: none; z-index: 55;
     opacity: .92; filter: brightness(1.15);
-    background: rgba(139, 139, 139, .85);
-    border: 2px solid; border-color: #373737 #ffffff #ffffff #373737;
+    background: rgba(223, 234, 245, .95);
+    border: 2px solid; border-color: #b6cbe0 #ffffff #ffffff #b6cbe0;
   }
   .inv-ghost img { width: 32px; height: 32px; margin: 2px; image-rendering: pixelated; }
-  .modal { position: fixed; inset: 0; background: rgba(0,0,0,.65); display: none; align-items: center; justify-content: center; z-index: 10; }
+  .modal { position: fixed; inset: 0; background: rgba(35,84,126,.20); display: none; align-items: center; justify-content: center; z-index: 10; backdrop-filter: blur(4px); }
   .modal.open { display: flex; }
-  .modal-box { background: var(--card); border: 1px solid var(--border); border-radius: 10px; width: min(860px, 94vw); padding: 18px; }
+  .modal-box { background: rgba(255,255,255,.98); border: 1px solid var(--border); border-radius: 10px; width: min(860px, 94vw); padding: 18px; box-shadow: 0 24px 50px rgba(35,84,126,.16); }
   .modal-box h3 { margin-bottom: 6px; }
   .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
-  #toast { position: fixed; bottom: 22px; right: 22px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; font-size: 13px; max-width: 70vw; display: none; z-index: 20; }
+  #toast { position: fixed; bottom: 22px; right: 22px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; font-size: 13px; max-width: 70vw; display: none; z-index: 20; box-shadow: 0 16px 32px rgba(35,84,126,.12); }
   #toast.show { display: block; }
   #toast.ok { border-color: var(--ok); color: var(--ok); }
   #toast.err { border-color: var(--err); color: var(--err); }
@@ -127,6 +128,44 @@
       </div>
     </div>
     <p class="status" id="invStatus">连接中...</p>
+  </div>
+
+  <div class="section">
+    <h2>🤖 机器人控制</h2>
+    <p class="hint">在这里直接管理机器人上线、下线和服务器配置。保存后可立即重连。</p>
+    <div class="card" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
+      <div>
+        <label>主机</label>
+        <input id="botHost" type="text" placeholder="127.0.0.1">
+      </div>
+      <div>
+        <label>端口</label>
+        <input id="botPort" type="number" placeholder="25565">
+      </div>
+      <div>
+        <label>用户名</label>
+        <input id="botUsername" type="text" placeholder="Bot">
+      </div>
+      <div>
+        <label>版本</label>
+        <input id="botVersion" type="text" placeholder="false / 1.21.11">
+      </div>
+      <div>
+        <label>认证</label>
+        <input id="botAuth" type="text" placeholder="microsoft / offline">
+      </div>
+      <div>
+        <label>密码/令牌</label>
+        <input id="botPassword" type="text" placeholder="可选">
+      </div>
+    </div>
+    <div class="task-actions" style="margin-top:12px;">
+      <button onclick="saveBotConfig()">💾 保存配置</button>
+      <button class="secondary" onclick="connectBot()">▶ 连接 / 重连</button>
+      <button class="danger" onclick="disconnectBot()">⏹ 下线</button>
+      <button class="secondary" onclick="reconnectBot()">🔄 仅重连</button>
+    </div>
+    <div class="hint" id="botControlStatus">加载中...</div>
   </div>
 
   <div class="section">
@@ -170,7 +209,7 @@
       <div style="display:flex;justify-content:flex-end;">
         <button class="secondary" onclick="closePanelModal()">✖ 关闭</button>
       </div>
-      <iframe id="panelFrame" style="flex:1;width:100%;min-height:0;border:0;border-radius:8px;background:#111"></iframe>
+      <iframe id="panelFrame" style="flex:1;width:100%;min-height:0;border:0;border-radius:8px;background:#fff"></iframe>
     </div>
   </div>
 
@@ -179,6 +218,7 @@
 <script>
   const TOKEN_KEY = 'webManagerToken';
   let currentConfigName = null;
+  let botConfigCache = null;
 
   // ---- 基础请求封装（401 时提示输入 token 并重试一次） ----
   async function api(path, opts = {}) {
@@ -298,6 +338,97 @@
     refreshPlugins();
     refreshTerminal();
     refreshInventory();
+    refreshBotControl();
+  }
+
+  function normalizeBotVersion(v) {
+    const t = String(v ?? '').trim();
+    if (!t || t === 'false' || t === 'null' || t === 'undefined') return '';
+    return t;
+  }
+
+  function applyBotConfig(cfg) {
+    botConfigCache = cfg || {};
+    document.getElementById('botHost').value = cfg.host || '';
+    document.getElementById('botPort').value = cfg.port || 25565;
+    document.getElementById('botUsername').value = cfg.username || '';
+    document.getElementById('botVersion').value = cfg.version == null ? '' : String(cfg.version);
+    document.getElementById('botAuth').value = cfg.auth || '';
+    document.getElementById('botPassword').value = cfg.password || '';
+  }
+
+  async function refreshBotControl() {
+    try {
+      const data = await apiJSON('/api/bot/status');
+      applyBotConfig(data.config || {});
+      const st = data.status || {};
+      document.getElementById('botControlStatus').textContent =
+        `状态：${st.loading ? '连接中' : (st.connected ? '在线' : '离线')} · ` +
+        `用户名：${st.username || '-'} · 服务器：${st.host || '-'}:${st.port || '-'}`;
+    } catch (err) {
+      document.getElementById('botControlStatus').textContent = '机器人控制模块不可用：' + err.message;
+    }
+  }
+
+  async function saveBotConfig() {
+    try {
+      const payload = {
+        host: document.getElementById('botHost').value.trim(),
+        port: Number(document.getElementById('botPort').value),
+        username: document.getElementById('botUsername').value.trim(),
+        version: normalizeBotVersion(document.getElementById('botVersion').value),
+        auth: document.getElementById('botAuth').value.trim(),
+      };
+      const password = document.getElementById('botPassword').value.trim();
+      if (password) payload.password = password;
+      await apiJSON('/api/bot/config', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      toast('机器人配置已保存');
+      refreshBotControl();
+    } catch (err) {
+      toast('保存失败: ' + err.message, 'err');
+    }
+  }
+
+  async function disconnectBot() {
+    try {
+      await apiJSON('/api/bot/disconnect', { method: 'POST' });
+      toast('已下线');
+      refreshBotControl();
+    } catch (err) {
+      toast('下线失败: ' + err.message, 'err');
+    }
+  }
+
+  async function connectBot() {
+    try {
+      await apiJSON('/api/bot/connect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ config: botConfigCache || {} }),
+      });
+      toast('已连接/重连');
+      refreshBotControl();
+    } catch (err) {
+      toast('连接失败: ' + err.message, 'err');
+    }
+  }
+
+  async function reconnectBot() {
+    try {
+      await apiJSON('/api/bot/reconnect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ config: botConfigCache || {} }),
+      });
+      toast('已请求重连');
+      refreshBotControl();
+    } catch (err) {
+      toast('重连失败: ' + err.message, 'err');
+    }
   }
 
   // ---- 终端 ----
@@ -725,6 +856,7 @@
   setInterval(refreshStatus, 30000);
   setInterval(refreshTerminal, 2000);
   setInterval(refreshInventory, 2000);
+  setInterval(refreshBotControl, 4000);
 </script>
 </body>
 </html>
