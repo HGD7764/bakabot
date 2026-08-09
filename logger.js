@@ -135,8 +135,10 @@ class Logger {
 
   // ---- 挂接 bot：记录所有消息收发 + 可选的包级日志 ----
   // 需在 createBot 之后调用；重复调用是安全的（内部去重）。
+  // 重连后会对新 bot 重新挂接（按 bot 实例去重，不是全局一次）。
   installBotHooks(bot) {
-    if (!bot || this._hooks) return;
+    if (!bot || this._hooksBot === bot) return;
+    this._hooksBot = bot;
     const self = this;
     const { createChatResolver, createWhisperDetector, nbtComponentToText, parseSystemWhisper } = require('./message-utils');
     const resolver = createChatResolver(bot);

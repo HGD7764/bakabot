@@ -13,6 +13,7 @@
   },
   "plugins": [
     "auto-login",
+    "auto-reconnect",
     "core-commands",
     "navigator",
     "interactor",

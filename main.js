@@ -1,4 +1,4 @@
-// main.js (新版本)
+// main.js
 
 const mineflayer = require('mineflayer');
 const fs = require('fs');
