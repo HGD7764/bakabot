@@ -165,6 +165,18 @@ module.exports = (context) => {
     return cfg.warehouseCenter || null;
   };
 
+  const stopPathfinder = () => {
+    try {
+      if (bot.pathfinder && typeof bot.pathfinder.stop === 'function') {
+        bot.pathfinder.stop();
+        return;
+      }
+      if (bot.pathfinder && typeof bot.pathfinder.setGoal === 'function') {
+        bot.pathfinder.setGoal(null);
+      }
+    } catch (err) {}
+  };
+
   const blockIds = (names) => {
     const reg = bot.registry && bot.registry.blocksByName ? bot.registry.blocksByName : {};
     return names.map((name) => reg[name] && reg[name].id).filter((id) => Number.isInteger(id));
@@ -193,13 +205,19 @@ module.exports = (context) => {
     const focus = warehouseFocusPoint();
     if (!focus) throw new Error(String(cfg.warehouseMode || 'area') === 'list' ? '未配置仓库箱子坐标' : '未配置仓库中心');
     if (!bot.pathfinder) throw new Error('未检测到寻路模块，请先启用 navigator 插件');
-    if (insideWarehouse(bot.entity && bot.entity.position)) return;
+    if (insideWarehouse(bot.entity && bot.entity.position)) {
+      stopPathfinder();
+      return;
+    }
     const target = focus;
     bot.pathfinder.setGoal(new GoalNear(Number(target.x || 0), Number(target.y || 0), Number(target.z || 0), 3));
     const started = Date.now();
     while (Date.now() - started < cfg.moveTimeoutMs) {
       if (!bot.entity || !bot.entity.position) throw new Error('机器人未进入世界');
-      if (bot.entity.position.distanceTo({ x: Number(target.x || 0), y: Number(target.y || 0), z: Number(target.z || 0) }) <= 4) return;
+      if (bot.entity.position.distanceTo({ x: Number(target.x || 0), y: Number(target.y || 0), z: Number(target.z || 0) }) <= 4) {
+        stopPathfinder();
+        return;
+      }
       await sleep(200);
     }
     throw new Error('前往仓库超时');
@@ -212,7 +230,10 @@ module.exports = (context) => {
     const started = Date.now();
     while (Date.now() - started < cfg.moveTimeoutMs) {
       if (!bot.entity || !bot.entity.position) throw new Error('机器人未进入世界');
-      if (bot.entity.position.distanceTo(block.position) <= distance + 0.8) return;
+      if (bot.entity.position.distanceTo(block.position) <= distance + 0.8) {
+        stopPathfinder();
+        return;
+      }
       await sleep(200);
     }
     throw new Error('接近容器超时');
@@ -302,6 +323,7 @@ module.exports = (context) => {
         st.lastError = err.message;
       }
     }
+    stopPathfinder();
     return chooseBestFood(inventoryFoodItems());
   };
 

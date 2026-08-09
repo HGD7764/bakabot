@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const zlib = require('zlib');
 const { GoalNear } = require('mineflayer-pathfinder').goals;
 const { Vec3 } = require('vec3');
 const zhCnItems = require('./zh_cn_items.json');
@@ -30,7 +31,7 @@ module.exports = (context) => {
     fallbackToTpaOnDeliveryTimeout: true,
     postCollectTpaDelayMs: 800,
     postTpaAutoDeliverDelayMs: 3000,
-    postTpaAutoDeliverRetryMs: 4000,
+    postTpaAutoDeliverRetryMs: 25000,
     postTpaAutoDeliverMaxAttempts: 8,
     aliases: {
       dirt: 'dirt',
@@ -75,6 +76,16 @@ module.exports = (context) => {
       lastError: null,
       scanning: false,
       timer: null,
+    },
+    projection: {
+      fileName: null,
+      blocks: [],
+      scannedAt: null,
+      lastError: null,
+      targetPlayer: '',
+      totalRequired: 0,
+      totalAvailable: 0,
+      totalMissing: 0,
     },
   });
 
@@ -226,11 +237,12 @@ module.exports = (context) => {
   const taskStateRank = (status) => ({
     pending: 0,
     collecting: 1,
-    ready: 2,
-    delivering: 3,
-    failed: 4,
-    cancelled: 5,
-    delivered: 6,
+    awaiting_partial: 2,
+    ready: 3,
+    delivering: 4,
+    failed: 5,
+    cancelled: 6,
+    delivered: 7,
   })[status] ?? 7;
 
   const compareTasks = (a, b) => taskStateRank(a.status) - taskStateRank(b.status) ||
@@ -450,6 +462,7 @@ module.exports = (context) => {
     updatedAt: task.updatedAt,
     readyAt: task.readyAt || null,
     deliveredAt: task.deliveredAt || null,
+    partialPromptedAt: task.partialPromptedAt || null,
   });
 
   const setTaskStage = (task, stage, label) => {
@@ -458,8 +471,278 @@ module.exports = (context) => {
     task.updatedAt = Date.now();
   };
 
+  const stopPathfinder = () => {
+    try {
+      if (bot.pathfinder && typeof bot.pathfinder.stop === 'function') {
+        bot.pathfinder.stop();
+        return;
+      }
+      if (bot.pathfinder && typeof bot.pathfinder.setGoal === 'function') {
+        bot.pathfinder.setGoal(null);
+      }
+    } catch (err) {}
+  };
+
+  const currentAvailableForTask = (task) => normalizeTaskItems(task)
+    .map((item) => {
+      const availableCount = Math.min(countInInventory(item.itemName), item.requestedCount);
+      return {
+        itemName: item.itemName,
+        displayName: item.displayName,
+        requestedInput: item.requestedInput,
+        requestedCount: item.requestedCount,
+        availableCount,
+        missingCount: Math.max(0, item.requestedCount - availableCount),
+      };
+    })
+    .filter((item) => item.availableCount > 0);
+
+  const partialDeliverySummary = (task) => {
+    const availableItems = currentAvailableForTask(task);
+    const availableCount = availableItems.reduce((sum, item) => sum + item.availableCount, 0);
+    return {
+      availableItems,
+      availableCount,
+      missingCount: Math.max(0, task.requestedCount - availableCount),
+    };
+  };
+
+  const promptPartialDeliveryChoice = (task) => {
+    if (typeof bot.whisper !== 'function') return;
+    const partial = partialDeliverySummary(task);
+    if (!partial.availableCount) return;
+    bot.whisper(task.targetPlayer, `> ${taskDisplayLabel(task)} 目前只备到 ${partial.availableCount}/${task.requestedCount}，请到网页选择“取消任务”或“先送已有物品”。`);
+  };
+
+  const markAwaitingPartial = (task, reason = '') => {
+    const partial = partialDeliverySummary(task);
+    if (!partial.availableCount) throw new Error(reason || `仓库内没有足够的 ${taskDisplayLabel(task)}`);
+    task.status = 'awaiting_partial';
+    task.lastError = reason || `库存不足，还差 ${partial.missingCount}`;
+    task.partialPromptedAt = Date.now();
+    setTaskStage(task, 'partial', `库存不足，待网页选择（已备 ${partial.availableCount}/${task.requestedCount}）`);
+    promptPartialDeliveryChoice(task);
+    return summarizeTask(task);
+  };
+
+  const stockItemCount = (itemName) => {
+    const entry = (st.stock.items || []).find((item) => item && item.itemName === itemName);
+    return entry ? Math.max(0, Number(entry.count || 0)) : 0;
+  };
+
+  const simplifyBlockStateName = (value) => String(value || '')
+    .trim()
+    .replace(/^minecraft:/, '')
+    .replace(/\[.*$/, '');
+
+  const readNbtPayload = (buffer) => {
+    const data = Buffer.isBuffer(buffer) ? buffer : Buffer.from(buffer);
+    const source = data.length > 2 && data[0] === 0x1f && data[1] === 0x8b
+      ? zlib.gunzipSync(data)
+      : data;
+    let offset = 0;
+
+    const ensure = (size) => {
+      if (offset + size > source.length) throw new Error('NBT 数据损坏');
+    };
+
+    const readU8 = () => { ensure(1); return source.readUInt8(offset++); };
+    const readI8 = () => { ensure(1); return source.readInt8(offset++); };
+    const readI16 = () => { ensure(2); const value = source.readInt16BE(offset); offset += 2; return value; };
+    const readU16 = () => { ensure(2); const value = source.readUInt16BE(offset); offset += 2; return value; };
+    const readI32 = () => { ensure(4); const value = source.readInt32BE(offset); offset += 4; return value; };
+    const readBigI64 = () => {
+      ensure(8);
+      const value = source.readBigInt64BE(offset);
+      offset += 8;
+      return value;
+    };
+    const readF32 = () => { ensure(4); const value = source.readFloatBE(offset); offset += 4; return value; };
+    const readF64 = () => { ensure(8); const value = source.readDoubleBE(offset); offset += 8; return value; };
+    const readString = () => {
+      const length = readU16();
+      ensure(length);
+      const value = source.toString('utf8', offset, offset + length);
+      offset += length;
+      return value;
+    };
+    const readByteArray = () => {
+      const length = readI32();
+      ensure(length);
+      const value = source.slice(offset, offset + length);
+      offset += length;
+      return value;
+    };
+    const readIntArray = () => {
+      const length = readI32();
+      const value = [];
+      for (let i = 0; i < length; i += 1) value.push(readI32());
+      return value;
+    };
+    const readLongArray = () => {
+      const length = readI32();
+      const value = [];
+      for (let i = 0; i < length; i += 1) value.push(readBigI64());
+      return value;
+    };
+    const readTagPayload = (type) => {
+      switch (type) {
+        case 0: return null;
+        case 1: return readI8();
+        case 2: return readI16();
+        case 3: return readI32();
+        case 4: return readBigI64();
+        case 5: return readF32();
+        case 6: return readF64();
+        case 7: return readByteArray();
+        case 8: return readString();
+        case 9: {
+          const itemType = readU8();
+          const length = readI32();
+          const list = [];
+          for (let i = 0; i < length; i += 1) list.push(readTagPayload(itemType));
+          return list;
+        }
+        case 10: {
+          const compound = {};
+          while (true) {
+            const innerType = readU8();
+            if (innerType === 0) break;
+            const name = readString();
+            compound[name] = readTagPayload(innerType);
+          }
+          return compound;
+        }
+        case 11: return readIntArray();
+        case 12: return readLongArray();
+        default: throw new Error(`不支持的 NBT 标签类型: ${type}`);
+      }
+    };
+
+    const rootType = readU8();
+    if (rootType === 0) return null;
+    readString();
+    return readTagPayload(rootType);
+  };
+
+  const countPackedIndices = (values, bitsPerEntry, totalEntries) => {
+    if (!Array.isArray(values) || !values.length || !bitsPerEntry) return [];
+    const longs = values.map((value) => BigInt.asUintN(64, BigInt(value)));
+    const mask = (1n << BigInt(bitsPerEntry)) - 1n;
+    const counts = new Map();
+
+    for (let index = 0; index < totalEntries; index += 1) {
+      const bitIndex = BigInt(index * bitsPerEntry);
+      const longIndex = Number(bitIndex / 64n);
+      const startOffset = Number(bitIndex % 64n);
+      let entry = longs[longIndex] >> BigInt(startOffset);
+      const spill = startOffset + bitsPerEntry - 64;
+      if (spill > 0) {
+        const next = longs[longIndex + 1] || 0n;
+        entry |= next << BigInt(64 - startOffset);
+      }
+      const paletteIndex = Number(entry & mask);
+      counts.set(paletteIndex, (counts.get(paletteIndex) || 0) + 1);
+    }
+
+    return counts;
+  };
+
+  const decodeLitematicProjection = (buffer, fileName = '') => {
+    const root = readNbtPayload(buffer);
+    const regions = root && root.Regions && typeof root.Regions === 'object' ? root.Regions : null;
+    if (!regions) throw new Error('没有找到 Litematica 区域数据');
+    const merged = new Map();
+
+    for (const region of Object.values(regions)) {
+      if (!region) continue;
+      const palette = Array.isArray(region.BlockStatePalette) ? region.BlockStatePalette : [];
+      const blockStates = Array.isArray(region.BlockStates) ? region.BlockStates : [];
+      const size = region.Size && typeof region.Size === 'object'
+        ? [Math.abs(Number(region.Size.x || region.Size.X || 0)), Math.abs(Number(region.Size.y || region.Size.Y || 0)), Math.abs(Number(region.Size.z || region.Size.Z || 0))]
+        : [0, 0, 0];
+      const totalBlocks = Math.max(0, size[0] * size[1] * size[2]);
+      const bitsPerEntry = Math.max(2, Math.ceil(Math.log2(Math.max(1, palette.length))));
+      const counts = countPackedIndices(blockStates, bitsPerEntry, totalBlocks);
+
+      counts.forEach((count, paletteIndex) => {
+        const entry = palette[paletteIndex] || {};
+        const name = simplifyBlockStateName(entry.Name || entry.name || entry.id);
+        if (!name || name === 'air') return;
+        merged.set(name, (merged.get(name) || 0) + count);
+      });
+    }
+
+    return Array.from(merged.entries())
+      .map(([itemName, requiredCount]) => ({
+        itemName,
+        displayName: preferredLabelForItem(itemName, itemName),
+        requestedInput: itemName,
+        requiredCount,
+      }))
+      .sort((a, b) => b.requiredCount - a.requiredCount || a.itemName.localeCompare(b.itemName, 'zh-CN'));
+  };
+
+  const decodeSchemProjection = (buffer) => {
+    const root = readNbtPayload(buffer);
+    if (!root || !root.Palette || !root.BlockData) throw new Error('没有找到 Schematic 数据');
+    const palette = root.Palette && typeof root.Palette === 'object' ? root.Palette : {};
+    const inverse = new Map(Object.entries(palette).map(([name, index]) => [Number(index), simplifyBlockStateName(name)]));
+    const width = Math.max(0, Number(root.Width || 0));
+    const height = Math.max(0, Number(root.Height || 0));
+    const length = Math.max(0, Number(root.Length || 0));
+    const totalBlocks = width * height * length;
+    const bytes = Buffer.isBuffer(root.BlockData) ? root.BlockData : Buffer.from(root.BlockData || []);
+
+    const readVarInt = (start) => {
+      let numRead = 0;
+      let result = 0;
+      let byte;
+      do {
+        if (start + numRead >= bytes.length) throw new Error('Schematic 数据损坏');
+        byte = bytes[start + numRead];
+        const value = byte & 0x7f;
+        result |= value << (7 * numRead);
+        numRead += 1;
+        if (numRead > 5) throw new Error('Schematic BlockData 过长');
+      } while ((byte & 0x80) !== 0);
+      return { value: result, length: numRead };
+    };
+
+    const merged = new Map();
+    let offset = 0;
+    for (let i = 0; i < totalBlocks && offset < bytes.length; i += 1) {
+      const { value, length: consumed } = readVarInt(offset);
+      offset += consumed;
+      const name = inverse.get(value) || null;
+      if (!name || name === 'air') continue;
+      merged.set(name, (merged.get(name) || 0) + 1);
+    }
+
+    return Array.from(merged.entries())
+      .map(([itemName, requiredCount]) => ({
+        itemName,
+        displayName: preferredLabelForItem(itemName, itemName),
+        requestedInput: itemName,
+        requiredCount,
+      }))
+      .sort((a, b) => b.requiredCount - a.requiredCount || a.itemName.localeCompare(b.itemName, 'zh-CN'));
+  };
+
+  const analyzeProjectionFile = (fileName, buffer) => {
+    const name = String(fileName || '').toLowerCase();
+    if (name.endsWith('.litematic')) return decodeLitematicProjection(buffer, fileName);
+    if (name.endsWith('.schem') || name.endsWith('.schematic')) return decodeSchemProjection(buffer, fileName);
+    throw new Error('只支持 .litematic / .schem / .schematic 文件');
+  };
+
   const reconcileTask = (task) => {
     if (!task || task.status === 'cancelled' || task.status === 'delivered' || task.status === 'failed') return;
+    if (task.status === 'awaiting_partial') {
+      task.updatedAt = Date.now();
+      setTaskStage(task, 'partial', task.stageLabel || '等待网页选择');
+      return;
+    }
 
     refreshTaskCounts(task);
     task.updatedAt = Date.now();
@@ -592,33 +875,28 @@ module.exports = (context) => {
       3
     ));
 
-    if (insideWarehouse(bot.entity.position)) return;
+    if (insideWarehouse(bot.entity.position)) {
+      stopPathfinder();
+      return;
+    }
 
     if (task) setTaskStage(task, 'warehouse', '正在前往仓库中心');
     bot.pathfinder.setGoal(new GoalNear(targetPoint.x, targetPoint.y, targetPoint.z, radius));
     await waitUntilNearPoint(targetPoint, Math.max(radius + 1, 3), cfg.deliveryMoveTimeoutMs);
+    stopPathfinder();
     await sleep(500);
   };
 
-  const approachPlayer = async (playerName) => {
-    const player = bot.players && bot.players[playerName];
-    if (!player || !player.entity) throw new Error(`无法定位玩家 ${playerName}`);
-
-    if (bot.entity && bot.entity.position.distanceTo(player.entity.position) <= cfg.handoffDistance) {
-      return player.entity;
+  const waitForPlayerArrival = async (playerName, timeoutMs) => {
+    const started = Date.now();
+    while (Date.now() - started < timeoutMs) {
+      const player = bot.players && bot.players[playerName];
+      if (player && player.entity && bot.entity && bot.entity.position.distanceTo(player.entity.position) <= cfg.handoffDistance) {
+        return player.entity;
+      }
+      await sleep(200);
     }
-
-    if (!bot.pathfinder) throw new Error('未检测到寻路模块，请先启用 navigator 插件');
-
-    bot.pathfinder.setGoal(new GoalNear(
-      player.entity.position.x,
-      player.entity.position.y,
-      player.entity.position.z,
-      Math.max(1, Math.ceil(cfg.handoffDistance))
-    ));
-
-    await waitUntilNear(player.entity, cfg.handoffDistance, cfg.deliveryMoveTimeoutMs);
-    return player.entity;
+    throw new Error(`等待玩家接受 TPA 超时（>${Math.round(timeoutMs / 1000)} 秒）`);
   };
 
   const tossExact = async (itemName, count) => {
@@ -731,6 +1009,7 @@ module.exports = (context) => {
       }
       throw err;
     } finally {
+      stopPathfinder();
       st.stock.scanning = false;
     }
   };
@@ -745,6 +1024,7 @@ module.exports = (context) => {
       Math.max(1, Math.ceil(distance))
     ));
     await waitUntilNearPoint(block.position, distance + 0.8, cfg.deliveryMoveTimeoutMs);
+    stopPathfinder();
   };
 
   const openContainerBlock = async (block) => {
@@ -824,15 +1104,19 @@ module.exports = (context) => {
       const need = () => Math.max(0, item.requestedCount - Math.min(countInInventory(item.itemName), item.requestedCount));
       while (need() > 0) {
         if (task.status === 'cancelled') return summarizeTask(task);
-        const missing = need();
-        const pulled = await withdrawFromStorage(task, item, missing);
+        const missingNow = need();
+        const pulled = await withdrawFromStorage(task, item, missingNow);
         refreshTaskCounts(task);
         if (pulled > 0) {
           setTaskStage(task, 'storage', `已从仓库补到 ${taskLabel(task)} ${task.collectedCount}/${task.requestedCount}`);
         }
         if (task.status === 'cancelled') return summarizeTask(task);
         if (need() <= 0) break;
-        throw new Error(`仓库内没有足够的 ${item.displayName || item.itemName}，当前仍缺少 ${need()} 个`);
+        const missing = need();
+        if (task.collectedCount > 0) {
+          return markAwaitingPartial(task, `仓库内没有足够的 ${item.displayName || item.itemName}，当前仍缺少 ${missing} 个`);
+        }
+        throw new Error(`仓库内没有足够的 ${item.displayName || item.itemName}，当前仍缺少 ${missing} 个`);
       }
     }
 
@@ -840,7 +1124,7 @@ module.exports = (context) => {
     return summarizeTask(task);
   }
 
-  async function deliverTask(id, source = 'manual') {
+  async function deliverTask(id, source = 'manual', options = {}) {
     const task = taskById(id);
     if (!task) throw new Error('任务不存在');
     if (task.status === 'cancelled') throw new Error('任务已取消');
@@ -848,7 +1132,27 @@ module.exports = (context) => {
     if (st.activeDeliveryId && st.activeDeliveryId !== task.id) throw new Error('已有其他任务正在交付');
 
     reconcileTask(task);
-    if (task.collectedCount < task.requestedCount) throw new Error(`库存不足，还差 ${task.requestedCount - task.collectedCount}`);
+    const partialAllowed = !!options.allowPartial || source === 'partial';
+    if (task.collectedCount < task.requestedCount && !partialAllowed) {
+      if (task.collectedCount > 0) return markAwaitingPartial(task);
+      throw new Error(`库存不足，还差 ${task.requestedCount - task.collectedCount}`);
+    }
+
+    const deliveryItems = partialAllowed
+      ? currentAvailableForTask(task)
+      : normalizeTaskItems(task).map((item) => ({
+        itemName: item.itemName,
+        displayName: item.displayName,
+        requestedInput: item.requestedInput,
+        requestedCount: item.requestedCount,
+        availableCount: item.requestedCount,
+        missingCount: 0,
+      }));
+    const totalDeliverCount = deliveryItems.reduce((sum, item) => sum + item.availableCount, 0);
+    if (!totalDeliverCount) {
+      if (partialAllowed) throw new Error('当前没有可送的物品');
+      throw new Error(`库存不足，还差 ${task.requestedCount - task.collectedCount}`);
+    }
 
     st.activeDeliveryId = task.id;
     task.status = 'delivering';
@@ -856,18 +1160,45 @@ module.exports = (context) => {
     task.updatedAt = Date.now();
 
     try {
-      const targetEntity = await approachPlayer(task.targetPlayer);
+      if (!task.tpaSentAt || task.stage !== 'tpa') {
+        promptBeforeTpa(task);
+        sendTpaForTask(task);
+        task.tpaSentAt = Date.now();
+        task.tpaSource = source;
+        setTaskStage(task, 'tpa', '已发起传送，等待自动交付');
+      }
+
+      const targetEntity = await waitForPlayerArrival(task.targetPlayer, cfg.deliveryMoveTimeoutMs);
       if (typeof bot.lookAt === 'function') {
         await bot.lookAt(targetEntity.position.offset(0, 1.2, 0), true);
       }
-      for (const item of normalizeTaskItems(task)) {
-        await tossExact(item.itemName, item.requestedCount);
+      for (const item of deliveryItems) {
+        await tossExact(item.itemName, item.availableCount);
       }
-      task.collectedCount = task.requestedCount;
-      task.status = 'delivered';
-      setTaskStage(task, 'delivered', '已交付完成');
-      task.deliveredAt = Date.now();
-      task.updatedAt = task.deliveredAt;
+      if (partialAllowed) {
+        for (const delivered of deliveryItems) {
+          const entry = normalizeTaskItems(task).find((item) => item.itemName === delivered.itemName);
+          if (!entry) continue;
+          entry.requestedCount = Math.max(0, entry.requestedCount - delivered.availableCount);
+        }
+        task.items = normalizeTaskItems(task).filter((item) => item.requestedCount > 0);
+        refreshTaskCounts(task);
+        if (!task.items.length || task.requestedCount <= 0) {
+          task.status = 'delivered';
+          setTaskStage(task, 'delivered', '已交付完成');
+          task.deliveredAt = Date.now();
+        } else {
+          task.status = 'pending';
+          setTaskStage(task, 'pending', '已送出当前可用物品，等待继续补货');
+          task.partialPromptedAt = null;
+        }
+      } else {
+        task.collectedCount = task.requestedCount;
+        task.status = 'delivered';
+        setTaskStage(task, 'delivered', '已交付完成');
+        task.deliveredAt = Date.now();
+        task.updatedAt = task.deliveredAt;
+      }
       try {
         sendHome();
       } catch (homeErr) {
@@ -899,6 +1230,7 @@ module.exports = (context) => {
       reconcileTask(task);
       throw err;
     } finally {
+      stopPathfinder();
       st.activeDeliveryId = null;
     }
   }
@@ -998,6 +1330,37 @@ module.exports = (context) => {
     return { task: summarizeTask(task), merged, queuePosition };
   };
 
+  const createProjectionTask = (payload = {}) => {
+    const projection = projectionPayload();
+    const targetPlayer = String(payload.targetPlayer || projection.targetPlayer || '').trim();
+    if (!targetPlayer) throw new Error('目标玩家不能为空');
+    const autoDeliver = payload.autoDeliver == null ? true : !!payload.autoDeliver;
+    const items = projection.blocks.filter((item) => Number(item.availableCount || 0) > 0);
+    if (!items.length) throw new Error('当前投影没有可先运送的物品');
+
+    let result = null;
+    for (const item of items) {
+      result = createTask({
+        item: item.itemName,
+        count: item.availableCount,
+        targetPlayer,
+        autoDeliver,
+        deliveryMode: 'tpa',
+        notifyPlayer: false,
+      });
+    }
+
+    if (typeof bot.whisper === 'function') {
+      bot.whisper(targetPlayer, `> 投影已识别：可先运送 ${projection.totalAvailable} 个，缺少 ${projection.totalMissing} 个。`);
+    }
+
+    return {
+      task: result ? result.task : null,
+      merged: result ? result.merged : false,
+      projection: projectionPayload(),
+    };
+  };
+
   const removeTask = (id) => {
     const idx = st.tasks.findIndex((task) => task.id === id);
     if (idx === -1) throw new Error('任务不存在');
@@ -1046,8 +1409,14 @@ module.exports = (context) => {
         lastError: st.stock.lastError,
         scanning: st.stock.scanning,
       },
+      projection: projectionPayload(),
     };
   };
+
+  const projectionPayload = () => ({
+    ...st.projection,
+    blocks: Array.isArray(st.projection.blocks) ? st.projection.blocks : [],
+  });
 
   const settingsPayload = () => ({
     warehouseMode: cfg.warehouseMode,
@@ -1102,12 +1471,15 @@ module.exports = (context) => {
 
   const recoverWarehouseStuck = async (task = null, label = '仓库流程卡住') => {
     if (task) setTaskStage(task, 'home', `${label}，正在回仓`);
+    stopPathfinder();
     sendHome();
     await sleep(2000);
   };
 
   const scheduleAutoDeliver = (taskId, attempt = 1) => {
-    const delay = attempt === 1 ? cfg.postTpaAutoDeliverDelayMs : cfg.postTpaAutoDeliverRetryMs;
+    const delay = attempt === 1
+      ? cfg.postTpaAutoDeliverDelayMs
+      : Math.max(25000, Number(cfg.postTpaAutoDeliverRetryMs || 25000));
     setTimeout(() => {
       const task = taskById(taskId);
       if (!task || task.status === 'delivered' || task.status === 'cancelled' || task.status === 'failed') return;
@@ -1118,6 +1490,7 @@ module.exports = (context) => {
       deliverTask(taskId, `auto-after-tpa:${attempt}`).catch((err) => {
         task.lastError = err.message;
         if (attempt < cfg.postTpaAutoDeliverMaxAttempts) {
+          task.tpaSentAt = null;
           setTaskStage(task, 'tpa', `已发起传送，等待交付（重试 ${attempt}/${cfg.postTpaAutoDeliverMaxAttempts}）`);
           scheduleAutoDeliver(taskId, attempt + 1);
         } else {
@@ -1249,8 +1622,55 @@ module.exports = (context) => {
 
   ep('POST', 'deliver', async (req, res, url, body) => {
     const payload = jsonBody(body) || {};
-    const task = await deliverTask(Number(payload.id), 'web');
+    const task = await deliverTask(Number(payload.id), payload.partial ? 'partial' : 'web', { allowPartial: !!payload.partial });
     ok(res, { task });
+  });
+
+  ep('POST', 'deliver-partial', async (req, res, url, body) => {
+    const payload = jsonBody(body) || {};
+    const task = await deliverTask(Number(payload.id), 'partial', { allowPartial: true });
+    ok(res, { task });
+  });
+
+  ep('POST', 'projection/analyze', async (req, res, url, body) => {
+    const payload = jsonBody(body) || {};
+    const fileName = String(payload.fileName || '').trim();
+    const dataBase64 = String(payload.dataBase64 || '').trim();
+    if (!fileName) throw new Error('文件名不能为空');
+    if (!dataBase64) throw new Error('文件内容不能为空');
+
+    const buffer = Buffer.from(dataBase64.replace(/^data:.*;base64,/, ''), 'base64');
+    if (!buffer.length) throw new Error('文件内容无效');
+
+    await scanWarehouseInventory('projection');
+    const blocks = analyzeProjectionFile(fileName, buffer).map((item) => {
+      const availableCount = stockItemCount(item.itemName);
+      return {
+        ...item,
+        availableCount,
+        missingCount: Math.max(0, item.requiredCount - availableCount),
+      };
+    });
+    const totalRequired = blocks.reduce((sum, item) => sum + item.requiredCount, 0);
+    const totalAvailable = blocks.reduce((sum, item) => sum + item.availableCount, 0);
+    const totalMissing = blocks.reduce((sum, item) => sum + item.missingCount, 0);
+    st.projection = {
+      fileName,
+      blocks,
+      scannedAt: Date.now(),
+      lastError: null,
+      targetPlayer: String(payload.targetPlayer || '').trim(),
+      totalRequired,
+      totalAvailable,
+      totalMissing,
+    };
+    ok(res, { projection: projectionPayload() });
+  });
+
+  ep('POST', 'projection/create-available', async (req, res, url, body) => {
+    const payload = jsonBody(body) || {};
+    const result = createProjectionTask(payload);
+    ok(res, result);
   });
 
   commands.register({
