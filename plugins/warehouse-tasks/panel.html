@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>备货任务</title>
+<style>
+  :root{--bg:#eef6ff;--bg2:#f9fcff;--panel:#fff;--line:#d8e6f5;--text:#17324a;--muted:#6d8297;--accent:#2f80ed;--ok:#3fb96b;--warn:#d99b2b;--err:#e05c5c}
+  :root[data-theme="dark"]{--bg:#0f1722;--bg2:#101827;--panel:#162233;--line:#2a3a52;--text:#e7eef8;--muted:#8ea3ba;--accent:#63a4ff;--ok:#61d27a;--warn:#f0b34f;--err:#ef6b6b}
+  *{box-sizing:border-box} body{margin:0;padding:20px;background:radial-gradient(circle at top left,rgba(108,184,255,.2),transparent 24%),linear-gradient(180deg,var(--bg2),var(--bg));color:var(--text);font-family:system-ui,"Microsoft YaHei",sans-serif}
+  .wrap{max-width:1100px;margin:0 auto}.hero,.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:0 16px 38px rgba(35,84,126,.08)}
+  .hero{padding:18px;margin-bottom:16px}.hero-top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}.hero h1{margin:0 0 8px;font-size:26px}.sub{color:var(--muted);font-size:14px}
+  .stats{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}.stat{min-width:120px;padding:12px 14px;border-radius:12px;background:rgba(47,128,237,.06);border:1px solid var(--line)}.stat b{display:block;font-size:20px}
+  .layout{display:grid;grid-template-columns:360px 1fr;gap:16px}.card{padding:16px}
+  h2{margin:0 0 12px;font-size:18px} label{display:block;margin:10px 0 6px;color:var(--muted);font-size:13px}
+  input,select,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:rgba(47,128,237,.04);color:var(--text);font-size:14px}
+  textarea{min-height:120px;resize:vertical} button{border:none;border-radius:10px;padding:10px 14px;cursor:pointer;background:var(--accent);color:#fff;font-weight:700}.secondary{background:#eaf3ff;color:var(--accent)}.danger{background:var(--err)}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.task-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.hint{color:var(--muted);font-size:12px;line-height:1.7;margin-top:8px}
+  .list{display:flex;flex-direction:column;gap:12px}.task{padding:14px;border-radius:14px;background:rgba(47,128,237,.05);border:1px solid var(--line)}
+  .task-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700}.pending{background:rgba(240,179,79,.16);color:var(--warn)}.collecting{background:rgba(47,128,237,.12);color:var(--accent)}.ready,.delivering{background:rgba(47,128,237,.18);color:#1653a0}.delivered{background:rgba(63,185,107,.14);color:var(--ok)}.cancelled,.failed{background:rgba(224,92,92,.16);color:var(--err)}
+  .bar{height:10px;border-radius:999px;overflow:hidden;background:#eef5fb;border:1px solid #ddeaf6;margin-top:10px}.bar>span{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#6cb8ff)}
+  .meta{color:var(--muted);font-size:13px;margin-top:10px}.mini{font-size:12px;color:var(--muted);margin-top:8px;white-space:pre-wrap}
+  .empty{padding:18px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px}
+  .theme-toggle{background:#eaf3ff;color:var(--accent);border:1px solid var(--line);border-radius:999px;padding:8px 12px;font-size:12px}
+  @media (max-width: 900px){.layout{grid-template-columns:1fr}.hero-top{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <div class="hero-top">
+      <div>
+        <h1>备货任务</h1>
+        <div class="sub">在这里下发“取货并交给某个玩家”的任务，进度会实时刷新。</div>
+      </div>
+      <button class="theme-toggle" onclick="toggleTheme()">切换深浅色</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><b id="sOpen">0</b><span>进行中</span></div>
+      <div class="stat"><b id="sReady">0</b><span>已备齐</span></div>
+      <div class="stat"><b id="sDelivering">0</b><span>交付中</span></div>
+      <div class="stat"><b id="sDone">0</b><span>已完成</span></div>
+    </div>
+  </div>
+  <div class="layout">
+    <div class="card">
+      <h2>新建任务</h2>
+      <label>物品</label>
+      <input id="item" list="itemPresetList" placeholder="例如 泥土 / dirt / 绿宝石">
+      <datalist id="itemPresetList"></datalist>
+      <div class="row">
+        <div><label>数量</label><input id="count" type="number" min="1" step="1" value="64"></div>
+        <div><label>玩家</label><input id="player" placeholder="玩家1"></div>
+      </div>
+      <label>自动交付</label>
+      <select id="autoDeliver"><option value="true">货齐后自动交付</option><option value="false">只备货</option></select>
+      <div class="task-actions">
+        <button onclick="createTask()">创建任务</button>
+        <button class="secondary" onclick="refresh()">刷新</button>
+        <button class="secondary" onclick="scanStock()">扫描仓库</button>
+        <button class="secondary" onclick="loadPresets()">加载物品预设</button>
+      </div>
+      <div class="hint" id="presetHint">网页会从当前 26.2 物品注册表加载全量预设。</div>
+      <h2 style="margin-top:18px">仓库设置</h2>
+      <div class="row">
+        <div><label>中心X</label><input id="centerX" type="number"></div>
+        <div><label>中心Y</label><input id="centerY" type="number"></div>
+      </div>
+      <div class="row">
+        <div><label>中心Z</label><input id="centerZ" type="number"></div>
+        <div><label>搜索范围X</label><input id="radiusX" type="number"></div>
+      </div>
+      <div class="row">
+        <div><label>搜索范围Y</label><input id="radiusY" type="number"></div>
+        <div><label>搜索范围Z</label><input id="radiusZ" type="number"></div>
+      </div>
+      <div class="task-actions">
+        <button class="secondary" onclick="saveSettings()">保存仓库设置</button>
+      </div>
+      <h2 style="margin-top:18px">状态</h2>
+      <div class="mini" id="statusBox">加载中...</div>
+    </div>
+    <div class="card">
+      <h2>任务列表</h2>
+      <div class="list" id="taskList"><div class="empty">加载中...</div></div>
+      <h2 style="margin-top:18px">仓库库存</h2>
+      <div class="mini" id="stockBox">暂无扫描结果</div>
+    </div>
+  </div>
+</div>
+<script>
+const BASE = location.pathname.replace(/\/panel$/, '');
+const api = (p, opt={}) => fetch(BASE + p, { credentials:'same-origin', ...opt }).then(async r => {
+  const txt = await r.text();
+  let data = null;
+  try { data = txt ? JSON.parse(txt) : null; } catch (e) {}
+  if (!r.ok) throw new Error((data && data.error) || txt || ('HTTP ' + r.status));
+  return data;
+});
+const $ = (id) => document.getElementById(id);
+let presetLoaded = false;
+function toggleTheme(){ const r=document.documentElement; r.dataset.theme = r.dataset.theme === 'dark' ? '' : 'dark'; localStorage.theme = r.dataset.theme || ''; }
+if (localStorage.theme) document.documentElement.dataset.theme = localStorage.theme;
+function badge(s){ return '<span class="badge '+s+'">'+s+'</span>'; }
+function fmtTask(t){ return `
+  <div class="task">
+    <div class="task-top">
+      <div><b>${escapeHtml(t.displayName || t.itemName)}</b> × ${t.requestedCount} → ${escapeHtml(t.targetPlayer)}</div>
+      <span class="badge ${t.status}">${t.status}</span>
+    </div>
+    <div class="meta">进度 ${t.collectedCount}/${t.requestedCount} · 剩余 ${t.remainingCount} · ${t.autoDeliver ? '自动交付' : '只备货'}</div>
+    <div class="bar"><span style="width:${Math.max(0, Math.min(100, (t.progress || 0) * 100))}%"></span></div>
+    <div class="mini">${escapeHtml(t.lastStep || '')}${t.lastError ? '\n错误：' + t.lastError : ''}</div>
+    <div class="task-actions">
+      <button class="secondary" onclick="deliver(${t.id})">交付</button>
+      <button class="secondary" onclick="retry(${t.id})">重试</button>
+      <button class="danger" onclick="cancelTask(${t.id})">取消</button>
+    </div>
+  </div>`;
+}
+function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
+async function refresh(){
+  const r = await api('/status');
+  const s = r.status;
+  $('sOpen').textContent = (s.summary.pending + s.summary.collecting + s.summary.ready + s.summary.delivering);
+  $('sReady').textContent = s.summary.ready;
+  $('sDelivering').textContent = s.summary.delivering;
+  $('sDone').textContent = s.summary.delivered;
+  $('statusBox').textContent = (s.lastStatus || 'idle') + (s.lastError ? '\n' + s.lastError : '');
+  $('taskList').innerHTML = s.tasks.length ? s.tasks.map(fmtTask).join('') : '<div class="empty">还没有任务</div>';
+  $('stockBox').textContent = s.stock.items && s.stock.items.length
+    ? s.stock.items.map(x => `${x.displayName || x.name} × ${x.count}`).join('\n')
+    : '暂无库存扫描结果';
+  const settings = s.settings || {};
+  const center = settings.warehouseCenter || {};
+  const radius = settings.containerSearchRadius || settings.warehouseSize || {};
+  $('centerX').value = center.x ?? '';
+  $('centerY').value = center.y ?? '';
+  $('centerZ').value = center.z ?? '';
+  $('radiusX').value = radius.x ?? '';
+  $('radiusY').value = radius.y ?? '';
+  $('radiusZ').value = radius.z ?? '';
+  if (!presetLoaded) loadPresets().catch(() => {});
+}
+async function createTask(){
+  await api('/tasks', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({
+    item: $('item').value, count: $('count').value, player: $('player').value, autoDeliver: $('autoDeliver').value === 'true'
+  })});
+  await refresh();
+}
+async function taskAction(id, action){
+  await api('/task-action', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ id, action }) });
+  await refresh();
+}
+async function cancelTask(id){ await taskAction(id, 'cancel'); }
+async function retry(id){ await taskAction(id, 'retry'); }
+async function deliver(id){ await taskAction(id, 'deliver'); }
+async function scanStock(){ await api('/scan', { method:'POST' }); await refresh(); }
+async function loadPresets(){
+  const r = await api('/items');
+  const items = r.items || [];
+  const box = $('itemPresetList');
+  box.innerHTML = items.map(it => `<option value="${escapeHtml(it.name)}">${escapeHtml(it.displayName || it.name)}</option>`).join('');
+  $('presetHint').textContent = `已加载 ${items.length} 个物品预设。`;
+  presetLoaded = true;
+}
+async function saveSettings(){
+  await api('/settings', {
+    method:'PUT',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      warehouseCenter: {
+        x: Number($('centerX').value || 0),
+        y: Number($('centerY').value || 0),
+        z: Number($('centerZ').value || 0),
+      },
+      containerSearchRadius: {
+        x: Number($('radiusX').value || 0),
+        y: Number($('radiusY').value || 0),
+        z: Number($('radiusZ').value || 0),
+      }
+    })
+  });
+  await refresh();
+}
+setInterval(refresh, 2000);
+refresh();
+</script>
+</body>
+</html>

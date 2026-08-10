@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { GoalNear } = require('mineflayer-pathfinder').goals;
 const { Vec3 } = require('vec3');
-const zhCnItems = require('../stock-prep/zh_cn_items.json');
+const zhCnItems = {};
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 

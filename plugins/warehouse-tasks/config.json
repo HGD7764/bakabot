@@ -1,0 +1,29 @@
+{
+  "enabled": true,
+  "reconcileIntervalMs": 1500,
+  "collectPauseMs": 350,
+  "moveTimeoutMs": 25000,
+  "handoffDistance": 2.5,
+  "blockApproachDistance": 2,
+  "maxStorageBlocksScan": 128,
+  "warehouseMode": "area",
+  "warehouseBlocks": ["chest", "trapped_chest", "barrel"],
+  "warehouseCenter": { "x": 0, "y": 64, "z": 0 },
+  "warehouseSize": { "x": 16, "y": 8, "z": 16 },
+  "containerSearchRadius": { "x": 16, "y": 8, "z": 16 },
+  "warehouseContainers": [],
+  "deliveryTeleportCommand": "/tpa {player}",
+  "deliveryTeleportWaitMs": 3500,
+  "aliases": {
+    "泥土": "dirt",
+    "圆石": "cobblestone",
+    "石头": "stone",
+    "沙子": "sand",
+    "砂砾": "gravel",
+    "木头": "oak_log",
+    "原木": "oak_log",
+    "木板": "oak_planks",
+    "下界岩": "netherrack",
+    "绿宝石": "emerald"
+  }
+}
