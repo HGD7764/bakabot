@@ -117,41 +117,6 @@
     max-height: 320px;
     overflow: auto;
   }
-  .projection-box {
-    margin-top: 12px;
-    padding: 14px;
-    border-radius: 14px;
-    background: var(--panel-2);
-    border: 1px solid var(--line);
-  }
-  .projection-head {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-bottom: 10px;
-  }
-  .projection-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 8px;
-    max-height: 260px;
-    overflow: auto;
-  }
-  .projection-item {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 10px 12px;
-    border-radius: 12px;
-    background: var(--panel-3);
-    border: 1px solid var(--line);
-  }
-  .projection-item .meta {
-    color: var(--muted);
-    font-size: 12px;
-    margin-top: 4px;
-  }
   .stock-item {
     display: flex;
     justify-content: space-between;
@@ -344,29 +309,6 @@
           现在可以直接输中文名，比如“下界岩”“绿宝石”“泥土”。
           <br>如果你点过仓库扫描，库存里的中文名也会优先补全出来。
         </div>
-
-        <h2 style="margin-top:20px;">投影识别</h2>
-        <label for="projectionFileInput">投影文件</label>
-        <input id="projectionFileInput" type="file" accept=".litematic,.schem,.schematic">
-        <div class="row">
-          <div>
-            <label for="projectionPlayerInput">目标玩家</label>
-            <input id="projectionPlayerInput" placeholder="例如 玩家1">
-          </div>
-          <div>
-            <label for="projectionDeliverExistingInput">处理方式</label>
-            <select id="projectionDeliverExistingInput">
-              <option value="true">先运送已有物品</option>
-              <option value="false">只识别投影</option>
-            </select>
-          </div>
-        </div>
-        <div class="task-actions" style="margin-top:14px;">
-          <button onclick="analyzeProjection()">识别投影</button>
-          <button class="secondary" onclick="createProjectionAvailableTask()">按已有库存创建任务</button>
-        </div>
-        <div class="hint">支持 `litematic`、`schem`、`schematic`。识别后会显示需要什么、仓库里有什么、还缺多少。</div>
-        <div id="projectionBox" class="projection-box empty">还没有识别投影文件。</div>
 
         <h2 style="margin-top:20px;">仓库设置</h2>
         <label for="warehouseModeInput">扫描模式</label>
@@ -677,41 +619,6 @@
     `).join('');
   }
 
-  function renderProjection(projection) {
-    const box = document.getElementById('projectionBox');
-    const blocks = (projection && projection.blocks) || [];
-    if (!projection || !projection.fileName) {
-      box.className = 'projection-box empty';
-      box.textContent = '还没有识别投影文件。';
-      return;
-    }
-
-    const head = `
-      <div class="projection-head">
-        <div>
-          <div class="task-title">${esc(projection.fileName)}</div>
-          <div class="sub">总计需要 ${esc(projection.totalRequired || 0)}，仓库已有 ${esc(projection.totalAvailable || 0)}，缺少 ${esc(projection.totalMissing || 0)}</div>
-        </div>
-        <div class="badge ready">已识别</div>
-      </div>
-    `;
-    const items = blocks.length ? `
-      <div class="projection-grid">
-        ${blocks.map((item) => `
-          <div class="projection-item">
-            <div>
-              <div class="name">${esc(item.displayName || item.itemName)}</div>
-              <div class="meta">${esc(item.itemName)} · 需要 ${esc(item.requiredCount)} · 有 ${esc(item.availableCount)} · 缺 ${esc(item.missingCount)}</div>
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    ` : '<div class="empty" style="margin-top:10px;">没有识别到可用方块。</div>';
-
-    box.className = 'projection-box';
-    box.innerHTML = head + items;
-  }
-
   function useStockName(name) {
     document.getElementById('itemInput').value = name;
   }
@@ -774,16 +681,6 @@
     renderWarehouseContainerRows(settings.warehouseContainers || []);
   }
 
-  function arrayBufferToBase64(buffer) {
-    const bytes = new Uint8Array(buffer);
-    let binary = '';
-    const chunk = 0x4000;
-    for (let i = 0; i < bytes.length; i += chunk) {
-      binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
-    }
-    return btoa(binary);
-  }
-
   async function refreshStatus() {
     try {
       const data = await api(base + '/status');
@@ -794,7 +691,6 @@
       renderStats(data.tasks || []);
       renderTasks(data.tasks || []);
       renderStock(data.stock || {});
-      renderProjection(data.projection || {});
       document.getElementById('lastUpdate').textContent = '刚刚同步';
     } catch (err) {
       document.getElementById('lastUpdate').textContent = '同步失败';
@@ -891,50 +787,6 @@
       toast(result.merged ? '任务已合并' : '任务已创建');
       document.getElementById('itemInput').value = '';
       document.getElementById('countInput').value = '64';
-      refreshStatus();
-    } catch (err) {
-      toast(err.message, 'err');
-    }
-  }
-
-  async function analyzeProjection() {
-    const input = document.getElementById('projectionFileInput');
-    const file = input.files && input.files[0];
-    const targetPlayer = document.getElementById('projectionPlayerInput').value.trim();
-    const deliverExisting = document.getElementById('projectionDeliverExistingInput').value === 'true';
-    if (!file) return toast('先选一个投影文件', 'err');
-
-    try {
-      const buffer = await file.arrayBuffer();
-      const result = await api(base + '/projection/analyze', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          fileName: file.name,
-          dataBase64: arrayBufferToBase64(buffer),
-          targetPlayer,
-        }),
-      });
-      renderProjection(result.projection || {});
-      toast('投影识别完成');
-      refreshStatus();
-      if (deliverExisting) {
-        await createProjectionAvailableTask();
-      }
-    } catch (err) {
-      toast(err.message, 'err');
-    }
-  }
-
-  async function createProjectionAvailableTask() {
-    const targetPlayer = document.getElementById('projectionPlayerInput').value.trim();
-    try {
-      const result = await api(base + '/projection/create-available', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ targetPlayer, autoDeliver: true }),
-      });
-      toast(result.merged ? '投影任务已合并' : '投影任务已创建');
       refreshStatus();
     } catch (err) {
       toast(err.message, 'err');
