@@ -138,6 +138,12 @@ module.exports = (context) => {
     return displayName || itemName;
   };
 
+  const isBlockItemName = (itemName) => {
+    const blocks = bot.registry && bot.registry.blocksByName ? bot.registry.blocksByName : null;
+    if (!blocks) return false;
+    return !!blocks[String(itemName || '').replace(/^minecraft:/, '')];
+  };
+
   const stockLookupMap = () => {
     const lookup = new Map();
     for (const entry of st.stock.items || []) {
@@ -214,7 +220,7 @@ module.exports = (context) => {
   const itemPresets = () => {
     const registry = bot.registry && bot.registry.itemsByName ? bot.registry.itemsByName : {};
     return Object.values(registry)
-      .filter((item) => item && item.name)
+      .filter((item) => item && item.name && isBlockItemName(item.name))
       .map((item) => ({
         name: item.name,
         displayName: preferredLabelForItem(item.name, item.displayName || item.name),
@@ -685,7 +691,7 @@ module.exports = (context) => {
           const container = await openContainerBlock(block);
           try {
             for (const item of containerItems(container)) {
-              if (!item || !item.name || !item.count) continue;
+              if (!item || !item.name || !item.count || !isBlockItemName(item.name)) continue;
               const existing = merged.get(item.name) || {
                 itemName: item.name,
                 displayName: item.displayName || item.name,
