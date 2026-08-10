@@ -469,6 +469,7 @@
   const base = '/api/plugins/stock-prep';
   let currentSettings = null;
   let lastStatus = null;
+  let scanInFlight = false;
 
   async function api(path, opts = {}) {
     let token = localStorage.getItem(TOKEN_KEY) || '';
@@ -847,12 +848,30 @@
   }
 
   async function manualScan() {
+    if (scanInFlight) return;
+    const button = document.querySelector('button[onclick="manualScan()"]');
+    scanInFlight = true;
+    if (button) {
+      button.disabled = true;
+      button.dataset.originalText = button.textContent;
+      button.textContent = '扫描中...';
+    }
+    const stock = (lastStatus && lastStatus.stock) || {};
+    renderStock({ ...stock, scanning: true });
     try {
-      await api(base + '/scan', { method: 'POST' });
+      const data = await api(base + '/scan', { method: 'POST' });
+      renderStock(data.stock || {});
       toast('仓库扫描已完成');
-      refreshStatus();
+      await refreshStatus();
     } catch (err) {
       toast('扫描失败: ' + err.message, 'err');
+      await refreshStatus();
+    } finally {
+      scanInFlight = false;
+      if (button) {
+        button.disabled = false;
+        button.textContent = button.dataset.originalText || '手动扫描';
+      }
     }
   }
 

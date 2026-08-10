@@ -89,6 +89,13 @@ module.exports = (context) => {
     },
   });
 
+  // 插件从网页重载时会复用共享 state；清理上一轮留下的定时器和假扫描状态。
+  if (st.stock && st.stock.timer) {
+    clearInterval(st.stock.timer);
+    st.stock.timer = null;
+  }
+  if (st.stock) st.stock.scanning = false;
+
   const htmlFile = path.join(__dirname, 'panel.html');
 
   const persistConfig = () => {
@@ -906,7 +913,14 @@ module.exports = (context) => {
 
     if (task) setTaskStage(task, 'warehouse', '正在前往仓库中心');
     bot.pathfinder.setGoal(new GoalNear(targetPoint.x, targetPoint.y, targetPoint.z, radius));
-    await waitUntilNearPoint(targetPoint, Math.max(radius + 1, 3), cfg.deliveryMoveTimeoutMs);
+    try {
+      await waitUntilNearPoint(targetPoint, Math.max(radius + 1, 3), cfg.deliveryMoveTimeoutMs);
+    } catch (err) {
+      if (String(err.message || '').includes('接近目标超时')) {
+        throw new Error(`前往仓库超时（>${Math.round(cfg.deliveryMoveTimeoutMs / 1000)} 秒）`);
+      }
+      throw err;
+    }
     stopPathfinder();
     await sleep(500);
   };
@@ -943,10 +957,8 @@ module.exports = (context) => {
   const warehouseContainerPositions = () => {
     const ids = blockIds(cfg.warehouseBlocks);
     if (String(cfg.warehouseMode || 'area') === 'list') {
-      return warehouseContainerVec3s().filter((pos) => {
-        const block = bot.blockAt(pos);
-        return !!(block && ids.includes(block.type));
-      });
+      // 指定坐标可能位于尚未加载的区块，不能在走过去之前调用 blockAt 过滤。
+      return warehouseContainerVec3s();
     }
     if (typeof bot.findBlocks !== 'function') return [];
     if (!ids.length) return [];
@@ -970,29 +982,35 @@ module.exports = (context) => {
     }
   };
 
-  const scanWarehouseInventory = async (reason = 'manual') => {
-    const allowRetry = !String(reason).includes(':retry');
-    if (st.stock.scanning) {
-      return {
-        items: st.stock.items,
-        scannedAt: st.stock.scannedAt,
-        lastError: st.stock.lastError,
-        skipped: true,
-      };
-    }
+  let activeScanPromise = null;
 
-    st.stock.scanning = true;
-    st.stock.lastError = null;
+  const runWarehouseScan = async (reason, allowRetry) => {
     try {
       await moveToWarehouseCenter();
       const positions = warehouseContainerPositions();
+      if (!positions.length) {
+        throw new Error(String(cfg.warehouseMode || 'area') === 'list'
+          ? '没有可扫描的箱子坐标，请先在仓库设置里添加并保存坐标'
+          : '指定范围内没有找到可扫描的容器');
+      }
       const merged = new Map();
 
+      const configuredContainerIds = blockIds(cfg.warehouseBlocks);
       for (const pos of positions) {
-        const block = bot.blockAt(pos);
-        if (!block) continue;
+        let block = null;
         try {
-          await approachBlock(block, 2);
+          if (String(cfg.warehouseMode || 'area') === 'list') {
+            await approachPoint(pos, 2);
+            block = bot.blockAt(pos);
+            if (!block) throw new Error(`坐标 ${pos.x},${pos.y},${pos.z} 处没有加载方块`);
+            if (!configuredContainerIds.includes(block.type)) {
+              throw new Error(`坐标 ${pos.x},${pos.y},${pos.z} 不是已配置的容器`);
+            }
+          } else {
+            block = bot.blockAt(pos);
+            if (!block) continue;
+            await approachBlock(block, 2);
+          }
           const container = await openContainerBlock(block);
           try {
             for (const item of containerItems(container)) {
@@ -1013,7 +1031,8 @@ module.exports = (context) => {
           }
         } catch (err) {
           if (isWarehouseStuckError(err)) throw err;
-          st.stock.lastError = `扫描 ${block.name} 失败: ${err.message}`;
+          const targetLabel = block && block.name ? block.name : `${pos.x},${pos.y},${pos.z}`;
+          st.stock.lastError = `扫描 ${targetLabel} 失败: ${err.message}`;
         }
       }
 
@@ -1029,26 +1048,51 @@ module.exports = (context) => {
       if (allowRetry && isWarehouseStuckError(err)) {
         st.stock.lastError = `扫描卡住，已执行回仓并重试: ${err.message}`;
         await recoverWarehouseStuck(null, '仓库扫描卡住');
-        return scanWarehouseInventory(`${reason}:retry`);
+        return runWarehouseScan(`${reason}:retry`, false);
       }
       throw err;
-    } finally {
+    }
+  };
+
+  const scanWarehouseInventory = (reason = 'manual') => {
+    if (activeScanPromise) return activeScanPromise;
+
+    st.stock.scanning = true;
+    st.stock.lastError = null;
+    activeScanPromise = runWarehouseScan(reason, true).catch((err) => {
+      st.stock.lastError = err.message;
+      throw err;
+    }).finally(() => {
       stopPathfinder();
       st.stock.scanning = false;
+      activeScanPromise = null;
+    });
+    return activeScanPromise;
+  };
+
+  const approachPoint = async (point, distance = cfg.blockApproachDistance) => {
+    if (!point) throw new Error('目标坐标不可用');
+    if (!bot.pathfinder) throw new Error('未检测到寻路模块，请先启用 navigator 插件');
+    bot.pathfinder.setGoal(new GoalNear(
+      point.x,
+      point.y,
+      point.z,
+      Math.max(1, Math.ceil(distance))
+    ));
+    try {
+      await waitUntilNearPoint(point, distance + 0.8, cfg.deliveryMoveTimeoutMs);
+    } catch (err) {
+      if (String(err.message || '').includes('接近目标超时')) {
+        throw new Error(`接近容器超时（>${Math.round(cfg.deliveryMoveTimeoutMs / 1000)} 秒）`);
+      }
+      throw err;
     }
+    stopPathfinder();
   };
 
   const approachBlock = async (block, distance = cfg.blockApproachDistance) => {
     if (!block || !block.position) throw new Error('目标方块不可用');
-    if (!bot.pathfinder) throw new Error('未检测到寻路模块，请先启用 navigator 插件');
-    bot.pathfinder.setGoal(new GoalNear(
-      block.position.x,
-      block.position.y,
-      block.position.z,
-      Math.max(1, Math.ceil(distance))
-    ));
-    await waitUntilNearPoint(block.position, distance + 0.8, cfg.deliveryMoveTimeoutMs);
-    stopPathfinder();
+    await approachPoint(block.position, distance);
   };
 
   const openContainerBlock = async (block) => {
