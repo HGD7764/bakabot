@@ -75,7 +75,6 @@ module.exports = (context) => {
       scannedAt: null,
       lastError: null,
       scanning: false,
-      timer: null,
     },
     projection: {
       fileName: null,
@@ -89,11 +88,7 @@ module.exports = (context) => {
     },
   });
 
-  // 插件从网页重载时会复用共享 state；清理上一轮留下的定时器和假扫描状态。
-  if (st.stock && st.stock.timer) {
-    clearInterval(st.stock.timer);
-    st.stock.timer = null;
-  }
+  // 插件从网页重载时会复用共享 state；只清理上一轮残留的扫描标记。
   if (st.stock) st.stock.scanning = false;
 
   const htmlFile = path.join(__dirname, 'panel.html');
@@ -1055,7 +1050,9 @@ module.exports = (context) => {
   };
 
   const scanWarehouseInventory = (reason = 'manual') => {
-    if (activeScanPromise) return activeScanPromise;
+    if (activeScanPromise) {
+      return Promise.reject(new Error('已有扫描正在进行'));
+    }
 
     st.stock.scanning = true;
     st.stock.lastError = null;
@@ -1121,12 +1118,21 @@ module.exports = (context) => {
     let taken = 0;
     for (const pos of positions) {
       if (taken >= needed) break;
-      const block = bot.blockAt(pos);
-      if (!block) continue;
-
       try {
+        if (String(cfg.warehouseMode || 'area') === 'list') {
+          await approachPoint(pos, 2);
+        }
+        const block = bot.blockAt(pos);
+        if (!block) throw new Error(`坐标 ${pos.x},${pos.y},${pos.z} 处没有加载方块`);
+        if (String(cfg.warehouseMode || 'area') === 'list') {
+          const configuredContainerIds = blockIds(cfg.warehouseBlocks);
+          if (!configuredContainerIds.includes(block.type)) {
+            throw new Error(`坐标 ${pos.x},${pos.y},${pos.z} 不是已配置的容器`);
+          }
+        } else {
+          await approachBlock(block, 2);
+        }
         setTaskStage(task, 'storage', `前往 ${block.name} 取 ${item.displayName || item.itemName}`);
-        await approachBlock(block, 2);
         const container = await openContainerBlock(block);
         try {
           const stack = containerItems(container).find((slot) => slot && slot.name === item.itemName);
@@ -1779,15 +1785,6 @@ module.exports = (context) => {
   if (!st.timer) {
     st.timer = setInterval(reconcileAll, Math.max(500, cfg.reconcileIntervalMs));
     if (typeof st.timer.unref === 'function') st.timer.unref();
-  }
-
-  if (!st.stock.timer) {
-    st.stock.timer = setInterval(() => {
-      scanWarehouseInventory('timer').catch((err) => {
-        st.stock.lastError = err.message;
-      });
-    }, 10 * 60 * 1000);
-    if (typeof st.stock.timer.unref === 'function') st.stock.timer.unref();
   }
 
   webManager.registerTile({
