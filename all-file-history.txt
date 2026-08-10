@@ -1,0 +1,950 @@
+.gitignore
+  2026-08-08 | 5e3e51f | fix ntc compatible
+README.md
+  2026-08-08 | 5e3e51f | fix ntc compatible
+command-manager.js
+  2026-08-08 | 5e3e51f | fix ntc compatible
+config.json
+  2026-08-09 | 4ec5044 | Merge branch 'main' into feat/stock-prep-web-settings
+logger.js
+  2026-08-09 | c8ffc7d | auto reconnect add
+main.js
+  2026-08-09 | a240ef5 | 修复tpa和发消息
+message-utils.js
+  2026-08-08 | 5e3e51f | fix ntc compatible
+package-lock.json
+  2026-08-08 | 5e3e51f | fix ntc compatible
+package.json
+  2026-08-08 | 5e3e51f | fix ntc compatible
+permissions.json
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/auto-eat/config.json
+  2026-08-09 | 934ca32 | 增加autoeat 更改ui颜色 增加扫描范围设置
+plugins/auto-eat/index.js
+  2026-08-10 | c978d1f | 修复寻路
+plugins/auto-eat/panel.html
+  2026-08-09 | fc289b4 | 修改了坐标报错问题
+plugins/auto-login/config.json
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/auto-login/index.js
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/auto-reconnect/config.json
+  2026-08-09 | c8ffc7d | auto reconnect add
+plugins/auto-reconnect/index.js
+  2026-08-09 | c8ffc7d | auto reconnect add
+plugins/chat/index.js
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/core-commands/index.js
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/config.json
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/index.js
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/panel.html
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/2 Unlimited - Get Ready For This.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+"plugins/disc-jockey/songs/9\345\205\205\346\273\241\344\272\206\346\231\272\346\205\247\347\232\204\346\255\214\346\233\262.nbs"
+  (no history found)
+plugins/disc-jockey/songs/A Team - Theme.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/ABBA - Angeleyes.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/ABBA - Dancing Queen.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/ABBA - Does Your Mother Know.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/ABBA - Gimme Gimme Gimme (A Man After Midnight).nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/ABBA - If it Wasn't for the Night.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/ABBA - Lay All Your Love On Me.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/ABBA - Mamma Mia.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/ABBA - SOS.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/ABBA - The Winner Takes It All.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/ABBA - Voulez Vous.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/ABBA - Waterloo.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Ace of Base - The Sign.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Adele - Hello 1.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Adele - Hello.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Aha - Take On Me 1.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Aha - Take On Me.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Aladdin - Prince Ali.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Alan Walker - Faded.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Andy Williams - Where Do I Begin Love Story.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Aqua - Barbie Girl.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Avenged Sevenfold - A Little Piece of Heaven.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Avicii - Levels.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Avicii - Waiting For Love.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Avicii - Wake Me Up.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Avril Lavigne - Complicated.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Axie - I'm Sane.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Baccara - I Can Boogie.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Bach - Canon in D(Fsharp).nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Bach - Fugue In D Minor.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Bach - Italian Concerto 1.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Bach - Italian Concerto.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Bach - Prelude No2 in C Minor.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Bach - Tocatta and Fugue.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Bacharach and David - Raindrops Keep Falling On My Head.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Backstreet Boys - Everybody.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Beatles - Here Comes the Sun.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Beatles - Hey Jude.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Beatles - I Want To Hold Your Hand.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Beatles - Let It Be.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Beatles - ObLaDi.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Beatles - Strawberry Fields Forever.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Beatles - Yesterday.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Beauty and the Beast - Something There edit.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Beauty and the Beast - Something There.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Bee Gees - Stayin' Alive.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Beethoven - 1812 Overture.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Beethoven - Fur Elise.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Beethoven - Hammeklavierr.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Beethoven - Moonlight Sonata.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Beethoven - Moonlight.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Beethoven - Ode to Joy.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Benny Hill - Yakety Sax Banjo.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Benny Hill - Yakety Sax Flute.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Benny Hill - Yakety Sax Medium.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Benny Hill - Yakety Sax Simple.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Billy Joel - Just the Way You Are.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Black Eyed Peas - I Got a Feeling.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Blondie - Heart of Glass.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Bon Jovi - It's My Life.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Bon Jovi - Livin' on a Prayer.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Bonnie Tyler - Total Eclipse of the Heart.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Breakbot - Baby I'm Yours.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Britney Spears - Toxic.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Bruno Mars - The Lazy Song.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Bruno Mars - Uptown Funk.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Bruno Mars - When I Was Your Man.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Bryan Adams - Heaven.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/C+C Music Factory - Everybody Dance Now.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/C418 - Sweden.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/C418 - Wet Hands.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/CORONA - In the Rhythm of the Night.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Capital Cities - Safe And Sound.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/CaptainSparklez - Revenge.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/CaptainSparklez - Take Back the Night.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Carly Rae Jepsen - Call Me Maybe.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Carpenters - Goodbye to Love 2.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Carpenters - Goodbye to Love.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Carpenters - Hurting Each Other.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Carpenters - It's Going to Take Some Time.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Carpenters - Mr Postman.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Carpenters - Only Yesterday 1.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Carpenters - Only Yesterday.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Carpenters - Rainy Days and Mondays.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Carpenters - Top of the World 1.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Carpenters - Top of the World 2.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Carpenters - Top of the World.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Carpenters - We've Only Just Begun.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Carpenters - Yesterday Once More.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Castle in the Sky - Fanfare.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Celine Dion - It's All Coming Back to Me Now.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Celine Dion - My Heart Will Go On.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Chaka Khan - I Feel for You.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Chopin - Ballade No1 in GMinor Op23.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Chopin - Etude 10 3.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Chopin - Etude 10 4.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Chopin - Etude 10 5.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Chopin - Minute Waltz.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Chopin - Waterfall Etude.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Chordettes - Mr Sandman.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Chuck Berry - Johnny B Goode.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Clean Bandit - Rather Be.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Clean Bandit - Rockabye.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Coldplay - Charlie Brown.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Coldplay - Clocks.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Coldplay - Viva La Vida.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Crystal Skies.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Culture Club - Karma Chameleon.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Daft Punk - Get Lucky.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Daft Punk - Harder, Better, Faster, Stronger.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Daler Mehndi - Tunak Tunak Tun.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Darude - Sandstorm.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Dave Brubeck - Take Five.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Demi Lovato - Heart Attack.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Deniece Williams - Let's Hear it for the Boy.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Dexys Midnight Runners and The Emerald Express - Come On Eileen.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Dolly Parton - 9 to 5.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Donald Glover - This Is America.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Donna Summer - Hot Stuff.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Donna Summer - Last Dance.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Donna Summer - Love to Love You Baby.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Donna Summer - She Works Hard for the Money.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/DragonForce - Through the Fire and Flames.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Dropkick Murphys - Shipping up to Boston.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Duck Tales - Theme.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Dwayne Johnson - You're Welcome.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Eagles - Hotel California.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Earth Wind and Fire - September.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Ed Sheeran - Shape of You.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Elton John - Crocodile Rock.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Elton John - I'm Still Standing.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Emmett - Dixie.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Europe - Final Countdown.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Eurythmics - Sweet Dreams 1.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Eurythmics - Sweet Dreams.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Evangelion - Cruel Angel Thesis simple.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Evangelion - Cruel Angel's Thesis.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Fall Out Boy - Immortals.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Fandroid - Curiosity (Got The Best Of Me).nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Flo Rida - Good Feeling.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Foster The People - Pumped Up Kicks.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Four Seasons - December 1963 Oh What a Night.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Frank Sinatra - My Way.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Frozen - Let It Go.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+"plugins/disc-jockey/songs/Fu\304\215\303\255k - Entry of the Gladiators 2.nbs"
+  (no history found)
+"plugins/disc-jockey/songs/Fu\304\215\303\255k - Entry of the Gladiators.nbs"
+  (no history found)
+plugins/disc-jockey/songs/Gangnam Style.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Garth Brooks - Friends in Low Places.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Genshin Impact - Mondstadt.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Genshin Impact - Qilin's Prance Ganyu Theme.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/George Michael - Careless Whisper.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/George Michael - Faith.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Gloria Estefan - Get on Your Feet.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Gloria Gaynor - I Will Survive 1.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Gloria Gaynor - I Will Survive.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Gonoud - Ave Maria easy.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Gotye - Somebody That I Used to Know.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Gounod - Ave Maria.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Grand Theft Auto - Vice City Theme.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Gravity Falls - Theme.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Grieg - In the Hall of the Mountain King.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Groucho Marx - Lydia the Tattooed Lady.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/GuanLanGaoShou.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Guitar, Loneliness and Blue Planet.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Guns N' Roses - Sweet Child of Mine.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Guoge.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Haddaway - What is Love 1.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Haddaway - What is Love.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Handel - Queen of Sheba 1.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Handel - Queen of Sheba.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Handel - Water Music.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Hans Zimmer - He's A Pirate.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Harry Potter - Theme.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Hatsune Miku - Nyan Cat.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Herb Alpert - Spanish Flea 2.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Herb Alpert - Spanish Flea.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Home on the Range - Little Patch of Heaven.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Hunchback of Notre Dame - Hellfire.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+"plugins/disc-jockey/songs/Hungarian Folk Songs - Magyar n\303\251pmes\303\251k f\305\221c\303\255mdal.nbs"
+  (no history found)
+plugins/disc-jockey/songs/Idina Menzel - Let It Go 1.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Idina Menzel - Let It Go.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Imagine Dragons - Radioactive.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Inital D - Deja Vu.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/It's My Life.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/J. Geils Band, The - Centerfold.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Jack Harlow - What's Poppin.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Jackson 5 - Blame it on the Boogie.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Jackson 5 - I Want You Back.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Jason Paige - Pokemon Theme.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Jepopardy - Theme.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Jin Hashimoto - STAND PROUD.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Joe Hisaishi - A Town with an Ocean View simple.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Joe Hisaishi - A Town with an Ocean View.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Joe Hisaishi - Castle in the Sky Fanfare.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Joe Hisaishi - Howl Merrygoround Of Life.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Joe Hisaishi - Jazz Town with an Ocean View vanilla.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Joe Hisaishi - Jazz Town with an Ocean View.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Joe Hisaishi - Kiki Bakers Assistant.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Joe Hisaishi - Ponyo Empty Bucket.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/John Lennon - Imagine.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/John Powell - Where No One Goes.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/John Williams - Home Along Medley.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/John Williams - The Raiders March.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/John Williams - Theme from Jurassic Park.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Johnny Marks - Rudolph the Red Nosed Reindeer.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Jonathan Wolff - Seinfeld Theme.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/KISS - Rock and Roll All Night.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Katy Perry - California Gurls.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Katy Perry - Roar.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Kenny Loggins - Footloose.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Key - Star Spangled Banner.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Killers - Mr Brightside.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Kim Possible - Theme.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+"plugins/disc-jockey/songs/Kitsune\302\262 - Rainbow Tylenol.nbs"
+  (no history found)
+plugins/disc-jockey/songs/Kylie Minogue - Loco-Motion, The.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+"plugins/disc-jockey/songs/K\305\215ji Wada - The Biggest Dreamer.nbs"
+  (no history found)
+plugins/disc-jockey/songs/LMFAO - Party Rock Anthem.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/La Bouche - Be My Lover.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/La La Land - Another Day of Sun vanilla.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/La La Land - Another Day of Sun.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Led Zepplin - Stairway to Heaven.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Legend of Zelda - Theme.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Leontoyvch - Carol of the Bells.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Leroy Anderson - Sleigh Ride.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/LilNasX - Industry Baby.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Linkin Park - What I've Done.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Lipps Inc - Funkytown 1.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Lipps Inc - Funkytown.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Liszt - Libestraum.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Little Boots - Every Little Earthquake.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Living Tombstone - Don't Tattle On Me.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Looking Glass - Brandy You're a Fine Girl.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Looney Tunes - Theme.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Luis Fonsi - Despacito.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Lupin III - Samba Temperado.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Madonna - Material Girl.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Mariah Carey - All I Want for Chirstmas.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Mario Kart - Rainbow Road.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Mariokart - Coconut Mall.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Mariya Takeuchi - Plastic Love.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Mark Mueller - DuckTales Theme.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Maroon 5 - Animals.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Maroon 5 - Payphone.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Maroon 5 - Sugar.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Matthew Wilder - Break My Stride
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Meghan Trainor - All About that Bass.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Michael Jackson - Beat It.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Michael Jackson - Billie Jean.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Michael Jackson - Thriller.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Mortal Kombat - Techno Syndrome.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Mozart - Aria of the Night Queen.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Mozart - Requiem Lachrimosa.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Mozart - Turkish March.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Muppets - Lydia the Tattooed Lady.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/NSYNC - I Want You Back.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Natalie Cole - This Will Be 1.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Natalie Cole - This Will Be.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Neil Diamond - I'm a Believer.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Nicki Minaj - Starships.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Nintendo - Kirby's Dreamland Intro.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Nintendo - Pokemon Center Theme.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Nintendo - Super Mario Bros 3 Athletic.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Nintendo - Wii Sports Resort.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Nirvana - Smells Like Teen Spirit.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Offenbach - Can Can.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/OneRepublic - Counting Stars.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Owl City - Fireflies 1.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Owl City - Fireflies.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Panic at the Disco - High Hopes simple.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Panic at the Disco - High Hopes.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Papers Please - Main Theme.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Pearl Jam - Even Flow.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Phantom of the Opera - Medley.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Pharrell Williams  - Happy.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Pharrell Williams - Happy 1.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Phil Collins - In the Air Tonight.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Phineas and Ferb - Doof1.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Phineas and Ferb - Doof2.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Phineas and Ferb - Theme 1.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Phineas and Ferb - Theme simple.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Phineas and Ferb - Theme.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Pink - Just Give Me a Reason.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Pirates of Penzance - Climbing over Rocky Mountain.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Pirates of the Caribbean - He's a Pirate.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Pointer Sisters - I'm So Excited.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Pokemon - Battle Theme.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Pokemon - Pallet Town Theme.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Pokemon - Pokemon Center.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Pokemon - Theme John Loeffler.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Pokemon - Theme.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Portal - Want You Gone.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Prince - Kiss.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Psy - Gangnam Style.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Queen - A Kind of Magic.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Queen - Another One Bites the Dust.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Queen - Bohemian Rhapsody.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Queen - Don't Stop Me Now.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Queen - Hammer To Fall.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Randy Brooks - Grandma Got Run Over by a Reindeer.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Rebecca Sugar - We Are the Crystal Gems.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Red Hot Chili Peppers - Californication.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Rednex - Cotton Eyed Joe 1.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Rednex - Cotton Eyed Joe.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Rick Astley - Never Gonna Give You Up.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Rimsky Korsakov - Flight of the Bumblebee.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Ritchie Valens - La Bamba.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Rollins and Nelson - Frosty the Snowman.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Rossini - Barber of Seville.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Rossini - Il viaggio a Reims.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+"plugins/disc-jockey/songs/Saint Sa\303\253ns - Danse Macabre.nbs"
+  (no history found)
+plugins/disc-jockey/songs/Sara Bareilles - Brave.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Schumann - Davidsbundlertanze.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Scott Joplin - Entertainer.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Script, The - Hall of Fame.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Sergey Stepanov - Epic Sax Guy.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Shakira - Hips Don't Lie 1.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Shakira - Hips Don't Lie.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Simon and Garfunkel - Bridge over Troubled Waters.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Skrillex - Scary Monsters And Nice Sprites.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Skylighter - Flow of Time.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Smash Mouth - All Star.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Softcell - Tainted Love.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Sound of Music - Medley.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Sound of Music - My Favorite Things Band 2.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Sound of Music - My Favorite Things Band.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Souza - Liberty March.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Souza - Stars and Stripes.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Spongebob - Main Theme.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Star Wars - Cantina Band.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Star Wars - Duel of the Fates.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Star Wars - Imperial March.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Star Wars - Theme.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Sword Art Online - Lizbeths Theme.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Sword Art Online - Season 1 Theme.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Taio Cruz - Dynamite.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Tangled - I See the Light medium.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Tangled - I See the Light.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Tangled - I've Got a Dream.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Tangled - When Will My Life Begin.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Taylor Swift - Blank Space.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Taylor Swift - Love Story.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Taylor Swift - Mean.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Taylor Swift - Shake it Off.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Taylor Swift - You Belong With Me.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Tchaikovsky - Nutcracker Dance of the Sugar Plum Fairies.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Tchaikovsky - Nutcracker Russian Dance.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Tchaikovsky - Nutcracker Waltz of the Flowers.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Tchaikovsky - Wedding March 1.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Technotronic - Pump Up the Jam.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Tegan And Sara - Everything is Awesome.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Terraria - Glowing Mushrooms.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Tetris - A Theme.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Tetris - B Theme.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+"plugins/disc-jockey/songs/Th19_02.\344\270\226\347\225\214\343\201\257\345\217\257\346\204\233\343\201\217\345\207\272\346\235\245\343\201\246\343\201\204\343\202\213 - .nbs"
+  (no history found)
+"plugins/disc-jockey/songs/Th19_09.\351\200\270\350\204\261\350\200\205\351\201\224\343\201\256\347\204\241\347\244\231\345\205\211\343\200\200\357\275\236 Kingdom of Nothingness - .nbs"
+  (no history found)
+plugins/disc-jockey/songs/The Lion King - Hakuna Matata.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/The Lion King - Medley.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/The Lion King - The Circle of Life.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/The Sound of Music - Climb Every Mountain.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/The Sound of Music - Do Re Mi 1.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/The Sound of Music - Do Re Mi 2.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/The Sound of Music - Edelweiss.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/The Sound of Music - I Have Confidence.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/The Sound of Music - Landler Dance.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/The Sound of Music - Lonely Goatherd 1.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/The Sound of Music - Maria 1.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/The Sound of Music - Maria 2.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/The Sound of Music - Morning Hymn.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/The Sound of Music - My Favorite Things 2.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/The Sound of Music - My Favorite Things 3.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/The Sound of Music - My Favorite Things.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/The Sound of Music - Overture 2.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/The Sound of Music - Overture.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/The Sound of Music - Prelude.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/The Sound of Music - Processional.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/The Sound of Music - Sixteen 1.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/The Sound of Music - So Long Farewell Reprise.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/The Sound of Music - So Long Farewell.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/The Sound of Music - Something Good 1.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/The Sound of Music - Something Good 2.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/TheFatRat - Jackpot.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/TheFatRat - Monody.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/TheFatRat - Never Be Alone.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/TheFatRat - No No No.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/TheFatRat - Windfall.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Thelonius Monk - Around Midnight.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Ting Tings, The - That's Not My Name.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Toby Fox - Fallen Down.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Toby Fox - Hopes and Dreams.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Tom Jobim - Chega De Saudade.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Toto - Africa.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Toto - Hold The Line.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Touhou - Bad Apple.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Traditional - Twelve Days of Christmas.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Train - Hey Soul Sister.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Twenty One Pilots - Heathens.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Twisted Sister- We're not Gonna Take It.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Two Door Cinema Club - What You Know.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+"plugins/disc-jockey/songs/U.N.\343\202\252\343\203\274\343\202\250\343\203\263\343\201\257\345\275\274\345\245\263\343\201\252\343\201\256\343\201\213\357\274\237-\343\201\276\343\202\211\343\201\227\343\201\203.nbs"
+  (no history found)
+plugins/disc-jockey/songs/Undertale - Megalovania hard.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Vanessa Carlton - A Thousand Miles.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Vangelis - Chariots of Fire.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Verdi - Requiem Dies Irae.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Village People - YMCA.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Vince Guaraldi - Linus and Lucy.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Vince Guaraldi - Thanksgiving Theme.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Wake Me Up - Avicii.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Ween - Ocean Man.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Wham - Last Christmas.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/White Stripes, The - Seven Nation Army.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Whitney Houston - I Wanna Dance with Somebody.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/Will Smith - Gettin Jiggy With It.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+"plugins/disc-jockey/songs/Yann Tiersen - Comptine d'un Autre \303\251t\303\251.nbs"
+  (no history found)
+plugins/disc-jockey/songs/china-p.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/fripSide - sister's noise.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/fun - We Are Young.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/noteblockinventory.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/oldboy.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/qian_ben_ying.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/qlx.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/disc-jockey/songs/testall.nbs
+  2026-08-08 | 5e3e51f | fix ntc compatible
+"plugins/disc-jockey/songs/\343\200\220Re\357\274\232\344\273\216\351\233\266\345\274\200\345\247\213\347\232\204\345\274\202\344\270\226\347\225\214\347\224\237\346\264\273\343\200\221\345\256\214\346\225\264\347\211\210ED1\342\200\224\342\200\224STYX HELIX.nbs"
+  (no history found)
+"plugins/disc-jockey/songs/\344\270\234\346\226\271\345\246\226\345\246\226\346\242\246.nbs"
+  (no history found)
+"plugins/disc-jockey/songs/\344\270\234\346\226\271\347\263\273\345\210\227\347\245\236\347\273\204\346\233\262.nbs"
+  (no history found)
+"plugins/disc-jockey/songs/\344\270\234\346\226\271\350\220\203\346\242\246\346\203\263\357\274\210\347\256\200\347\211\210\357\274\211.nbs"
+  (no history found)
+"plugins/disc-jockey/songs/\344\270\234\346\226\271\351\243\216\347\245\236\345\275\225 Extra Boss.nbs"
+  (no history found)
+"plugins/disc-jockey/songs/\344\272\241\347\201\265\345\272\217\346\233\262.nbs"
+  (no history found)
+"plugins/disc-jockey/songs/\345\205\213\347\275\227\345\234\260\344\272\232\347\213\202\346\203\263\346\233\262.nbs"
+  (no history found)
+"plugins/disc-jockey/songs/\345\215\203\345\271\264\345\271\273\346\203\263\344\271\241.nbs"
+  (no history found)
+"plugins/disc-jockey/songs/\345\215\203\346\234\254\346\250\261.nbs"
+  (no history found)
+"plugins/disc-jockey/songs/\345\215\203\346\234\254\346\250\2612(18\350\275\250\346\216\250\350\215\220\344\275\277\347\224\250).nbs"
+  (no history found)
+"plugins/disc-jockey/songs/\345\260\221\345\245\263\347\273\256\346\203\263\346\233\262.nbs"
+  (no history found)
+"plugins/disc-jockey/songs/\346\230\245\346\227\245\345\275\261.nbs"
+  (no history found)
+"plugins/disc-jockey/songs/\346\235\261\346\226\271\346\260\270\345\244\234\346\212\204 \343\203\227\343\203\254\343\202\244\343\203\263\343\202\250\343\202\244\343\202\270\343\202\242.nbs"
+  (no history found)
+"plugins/disc-jockey/songs/\346\235\261\346\226\271\346\260\270\345\244\234\346\212\204 \346\201\213\350\211\262\343\203\236\343\202\271\343\202\277\343\203\274\343\202\271\343\203\221\343\203\274\343\202\257.nbs"
+  (no history found)
+"plugins/disc-jockey/songs/\346\235\261\346\226\271\347\264\205\351\255\224\351\203\267-\347\264\205\346\245\274.nbs"
+  (no history found)
+"plugins/disc-jockey/songs/\346\236\201\344\271\220\345\207\200\345\234\237.nbs"
+  (no history found)
+"plugins/disc-jockey/songs/\351\207\216\350\234\202\351\243\236\350\210\236.nbs"
+  (no history found)
+"plugins/disc-jockey/songs/\351\243\216\347\245\236\345\275\225\344\270\262\347\203\247.nbs"
+  (no history found)
+plugins/fisher/config.json
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/fisher/index.js
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/interactor/index.js
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/navigator/index.js
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/stock-prep/config.json
+  2026-08-09 | 934ca32 | 增加autoeat 更改ui颜色 增加扫描范围设置
+plugins/stock-prep/index.js
+  2026-08-10 | 727f0e6 | 功能回滚 修复错误提交
+plugins/stock-prep/panel.html
+  2026-08-10 | 4de8e30 | 删除投影
+plugins/stock-prep/zh_cn_items.json
+  2026-08-09 | dbe62c4 | 添加了中文名称
+plugins/web-manager/config.json
+  2026-08-08 | 5e3e51f | fix ntc compatible
+plugins/web-manager/index.js
+  2026-08-10 | 727f0e6 | 功能回滚 修复错误提交
+plugins/web-manager/public/index.html
+  2026-08-09 | fc289b4 | 修改了坐标报错问题
+plugins/web-manager/texture-map.js
+  2026-08-08 | 5e3e51f | fix ntc compatible
