@@ -74,11 +74,9 @@ module.exports = (context) => {
       scannedAt: null,
       lastError: null,
       scanning: false,
+      timer: null,
     },
   });
-
-  // 插件从网页重载时会复用共享 state；只清理上一轮残留的扫描标记。
-  if (st.stock) st.stock.scanning = false;
 
   const htmlFile = path.join(__dirname, 'panel.html');
 
@@ -140,11 +138,6 @@ module.exports = (context) => {
     return displayName || itemName;
   };
 
-  const registryItems = () => {
-    const registry = bot.registry && bot.registry.itemsByName ? bot.registry.itemsByName : {};
-    return Object.values(registry).filter((item) => item && item.name);
-  };
-
   const stockLookupMap = () => {
     const lookup = new Map();
     for (const entry of st.stock.items || []) {
@@ -192,37 +185,17 @@ module.exports = (context) => {
       };
     }
 
-    const normalized = normalizeKey(raw);
-    const candidates = registryItems();
-    for (const it of candidates) {
-      const labels = [
-        it.name,
-        it.displayName || '',
-        preferredLabelForItem(it.name, it.displayName || it.name),
-      ];
-      if (labels.some((value) => normalizeKey(value) === normalized)) {
-        return {
-          name: it.name,
-          displayName: preferredLabelForItem(it.name, it.displayName || it.name),
-          input: raw,
-        };
+    if (registry) {
+      const normalized = normalizeKey(raw);
+      for (const it of Object.values(registry)) {
+        if (normalizeKey(it.name) === normalized || normalizeKey(it.displayName || '') === normalized) {
+          return {
+            name: it.name,
+            displayName: preferredLabelForItem(it.name, it.displayName || it.name),
+            input: raw,
+          };
+        }
       }
-    }
-
-    const looseMatch = candidates.find((it) => {
-      const labels = [
-        it.name,
-        it.displayName || '',
-        preferredLabelForItem(it.name, it.displayName || it.name),
-      ].map((value) => normalizeKey(value));
-      return labels.some((value) => value && (value.includes(normalized) || normalized.includes(value)));
-    });
-    if (looseMatch) {
-      return {
-        name: looseMatch.name,
-        displayName: preferredLabelForItem(looseMatch.name, looseMatch.displayName || looseMatch.name),
-        input: raw,
-      };
     }
 
     if (/^[a-z0-9_]+$/.test(cleanName)) {
@@ -239,7 +212,8 @@ module.exports = (context) => {
   const taskById = (id) => st.tasks.find((task) => task.id === id);
 
   const itemPresets = () => {
-    return registryItems()
+    const registry = bot.registry && bot.registry.itemsByName ? bot.registry.itemsByName : {};
+    return Object.values(registry)
       .filter((item) => item && item.name)
       .map((item) => ({
         name: item.name,
@@ -252,12 +226,11 @@ module.exports = (context) => {
   const taskStateRank = (status) => ({
     pending: 0,
     collecting: 1,
-    awaiting_partial: 2,
-    ready: 3,
-    delivering: 4,
-    failed: 5,
-    cancelled: 6,
-    delivered: 7,
+    ready: 2,
+    delivering: 3,
+    failed: 4,
+    cancelled: 5,
+    delivered: 6,
   })[status] ?? 7;
 
   const compareTasks = (a, b) => taskStateRank(a.status) - taskStateRank(b.status) ||
@@ -477,7 +450,6 @@ module.exports = (context) => {
     updatedAt: task.updatedAt,
     readyAt: task.readyAt || null,
     deliveredAt: task.deliveredAt || null,
-    partialPromptedAt: task.partialPromptedAt || null,
   });
 
   const setTaskStage = (task, stage, label) => {
@@ -486,77 +458,8 @@ module.exports = (context) => {
     task.updatedAt = Date.now();
   };
 
-  const stopPathfinder = () => {
-    try {
-      if (bot.pathfinder && typeof bot.pathfinder.stop === 'function') {
-        bot.pathfinder.stop();
-        return;
-      }
-      if (bot.pathfinder && typeof bot.pathfinder.setGoal === 'function') {
-        bot.pathfinder.setGoal(null);
-      }
-    } catch (err) {}
-  };
-
-  const isNearPoint = (point, distance = 3) => {
-    if (!bot.entity || !bot.entity.position || !point) return false;
-    return bot.entity.position.distanceTo(new Vec3(Number(point.x || 0), Number(point.y || 0), Number(point.z || 0))) <= distance;
-  };
-
-  const currentAvailableForTask = (task) => normalizeTaskItems(task)
-    .map((item) => {
-      const availableCount = Math.min(countInInventory(item.itemName), item.requestedCount);
-      return {
-        itemName: item.itemName,
-        displayName: item.displayName,
-        requestedInput: item.requestedInput,
-        requestedCount: item.requestedCount,
-        availableCount,
-        missingCount: Math.max(0, item.requestedCount - availableCount),
-      };
-    })
-    .filter((item) => item.availableCount > 0);
-
-  const partialDeliverySummary = (task) => {
-    const availableItems = currentAvailableForTask(task);
-    const availableCount = availableItems.reduce((sum, item) => sum + item.availableCount, 0);
-    return {
-      availableItems,
-      availableCount,
-      missingCount: Math.max(0, task.requestedCount - availableCount),
-    };
-  };
-
-  const promptPartialDeliveryChoice = (task) => {
-    if (typeof bot.whisper !== 'function') return;
-    const partial = partialDeliverySummary(task);
-    if (!partial.availableCount) return;
-    bot.whisper(task.targetPlayer, `> ${taskDisplayLabel(task)} 目前只备到 ${partial.availableCount}/${task.requestedCount}，请到网页选择“取消任务”或“先送已有物品”。`);
-  };
-
-  const markAwaitingPartial = (task, reason = '') => {
-    const partial = partialDeliverySummary(task);
-    if (!partial.availableCount) throw new Error(reason || `仓库内没有足够的 ${taskDisplayLabel(task)}`);
-    task.status = 'awaiting_partial';
-    task.lastError = reason || `库存不足，还差 ${partial.missingCount}`;
-    task.partialPromptedAt = Date.now();
-    setTaskStage(task, 'partial', `库存不足，待网页选择（已备 ${partial.availableCount}/${task.requestedCount}）`);
-    promptPartialDeliveryChoice(task);
-    return summarizeTask(task);
-  };
-
-  const stockItemCount = (itemName) => {
-    const entry = (st.stock.items || []).find((item) => item && item.itemName === itemName);
-    return entry ? Math.max(0, Number(entry.count || 0)) : 0;
-  };
-
   const reconcileTask = (task) => {
     if (!task || task.status === 'cancelled' || task.status === 'delivered' || task.status === 'failed') return;
-    if (task.status === 'awaiting_partial') {
-      task.updatedAt = Date.now();
-      setTaskStage(task, 'partial', task.stageLabel || '等待网页选择');
-      return;
-    }
 
     refreshTaskCounts(task);
     task.updatedAt = Date.now();
@@ -689,22 +592,11 @@ module.exports = (context) => {
       3
     ));
 
-    if (isNearPoint(targetPoint, Math.max(radius + 1, 3))) {
-      stopPathfinder();
-      return;
-    }
+    if (insideWarehouse(bot.entity.position)) return;
 
     if (task) setTaskStage(task, 'warehouse', '正在前往仓库中心');
     bot.pathfinder.setGoal(new GoalNear(targetPoint.x, targetPoint.y, targetPoint.z, radius));
-    try {
-      await waitUntilNearPoint(targetPoint, Math.max(radius + 1, 3), cfg.deliveryMoveTimeoutMs);
-    } catch (err) {
-      if (String(err.message || '').includes('接近目标超时')) {
-        throw new Error(`前往仓库超时（>${Math.round(cfg.deliveryMoveTimeoutMs / 1000)} 秒）`);
-      }
-      throw err;
-    }
-    stopPathfinder();
+    await waitUntilNearPoint(targetPoint, Math.max(radius + 1, 3), cfg.deliveryMoveTimeoutMs);
     await sleep(500);
   };
 
@@ -740,10 +632,9 @@ module.exports = (context) => {
   const warehouseContainerPositions = () => {
     const ids = blockIds(cfg.warehouseBlocks);
     if (String(cfg.warehouseMode || 'area') === 'list') {
-      // 指定坐标可能位于尚未加载的区块，不能在走过去之前调用 blockAt 过滤。
-      return warehouseContainerVec3s().sort((a, b) => {
-        if (!bot.entity || !bot.entity.position) return 0;
-        return bot.entity.position.distanceTo(a) - bot.entity.position.distanceTo(b);
+      return warehouseContainerVec3s().filter((pos) => {
+        const block = bot.blockAt(pos);
+        return !!(block && ids.includes(block.type));
       });
     }
     if (typeof bot.findBlocks !== 'function') return [];
@@ -753,52 +644,44 @@ module.exports = (context) => {
       Number(cfg.warehouseSize.y || 0),
       Number(cfg.warehouseSize.z || 0)
     ) + 8;
-    const center = new Vec3(
-      Number(cfg.warehouseCenter.x || 0),
-      Number(cfg.warehouseCenter.y || 0),
-      Number(cfg.warehouseCenter.z || 0)
-    );
+    const center = bot.entity && bot.entity.position
+      ? bot.entity.position
+      : cfg.warehouseCenter;
     try {
       return (bot.findBlocks({
         point: center,
         matching: ids,
         maxDistance,
         count: cfg.maxStorageBlocksScan,
-      }) || []).filter(insideWarehouse).sort((a, b) => center.distanceTo(a) - center.distanceTo(b));
+      }) || []).filter(insideWarehouse);
     } catch (err) {
       return [];
     }
   };
 
-  let activeScanPromise = null;
+  const scanWarehouseInventory = async (reason = 'manual') => {
+    const allowRetry = !String(reason).includes(':retry');
+    if (st.stock.scanning) {
+      return {
+        items: st.stock.items,
+        scannedAt: st.stock.scannedAt,
+        lastError: st.stock.lastError,
+        skipped: true,
+      };
+    }
 
-  const runWarehouseScan = async (reason, allowRetry) => {
+    st.stock.scanning = true;
+    st.stock.lastError = null;
     try {
       await moveToWarehouseCenter();
       const positions = warehouseContainerPositions();
-      if (!positions.length) {
-        throw new Error(String(cfg.warehouseMode || 'area') === 'list'
-          ? '没有可扫描的箱子坐标，请先在仓库设置里添加并保存坐标'
-          : '指定范围内没有找到可扫描的容器');
-      }
       const merged = new Map();
 
-      const configuredContainerIds = blockIds(cfg.warehouseBlocks);
       for (const pos of positions) {
-        let block = null;
+        const block = bot.blockAt(pos);
+        if (!block) continue;
         try {
-          if (String(cfg.warehouseMode || 'area') === 'list') {
-            await approachPoint(pos, 2);
-            block = bot.blockAt(pos);
-            if (!block) throw new Error(`坐标 ${pos.x},${pos.y},${pos.z} 处没有加载方块`);
-            if (!configuredContainerIds.includes(block.type)) {
-              throw new Error(`坐标 ${pos.x},${pos.y},${pos.z} 不是已配置的容器`);
-            }
-          } else {
-            block = bot.blockAt(pos);
-            if (!block) continue;
-            await approachBlock(block, 2);
-          }
+          await approachBlock(block, 2);
           const container = await openContainerBlock(block);
           try {
             for (const item of containerItems(container)) {
@@ -819,8 +702,7 @@ module.exports = (context) => {
           }
         } catch (err) {
           if (isWarehouseStuckError(err)) throw err;
-          const targetLabel = block && block.name ? block.name : `${pos.x},${pos.y},${pos.z}`;
-          st.stock.lastError = `扫描 ${targetLabel} 失败: ${err.message}`;
+          st.stock.lastError = `扫描 ${block.name} 失败: ${err.message}`;
         }
       }
 
@@ -836,53 +718,24 @@ module.exports = (context) => {
       if (allowRetry && isWarehouseStuckError(err)) {
         st.stock.lastError = `扫描卡住，已执行回仓并重试: ${err.message}`;
         await recoverWarehouseStuck(null, '仓库扫描卡住');
-        return runWarehouseScan(`${reason}:retry`, false);
+        return scanWarehouseInventory(`${reason}:retry`);
       }
       throw err;
-    }
-  };
-
-  const scanWarehouseInventory = (reason = 'manual') => {
-    if (activeScanPromise) {
-      return Promise.reject(new Error('已有扫描正在进行'));
-    }
-
-    st.stock.scanning = true;
-    st.stock.lastError = null;
-    activeScanPromise = runWarehouseScan(reason, true).catch((err) => {
-      st.stock.lastError = err.message;
-      throw err;
-    }).finally(() => {
-      stopPathfinder();
+    } finally {
       st.stock.scanning = false;
-      activeScanPromise = null;
-    });
-    return activeScanPromise;
-  };
-
-  const approachPoint = async (point, distance = cfg.blockApproachDistance) => {
-    if (!point) throw new Error('目标坐标不可用');
-    if (!bot.pathfinder) throw new Error('未检测到寻路模块，请先启用 navigator 插件');
-    bot.pathfinder.setGoal(new GoalNear(
-      point.x,
-      point.y,
-      point.z,
-      Math.max(1, Math.ceil(distance))
-    ));
-    try {
-      await waitUntilNearPoint(point, distance + 0.8, cfg.deliveryMoveTimeoutMs);
-    } catch (err) {
-      if (String(err.message || '').includes('接近目标超时')) {
-        throw new Error(`接近容器超时（>${Math.round(cfg.deliveryMoveTimeoutMs / 1000)} 秒）`);
-      }
-      throw err;
     }
-    stopPathfinder();
   };
 
   const approachBlock = async (block, distance = cfg.blockApproachDistance) => {
     if (!block || !block.position) throw new Error('目标方块不可用');
-    await approachPoint(block.position, distance);
+    if (!bot.pathfinder) throw new Error('未检测到寻路模块，请先启用 navigator 插件');
+    bot.pathfinder.setGoal(new GoalNear(
+      block.position.x,
+      block.position.y,
+      block.position.z,
+      Math.max(1, Math.ceil(distance))
+    ));
+    await waitUntilNearPoint(block.position, distance + 0.8, cfg.deliveryMoveTimeoutMs);
   };
 
   const openContainerBlock = async (block) => {
@@ -911,21 +764,12 @@ module.exports = (context) => {
     let taken = 0;
     for (const pos of positions) {
       if (taken >= needed) break;
+      const block = bot.blockAt(pos);
+      if (!block) continue;
+
       try {
-        if (String(cfg.warehouseMode || 'area') === 'list') {
-          await approachPoint(pos, 2);
-        }
-        const block = bot.blockAt(pos);
-        if (!block) throw new Error(`坐标 ${pos.x},${pos.y},${pos.z} 处没有加载方块`);
-        if (String(cfg.warehouseMode || 'area') === 'list') {
-          const configuredContainerIds = blockIds(cfg.warehouseBlocks);
-          if (!configuredContainerIds.includes(block.type)) {
-            throw new Error(`坐标 ${pos.x},${pos.y},${pos.z} 不是已配置的容器`);
-          }
-        } else {
-          await approachBlock(block, 2);
-        }
         setTaskStage(task, 'storage', `前往 ${block.name} 取 ${item.displayName || item.itemName}`);
+        await approachBlock(block, 2);
         const container = await openContainerBlock(block);
         try {
           const stack = containerItems(container).find((slot) => slot && slot.name === item.itemName);
@@ -971,19 +815,15 @@ module.exports = (context) => {
       const need = () => Math.max(0, item.requestedCount - Math.min(countInInventory(item.itemName), item.requestedCount));
       while (need() > 0) {
         if (task.status === 'cancelled') return summarizeTask(task);
-        const missingNow = need();
-        const pulled = await withdrawFromStorage(task, item, missingNow);
+        const missing = need();
+        const pulled = await withdrawFromStorage(task, item, missing);
         refreshTaskCounts(task);
         if (pulled > 0) {
           setTaskStage(task, 'storage', `已从仓库补到 ${taskLabel(task)} ${task.collectedCount}/${task.requestedCount}`);
         }
         if (task.status === 'cancelled') return summarizeTask(task);
         if (need() <= 0) break;
-        const missing = need();
-        if (task.collectedCount > 0) {
-          return markAwaitingPartial(task, `仓库内没有足够的 ${item.displayName || item.itemName}，当前仍缺少 ${missing} 个`);
-        }
-        throw new Error(`仓库内没有足够的 ${item.displayName || item.itemName}，当前仍缺少 ${missing} 个`);
+        throw new Error(`仓库内没有足够的 ${item.displayName || item.itemName}，当前仍缺少 ${need()} 个`);
       }
     }
 
@@ -991,7 +831,7 @@ module.exports = (context) => {
     return summarizeTask(task);
   }
 
-  async function deliverTask(id, source = 'manual', options = {}) {
+  async function deliverTask(id, source = 'manual') {
     const task = taskById(id);
     if (!task) throw new Error('任务不存在');
     if (task.status === 'cancelled') throw new Error('任务已取消');
@@ -999,27 +839,7 @@ module.exports = (context) => {
     if (st.activeDeliveryId && st.activeDeliveryId !== task.id) throw new Error('已有其他任务正在交付');
 
     reconcileTask(task);
-    const partialAllowed = !!options.allowPartial || source === 'partial';
-    if (task.collectedCount < task.requestedCount && !partialAllowed) {
-      if (task.collectedCount > 0) return markAwaitingPartial(task);
-      throw new Error(`库存不足，还差 ${task.requestedCount - task.collectedCount}`);
-    }
-
-    const deliveryItems = partialAllowed
-      ? currentAvailableForTask(task)
-      : normalizeTaskItems(task).map((item) => ({
-        itemName: item.itemName,
-        displayName: item.displayName,
-        requestedInput: item.requestedInput,
-        requestedCount: item.requestedCount,
-        availableCount: item.requestedCount,
-        missingCount: 0,
-      }));
-    const totalDeliverCount = deliveryItems.reduce((sum, item) => sum + item.availableCount, 0);
-    if (!totalDeliverCount) {
-      if (partialAllowed) throw new Error('当前没有可送的物品');
-      throw new Error(`库存不足，还差 ${task.requestedCount - task.collectedCount}`);
-    }
+    if (task.collectedCount < task.requestedCount) throw new Error(`库存不足，还差 ${task.requestedCount - task.collectedCount}`);
 
     st.activeDeliveryId = task.id;
     task.status = 'delivering';
@@ -1039,33 +859,14 @@ module.exports = (context) => {
       if (typeof bot.lookAt === 'function') {
         await bot.lookAt(targetEntity.position.offset(0, 1.2, 0), true);
       }
-      for (const item of deliveryItems) {
-        await tossExact(item.itemName, item.availableCount);
+      for (const item of normalizeTaskItems(task)) {
+        await tossExact(item.itemName, item.requestedCount);
       }
-      if (partialAllowed) {
-        for (const delivered of deliveryItems) {
-          const entry = normalizeTaskItems(task).find((item) => item.itemName === delivered.itemName);
-          if (!entry) continue;
-          entry.requestedCount = Math.max(0, entry.requestedCount - delivered.availableCount);
-        }
-        task.items = normalizeTaskItems(task).filter((item) => item.requestedCount > 0);
-        refreshTaskCounts(task);
-        if (!task.items.length || task.requestedCount <= 0) {
-          task.status = 'delivered';
-          setTaskStage(task, 'delivered', '已交付完成');
-          task.deliveredAt = Date.now();
-        } else {
-          task.status = 'pending';
-          setTaskStage(task, 'pending', '已送出当前可用物品，等待继续补货');
-          task.partialPromptedAt = null;
-        }
-      } else {
-        task.collectedCount = task.requestedCount;
-        task.status = 'delivered';
-        setTaskStage(task, 'delivered', '已交付完成');
-        task.deliveredAt = Date.now();
-        task.updatedAt = task.deliveredAt;
-      }
+      task.collectedCount = task.requestedCount;
+      task.status = 'delivered';
+      setTaskStage(task, 'delivered', '已交付完成');
+      task.deliveredAt = Date.now();
+      task.updatedAt = task.deliveredAt;
       try {
         sendHome();
       } catch (homeErr) {
@@ -1097,7 +898,6 @@ module.exports = (context) => {
       reconcileTask(task);
       throw err;
     } finally {
-      stopPathfinder();
       st.activeDeliveryId = null;
     }
   }
@@ -1301,7 +1101,6 @@ module.exports = (context) => {
 
   const recoverWarehouseStuck = async (task = null, label = '仓库流程卡住') => {
     if (task) setTaskStage(task, 'home', `${label}，正在回仓`);
-    stopPathfinder();
     sendHome();
     await sleep(2000);
   };
@@ -1452,13 +1251,7 @@ module.exports = (context) => {
 
   ep('POST', 'deliver', async (req, res, url, body) => {
     const payload = jsonBody(body) || {};
-    const task = await deliverTask(Number(payload.id), payload.partial ? 'partial' : 'web', { allowPartial: !!payload.partial });
-    ok(res, { task });
-  });
-
-  ep('POST', 'deliver-partial', async (req, res, url, body) => {
-    const payload = jsonBody(body) || {};
-    const task = await deliverTask(Number(payload.id), 'partial', { allowPartial: true });
+    const task = await deliverTask(Number(payload.id), 'web');
     ok(res, { task });
   });
 
@@ -1500,6 +1293,15 @@ module.exports = (context) => {
   if (!st.timer) {
     st.timer = setInterval(reconcileAll, Math.max(500, cfg.reconcileIntervalMs));
     if (typeof st.timer.unref === 'function') st.timer.unref();
+  }
+
+  if (!st.stock.timer) {
+    st.stock.timer = setInterval(() => {
+      scanWarehouseInventory('timer').catch((err) => {
+        st.stock.lastError = err.message;
+      });
+    }, 10 * 60 * 1000);
+    if (typeof st.stock.timer.unref === 'function') st.stock.timer.unref();
   }
 
   webManager.registerTile({

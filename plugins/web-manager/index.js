@@ -1,1514 +1,739 @@
+// plugins/web-manager/index.js
+// Web 管理插件：零依赖 HTTP 服务 + 插件磁贴/重载/配置/权限管理 + 插件接入接口
+const http = require('http');
 const fs = require('fs');
 const path = require('path');
-const { GoalNear } = require('mineflayer-pathfinder').goals;
-const { Vec3 } = require('vec3');
-const zhCnItems = require('./zh_cn_items.json');
-
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const { resolveTex } = require('./texture-map'); // 物品 → 纹理文件名映射（1.21.11 仓库验证）
 
 module.exports = (context) => {
-  const { bot, commands, pluginConfig, pluginName, webManager, state } = context;
-  const configFile = path.join(__dirname, 'config.json');
+  const { bot, config, state, permissions, pluginConfig, webManager, commands, botManager } = context;
 
-  const cfg = {
-    autoDeliverByDefault: true,
-    reconcileIntervalMs: 1500,
-    handoffDistance: 2.5,
-    deliveryMoveTimeoutMs: 25000,
-    blockApproachDistance: 2,
-    collectPauseMs: 400,
-    containerOpenTimeoutMs: 8000,
-    maxTasks: 50,
-    maxStorageBlocksScan: 128,
-    warehouseMode: 'area',
-    warehouseBlocks: ['chest', 'trapped_chest', 'barrel'],
-    warehouseCenter: { x: 0, y: 64, z: 0 },
-    warehouseSize: { x: 16, y: 8, z: 16 },
-    warehouseContainers: [],
-    tpaCommand: '/tpa {player}',
-    homeCommand: '/home',
-    fallbackToTpaOnDeliveryTimeout: true,
-    postCollectTpaDelayMs: 800,
-    postTpaAutoDeliverDelayMs: 3000,
-    postTpaAutoDeliverRetryMs: 25000,
-    postTpaAutoDeliverMaxAttempts: 8,
-    aliases: {
-      dirt: 'dirt',
-      mud: 'mud',
-      cobble: 'cobblestone',
-      stone: 'stone',
-      emerald: 'emerald',
-      netherrack: 'netherrack',
-      oaklog: 'oak_log',
-      plank: 'oak_planks',
-      planks: 'oak_planks',
-      泥土: 'dirt',
-      泥巴: 'mud',
-      圆石: 'cobblestone',
-      石头: 'stone',
-      绿宝石: 'emerald',
-      下界岩: 'netherrack',
-      原木: 'oak_log',
-      木板: 'oak_planks',
-      火把: 'torch',
-      沙子: 'sand',
-      砂砾: 'gravel',
-      箱子: 'chest',
-      面包: 'bread',
-      鱼竿: 'fishing_rod',
-    },
-    ...(pluginConfig || {}),
+  const pluginsDir = path.join(__dirname, '..');
+  const cfg = { host: '127.0.0.1', port: 8123, token: '', ...(pluginConfig || {}) };
+
+  // ---- 共享状态（跨重载存活）----
+  // ⚠️ 承重细节：HTTP 服务器只在首次运行时创建，重载时复用（避免 EADDRINUSE）。
+  // 因此请求处理闭包里所有配置读取都必须走 wm（state），绝不能读模块运行期局部变量，
+  // 否则重载后 token 校验仍用的是旧配置。
+  const wm = state.webManager || (state.webManager = {
+    server: null,
+    routes: new Map(),
+    html: null,
+    auth: null,
+    terminal: [],  // 终端消息缓冲区（chat/whisper/系统事件）
+    hooked: false, // bot.chat/bot.whisper 包装与事件监听只挂载一次
+  });
+  wm.auth = { host: cfg.host, port: cfg.port, token: cfg.token || '' };
+
+  // 每次运行重新读取页面文件，UI 修改后重载插件即可生效
+  try {
+    wm.html = fs.readFileSync(path.join(__dirname, 'public', 'index.html'), 'utf8');
+  } catch (err) {
+    wm.html = '<h1>index.html 缺失</h1><p>请检查 plugins/web-manager/public/ 目录。</p>';
+  }
+
+  // ---- 辅助函数 ----
+  const sendJSON = (res, status, obj) => {
+    try {
+      const body = JSON.stringify(obj);
+      res.writeHead(status, {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Content-Length': Buffer.byteLength(body),
+      });
+      res.end(body);
+    } catch (err) {
+      // socket 可能已关闭（如请求体过大被销毁时）
+    }
   };
 
-  const st = state.stockPrep || (state.stockPrep = {
-    nextId: 1,
-    tasks: [],
-    activeDeliveryId: null,
-    deliveryPromise: null,
-    activeFulfillmentId: null,
-    fulfillmentPromise: null,
-    activeRequestId: null,
-    timer: null,
-    stock: {
-      items: [],
-      scannedAt: null,
-      lastError: null,
-      scanning: false,
-    },
+  const readBody = (req, limit = 1024 * 1024) => new Promise((resolve, reject) => {
+    let size = 0;
+    const chunks = [];
+    req.on('data', (chunk) => {
+      size += chunk.length;
+      if (size > limit) {
+        reject(new Error('请求体过大'));
+        req.destroy();
+        return;
+      }
+      chunks.push(chunk);
+    });
+    req.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
+    req.on('error', reject);
   });
 
-  // 插件从网页重载时会复用共享 state；只清理上一轮残留的扫描标记。
-  if (st.stock) st.stock.scanning = false;
-
-  const htmlFile = path.join(__dirname, 'panel.html');
-
-  const persistConfig = () => {
-    fs.writeFileSync(configFile, JSON.stringify({
-      autoDeliverByDefault: cfg.autoDeliverByDefault,
-      reconcileIntervalMs: cfg.reconcileIntervalMs,
-      handoffDistance: cfg.handoffDistance,
-      deliveryMoveTimeoutMs: cfg.deliveryMoveTimeoutMs,
-      blockApproachDistance: cfg.blockApproachDistance,
-      collectPauseMs: cfg.collectPauseMs,
-      containerOpenTimeoutMs: cfg.containerOpenTimeoutMs,
-      maxTasks: cfg.maxTasks,
-      maxStorageBlocksScan: cfg.maxStorageBlocksScan,
-      warehouseMode: cfg.warehouseMode,
-      warehouseBlocks: cfg.warehouseBlocks,
-      warehouseCenter: cfg.warehouseCenter,
-      warehouseSize: cfg.warehouseSize,
-      warehouseContainers: cfg.warehouseContainers,
-      tpaCommand: cfg.tpaCommand,
-      homeCommand: cfg.homeCommand,
-      fallbackToTpaOnDeliveryTimeout: cfg.fallbackToTpaOnDeliveryTimeout,
-      postCollectTpaDelayMs: cfg.postCollectTpaDelayMs,
-      aliases: cfg.aliases,
-    }, null, 2));
+  const getAuthToken = (req, url) => {
+    const h = req.headers.authorization;
+    if (h && h.startsWith('Bearer ')) return h.slice(7);
+    return url.searchParams.get('token') || null;
   };
 
-  const ok = (res, data = {}) => {
-    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
-    res.end(JSON.stringify({ ok: true, ...data }));
+  const authOk = (req, url) => {
+    if (!wm.auth.token) return true;
+    return getAuthToken(req, url) === wm.auth.token;
   };
 
-  const fail = (res, status, error) => {
-    res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
-    res.end(JSON.stringify({ ok: false, error }));
+  // 扫描 plugins 目录下所有含 index.js 的插件目录
+  const scanPlugins = () => {
+    if (!fs.existsSync(pluginsDir)) return [];
+    return fs.readdirSync(pluginsDir, { withFileTypes: true })
+      .filter(d => d.isDirectory() && fs.existsSync(path.join(pluginsDir, d.name, 'index.js')))
+      .map(d => d.name);
   };
 
-  const normalizeKey = (value) => String(value || '')
-    .trim()
-    .toLowerCase()
-    .replace(/^minecraft:/, '')
-    .replace(/[\s_-]+/g, '');
-
-  const inventoryItems = () => (bot.inventory && typeof bot.inventory.items === 'function')
-    ? bot.inventory.items()
-    : [];
-
-  const countInInventory = (itemName) => inventoryItems()
-    .filter((item) => item && item.name === itemName)
-    .reduce((sum, item) => sum + item.count, 0);
-
-  const isChineseText = (value) => /[\u3400-\u9fff]/.test(String(value || ''));
-
-  const preferredLabelForItem = (itemName, displayName = null) => {
-    if (zhCnItems[itemName]) return zhCnItems[itemName];
-    const pair = Object.entries(cfg.aliases || {})
-      .find(([key, value]) => value === itemName && isChineseText(key));
-    if (pair) return pair[0];
-    return displayName || itemName;
-  };
-
-  const registryItems = () => {
-    const registry = bot.registry && bot.registry.itemsByName ? bot.registry.itemsByName : {};
-    return Object.values(registry).filter((item) => item && item.name);
-  };
-
-  const stockLookupMap = () => {
-    const lookup = new Map();
-    for (const entry of st.stock.items || []) {
-      for (const raw of [entry.itemName, entry.displayName, entry.label]) {
-        const key = normalizeKey(raw);
-        if (key) lookup.set(key, entry);
-      }
+  // 通过 require.cache 判断插件是否已加载
+  const pluginLoaded = (name) => {
+    try {
+      return !!require.cache[require.resolve(path.join(pluginsDir, name, 'index.js'))];
+    } catch (err) {
+      return false;
     }
-    return lookup;
   };
 
-  const resolveItem = (input) => {
-    const raw = String(input || '').trim();
-    if (!raw) return null;
+  // ---- 重载逻辑（与 main.js 加载器保持一致）----
+  const reloadPlugin = (name) => {
+    const indexFile = path.join(pluginsDir, name, 'index.js');
+    const configFile = path.join(pluginsDir, name, 'config.json');
+    if (!fs.existsSync(indexFile)) throw new Error(`插件 '${name}' 不存在或无 index.js`);
 
-    const aliasValue = cfg.aliases[raw] || cfg.aliases[normalizeKey(raw)];
-    const candidate = aliasValue || raw;
-    const cleanName = String(candidate).trim().toLowerCase().replace(/^minecraft:/, '');
-    const registry = bot.registry && bot.registry.itemsByName ? bot.registry.itemsByName : null;
+    // 清理旧磁贴与端点，避免残留
+    webManager._clearForPlugin(name);
+    // 连同插件目录下的子模块缓存一起清除（如 piano 的 player.js/nbs.js），
+    // 否则 index.js 重载后 require('./player') 拿到的还是旧模块，代码修改不生效
+    const dirPrefix = path.resolve(pluginsDir, name) + path.sep;
+    for (const key of Object.keys(require.cache)) {
+      if (key.startsWith(dirPrefix)) delete require.cache[key];
+    }
+    delete require.cache[require.resolve(indexFile)];
 
-    if (registry && registry[cleanName]) {
-      const it = registry[cleanName];
-      return {
-        name: it.name,
-        displayName: preferredLabelForItem(it.name, it.displayName || it.name),
-        input: raw,
+    let pluginConfig = {};
+    if (fs.existsSync(configFile)) pluginConfig = JSON.parse(fs.readFileSync(configFile, 'utf8'));
+
+    const plugin = require(indexFile);
+    if (typeof plugin !== 'function') throw new Error(`插件 '${name}' 未导出函数`);
+    plugin({ ...context, pluginConfig, pluginName: name });
+    return { name, ok: true };
+  };
+
+  // ---- 终端（模拟聊天框）数据源 ----
+  const logTerminal = (dir, type, user, msg) => {
+    wm.terminal.push({ t: Date.now(), dir, type, user, msg: String(msg) });
+    if (wm.terminal.length > 500) wm.terminal.splice(0, wm.terminal.length - 500);
+  };
+
+  // 只在首次运行时挂载：包装 bot.chat/bot.whisper 记录发出的消息，
+  // 监听 chat/whisper 事件记录收到的消息（机器人自己的消息走钩子，跳过回声）
+  if (!wm.hooked) {
+    wm.hooked = true;
+
+    // ⚠️ 此 mineflayer fork 的插件在连接握手后异步注入（inject_allowed 事件），
+    // 插件加载时 bot.chat/bot.whisper 尚未定义，必须等注入完成后再包装。
+    const installHooks = () => {
+      const origChat = bot.chat.bind(bot);
+      bot.chat = (message) => {
+        logTerminal('out', 'chat', bot.username || 'Bot', message);
+        return origChat(message);
       };
-    }
 
-    const stockMatch = stockLookupMap().get(normalizeKey(raw));
-    if (stockMatch) {
-      return {
-        name: stockMatch.itemName,
-        displayName: stockMatch.label || stockMatch.displayName || stockMatch.itemName,
-        input: raw,
+      const origWhisper = bot.whisper.bind(bot);
+      bot.whisper = (username, message) => {
+        logTerminal('out', 'whisper', username, message);
+        return origWhisper(username, message);
       };
+    };
+
+    if (typeof bot.chat === 'function') {
+      installHooks(); // 兜底：若已注入则立即包装
+    } else {
+      // 注入完成后再包装（此时 mineflayer 聊天插件已定义 bot.chat/bot.whisper）
+      bot.once('inject_allowed', installHooks);
     }
 
-    const zhMatchName = Object.entries(zhCnItems).find(([, label]) => normalizeKey(label) === normalizeKey(raw));
-    if (zhMatchName) {
-      return {
-        name: zhMatchName[0],
-        displayName: zhMatchName[1],
-        input: raw,
-      };
+    // 接收消息：优先解析 minecraft-protocol 重发的 playerChat 事件（chatType 编号 +
+    // 发送者 UUID + 明文，服务器聊天格式插件改不了这些协议字段，能稳定拿到发送者
+    // 真实用户名与消息类型）。
+    // 兜底走 message 事件按翻译 key 分类（无 player_chat 的环境，如旧协议/mock）。
+    const { createChatResolver, createWhisperDetector, nbtComponentToText, reasonToText, parseSystemWhisper } = require('../../message-utils');
+    const chatResolver = createChatResolver(bot);
+    const hasPacketPath = !!(bot._client && chatResolver && chatResolver.packet);
+    if (hasPacketPath) {
+      bot._client.on('playerChat', (data) => {
+        const info = chatResolver.packet(data);
+        if (!info) return;
+        if (info.sender === bot.username) return; // 机器人自己的消息回声（已由 out 钩子记录）
+        logTerminal('in', info.type === 'whisper' ? 'whisper' : (info.type === 'system' ? 'system' : 'chat'), info.sender, info.content);
+      });
+      // 系统消息走 systemChat 事件（minecraft-protocol 重发为 formattedMessage/positionId，
+      // 原始包字段为 content/isActionBar，兼容两者；nbtComponentToText 可同时处理
+      // NBT 组件、JSON 字符串与普通字符串）
+      bot._client.on('systemChat', (data) => {
+        if (data.isActionBar === true || data.positionId === 2) return; // 动作栏消息，跳过
+        const raw = data.formattedMessage != null ? data.formattedMessage : data.content;
+        let text = nbtComponentToText(raw);
+        if (!text) {
+          try { text = typeof raw === 'string' ? raw : JSON.stringify(raw); }
+          catch (err) { text = String(raw || ''); }
+        }
+        // 私信渲染成 '[发送者 -> 我] 内容' → 终端里归类为私信
+        const w = parseSystemWhisper(text);
+        if (w) {
+          if (w.sender === bot.username) return; // 机器人自己的私信回声（out 钩子已记录）
+          logTerminal('in', 'whisper', w.sender, w.content);
+        } else {
+          logTerminal('in', 'system', '', text);
+        }
+      });
+    } else {
+      const detectWhisper = createWhisperDetector(bot);
+      bot.on('message', (msg, position) => {
+        if (position === 'game_info') return; // 动作栏消息，跳过
+        if (position === 'system' || (msg && msg.translate === 'chat.type.announcement')) {
+          // 服务器系统消息 / 公告（控制台 /say 等）
+          logTerminal('in', 'system', '', msg ? msg.toString() : String(msg));
+          return;
+        }
+        const info = detectWhisper(msg);
+        if (info) {
+          if (info.sender === bot.username) return; // 机器人自己的私信回声（out 钩子已记录）
+          logTerminal('in', 'whisper', info.sender, info.content);
+          return;
+        }
+        const withs = (msg && msg.with) || [];
+        const sender = withs[0] ? withs[0].toString() : null;
+        if (sender === bot.username) return; // 机器人自己的消息回声（已由 out 钩子记录）
+        const content = withs[1] ? withs[1].toString() : (msg ? msg.toString() : '');
+        logTerminal('in', 'chat', sender || '未知玩家', content);
+      });
     }
 
-    const normalized = normalizeKey(raw);
-    const candidates = registryItems();
-    for (const it of candidates) {
-      const labels = [
-        it.name,
-        it.displayName || '',
-        preferredLabelForItem(it.name, it.displayName || it.name),
-      ];
-      if (labels.some((value) => normalizeKey(value) === normalized)) {
-        return {
-          name: it.name,
-          displayName: preferredLabelForItem(it.name, it.displayName || it.name),
-          input: raw,
-        };
-      }
-    }
+    bot.on('login', () => logTerminal('system', 'system', '', `机器人 ${bot.username} 已登录。`));
+    bot.on('spawn', () => logTerminal('system', 'system', '', '已进入世界。'));
+    bot.on('kicked', (reason) => logTerminal('system', 'system', '', `被踢出服务器: ${reasonToText(reason)}`));
+    bot.on('end', (reason) => logTerminal('system', 'system', '', `连接已断开: ${reasonToText(reason)}`));
+  }
 
-    const looseMatch = candidates.find((it) => {
-      const labels = [
-        it.name,
-        it.displayName || '',
-        preferredLabelForItem(it.name, it.displayName || it.name),
-      ].map((value) => normalizeKey(value));
-      return labels.some((value) => value && (value.includes(normalized) || normalized.includes(value)));
+  // ---- 内置路由 ----
+  const addRoute = (method, pattern, handler) => wm.routes.set(`${method} ${pattern}`, { pattern, handler });
+
+  addRoute('GET', '/', (req, res) => {
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    res.end(wm.html);
+  });
+
+  addRoute('GET', '/api/status', (req, res) => {
+    const pos = bot.entity && bot.entity.position
+      ? {
+          x: Math.round(bot.entity.position.x),
+          y: Math.round(bot.entity.position.y),
+          z: Math.round(bot.entity.position.z),
+        }
+      : null;
+    sendJSON(res, 200, {
+      bot: {
+        username: bot.username || null,
+        connected: !!(bot._client && !bot._client.destroyed && bot._client.state === 'play'),
+        spawned: !!bot.entity,
+        health: bot.health ?? null,
+        hunger: bot.food ?? null,
+        position: pos,
+      },
+      pm2: !!process.env.PM2_HOME,
+      uptime: Math.round(process.uptime()),
     });
-    if (looseMatch) {
+  });
+
+  addRoute('GET', '/api/bot/status', (req, res) => {
+    if (!botManager || typeof botManager.getStatus !== 'function') {
+      return sendJSON(res, 503, { ok: false, error: '机器人控制模块未就绪' });
+    }
+    sendJSON(res, 200, { ok: true, status: botManager.getStatus(), config: botManager.getConfig ? botManager.getConfig() : (config.bot || {}) });
+  });
+
+  addRoute('GET', '/api/bot/config', (req, res) => {
+    if (!botManager || typeof botManager.getConfig !== 'function') {
+      return sendJSON(res, 503, { ok: false, error: '机器人控制模块未就绪' });
+    }
+    sendJSON(res, 200, { ok: true, config: botManager.getConfig() });
+  });
+
+  addRoute('PUT', '/api/bot/config', async (req, res, params, body) => {
+    if (!botManager || typeof botManager.updateConfig !== 'function') {
+      return sendJSON(res, 503, { ok: false, error: '机器人控制模块未就绪' });
+    }
+    let obj;
+    try {
+      obj = JSON.parse(body || 'null');
+    } catch (err) {
+      return sendJSON(res, 400, { ok: false, error: '无效 JSON' });
+    }
+    const result = botManager.updateConfig(obj || {});
+    if (!result || result.ok === false) return sendJSON(res, 400, result || { ok: false, error: '保存失败' });
+    sendJSON(res, 200, result);
+  });
+
+  addRoute('POST', '/api/bot/connect', (req, res, params, body) => {
+    if (!botManager || typeof botManager.connect !== 'function') {
+      return sendJSON(res, 503, { ok: false, error: '机器人控制模块未就绪' });
+    }
+    let obj = {};
+    try { obj = JSON.parse(body || 'null') || {}; } catch (err) {}
+    const result = botManager.connect(obj.config || null);
+    if (!result || result.ok === false) return sendJSON(res, 400, result || { ok: false, error: '连接失败' });
+    sendJSON(res, 200, result);
+  });
+
+  addRoute('POST', '/api/bot/disconnect', (req, res) => {
+    if (!botManager || typeof botManager.disconnect !== 'function') {
+      return sendJSON(res, 503, { ok: false, error: '机器人控制模块未就绪' });
+    }
+    const result = botManager.disconnect('面板手动下线');
+    if (!result || result.ok === false) return sendJSON(res, 400, result || { ok: false, error: '下线失败' });
+    sendJSON(res, 200, result);
+  });
+
+  addRoute('POST', '/api/bot/reconnect', (req, res, params, body) => {
+    if (!botManager || typeof botManager.reconnect !== 'function') {
+      return sendJSON(res, 503, { ok: false, error: '机器人控制模块未就绪' });
+    }
+    let obj = {};
+    try { obj = JSON.parse(body || 'null') || {}; } catch (err) {}
+    const result = botManager.reconnect(obj.config || null);
+    if (!result || result.ok === false) return sendJSON(res, 400, result || { ok: false, error: '重连失败' });
+    sendJSON(res, 200, result);
+  });
+
+  addRoute('GET', '/api/plugins', (req, res) => {
+    const names = new Set([...(config.plugins || []), ...scanPlugins()]);
+    const plugins = Array.from(names).map(name => {
+      const tile = webManager.tiles.get(name);
+      // 端点信息：path 全路径，label 为磁贴按钮文字（未设置时前端显示「📡 调用接口」），
+      // dropdown 为 {source, param} —— 前端先从 source 拉选项，选中值作为 ?param= 拼上。
+      // 带 panel 的插件：面板就是控制界面，磁贴上不再把每个 API 端点渲染成「调用接口」按钮。
+      const endpoints = tile && tile.panel ? [] : webManager._endpointsFor(name).map(ep => ({
+        path: ep.path,
+        label: ep.label,
+        dropdown: ep.dropdown,
+      }));
+      const panel = tile && tile.panel;
       return {
-        name: looseMatch.name,
-        displayName: preferredLabelForItem(looseMatch.name, looseMatch.displayName || looseMatch.name),
-        input: raw,
+        name,
+        loaded: pluginLoaded(name),
+        hasConfig: fs.existsSync(path.join(pluginsDir, name, 'config.json')),
+        customTile: tile ? { title: tile.title, description: tile.description, panel, endpoints: endpoints.filter(ep => ep.path !== panel) } : null,
       };
+    }).sort((a, b) => a.name.localeCompare(b.name));
+    sendJSON(res, 200, { plugins });
+  });
+
+  addRoute('GET', '/api/plugins/:name/config', (req, res, params) => {
+    const { name } = params;
+    const f = path.join(pluginsDir, name, 'config.json');
+    if (!fs.existsSync(f)) return sendJSON(res, 404, { error: `插件 '${name}' 无配置文件` });
+    try {
+      sendJSON(res, 200, { name, hasConfig: true, config: JSON.parse(fs.readFileSync(f, 'utf8')) });
+    } catch (err) {
+      sendJSON(res, 500, { error: `解析配置失败: ${err.message}` });
+    }
+  });
+
+  addRoute('PUT', '/api/plugins/:name/config', async (req, res, params, body) => {
+    const { name } = params;
+    const f = path.join(pluginsDir, name, 'config.json');
+    if (!fs.existsSync(f)) return sendJSON(res, 404, { error: `插件 '${name}' 无配置文件` });
+
+    let obj;
+    try {
+      obj = JSON.parse(body || 'null');
+    } catch (err) {
+      return sendJSON(res, 400, { error: `无效的 JSON: ${err.message}` });
+    }
+    if (typeof obj !== 'object' || obj === null || Array.isArray(obj)) {
+      return sendJSON(res, 400, { error: '配置必须是 JSON 对象' });
     }
 
-    if (/^[a-z0-9_]+$/.test(cleanName)) {
-      return {
-        name: cleanName,
-        displayName: cleanName,
-        input: raw,
-      };
+    try {
+      fs.writeFileSync(f, JSON.stringify(obj, null, 2));
+      console.log(`[web-manager] 已保存插件 '${name}' 的配置（重载后生效）。`);
+      sendJSON(res, 200, { ok: true, path: f });
+    } catch (err) {
+      sendJSON(res, 500, { error: `保存配置失败: ${err.message}` });
+    }
+  });
+
+  addRoute('POST', '/api/plugins/:name/reload', (req, res, params) => {
+    const { name } = params;
+    try {
+      reloadPlugin(name);
+      console.log(`[web-manager] 插件 '${name}' 已重载。`);
+      sendJSON(res, 200, { ok: true, message: `插件 '${name}' 已重载` });
+    } catch (err) {
+      console.error(`[web-manager] 重载插件 '${name}' 失败:`, err);
+      sendJSON(res, 500, { ok: false, error: err.message });
+    }
+  });
+
+  addRoute('POST', '/api/reload-all', (req, res) => {
+    const results = {};
+    for (const name of config.plugins || []) {
+      try {
+        reloadPlugin(name);
+        results[name] = { ok: true };
+      } catch (err) {
+        console.error(`[web-manager] 重载插件 '${name}' 失败:`, err);
+        results[name] = { ok: false, error: err.message };
+      }
+    }
+    sendJSON(res, 200, { ok: true, results });
+  });
+
+  addRoute('GET', '/api/permissions', (req, res) => sendJSON(res, 200, permissions.permissions));
+
+  addRoute('PUT', '/api/permissions', (req, res, params, body) => {
+    let obj;
+    try {
+      obj = JSON.parse(body || 'null');
+    } catch (err) {
+      return sendJSON(res, 400, { error: `无效的 JSON: ${err.message}` });
+    }
+    if (!obj || typeof obj !== 'object' || !Array.isArray(obj.admins) || typeof obj.users !== 'object') {
+      return sendJSON(res, 400, { error: '权限格式错误：需要 {"admins": string[], "users": {name: {level: number}}}' });
+    }
+    if (obj.admins.some(a => typeof a !== 'string')) return sendJSON(res, 400, { error: 'admins 必须是字符串数组' });
+    for (const [name, v] of Object.entries(obj.users)) {
+      if (!v || typeof v.level !== 'number') return sendJSON(res, 400, { error: `用户 '${name}' 的 level 必须是数字` });
     }
 
+    permissions.permissions = obj;
+    if (!permissions.save()) return sendJSON(res, 500, { error: '保存权限文件失败' });
+    sendJSON(res, 200, { ok: true });
+  });
+
+  addRoute('GET', '/api/terminal/messages', (req, res) => {
+    sendJSON(res, 200, { messages: wm.terminal.slice(-200) });
+  });
+
+  addRoute('POST', '/api/terminal/send', (req, res, params, body) => {
+    let obj;
+    try {
+      obj = JSON.parse(body || 'null');
+    } catch (err) {
+      return sendJSON(res, 400, { error: `无效的 JSON: ${err.message}` });
+    }
+    const message = obj && typeof obj.message === 'string' ? obj.message.trim() : '';
+    if (!message) return sendJSON(res, 400, { error: '消息不能为空' });
+    if (message.length > 256) return sendJSON(res, 400, { error: '消息过长（最多 256 字符）' });
+    bot.chat(message);
+    sendJSON(res, 200, { ok: true });
+  });
+
+  addRoute('POST', '/api/terminal/clear', (req, res) => {
+    wm.terminal.length = 0;
+    sendJSON(res, 200, { ok: true });
+  });
+
+  // ---- 背包管理（网页 UI + 聊天指令）----
+  // 玩家背包窗口槽位布局（与 mineflayer bot.inventory.slots 一致，QUICK_BAR_START=36）：
+  // 0=合成输出, 1-4=合成网格, 5-8=盔甲(头胸腿脚), 9-35=主背包, 36-44=快捷栏, 45=副手
+  // 重命名物品的自定义名:1.21 存于 custom_name 组件,旧版存 nbt display.Name,
+  // 且 displayName 只是构造时的基础名,自定义名只能从 item.customName 读取。
+  // 可能形态: JSON 文本组件字符串 / 已解析对象 / 纯字符串(旧版),统一转纯文本。
+  const textComponentToText = (comp) => {
+    if (typeof comp === 'string') return comp;
+    if (Array.isArray(comp)) return comp.map(textComponentToText).join('');
+    if (comp && typeof comp === 'object') {
+      if (typeof comp.text === 'string') return comp.text;
+      if (typeof comp.translate === 'string') return comp.translate;
+      if (Array.isArray(comp.extra)) return comp.extra.map(textComponentToText).join('');
+    }
+    return '';
+  };
+  const customItemName = (item) => {
+    try {
+      const raw = item && item.customName;
+      if (raw === null || raw === undefined || raw === '') return null;
+      // prismarine-nbt 包装对象 { type:'string', value:'{"text":"..."}' }（1.21 anonymousNbt 解析结果）
+      const src = (raw && typeof raw === 'object' && typeof raw.value === 'string') ? raw.value : raw;
+      let text;
+      if (typeof src === 'string') {
+        const t = src.trim();
+        text = (t.startsWith('{') || t.startsWith('[')) ? textComponentToText(JSON.parse(t)) : t;
+      } else {
+        text = textComponentToText(src);
+      }
+      return text.replace(/§./g, '') || null;
+    } catch (err) { return null; }
+  };
+  const itemLabel = (item) => customItemName(item) || item.displayName || item.name;
+
+  // 装备栏(槽 5-8:头/胸/腿/脚)原版规则:只接受对应部位的装备
+  const armorSlotMatches = (item, to) => {
+    if (to < 5 || to > 8) return true;
+    if (!item) return true;
+    const n = item.name || '';
+    const head = n.endsWith('_helmet') ||
+      ['carved_pumpkin', 'player_head', 'zombie_head', 'skeleton_skull', 'wither_skeleton_skull', 'creeper_head', 'dragon_head', 'piglin_head'].includes(n);
+    const chest = n.endsWith('_chestplate') || n === 'elytra';
+    const legs = n.endsWith('_leggings');
+    const feet = n.endsWith('_boots');
+    return [head, chest, legs, feet][to - 5] === true;
+  };
+
+  const itemInfo = (item) => item ? (() => {
+    const isBlock = !!(bot.registry && bot.registry.blocksByName && bot.registry.blocksByName[item.name]);
+    const tex = resolveTex(item.name);
+    return {
+      slot: item.slot,
+      name: item.name,
+      displayName: item.displayName,
+      customName: customItemName(item),
+      count: item.count,
+      maxStackSize: item.stackSize,
+      enchanted: !!(item.enchants && item.enchants.length),
+      block: isBlock, // 方块纹理在 block/ 目录
+      texDir: tex ? tex.dir : null,   // 纹理目录: block / item / entity/<子目录>(已验证存在)
+      texName: tex ? tex.file : null, // 纹理文件名(不含 .png), null 时前端用 item.name
+    };
+  })() : null;
+
+  const invAvailable = () => !!(bot.inventory && bot.inventory.slots);
+
+  // 槽位编号按玩家窗口布局；若正打开着其他容器（如箱子），先关闭，否则点击会落到容器窗口的槽位上
+  const ensurePlayerWindow = () => {
+    if (bot.currentWindow) bot.closeWindow(bot.currentWindow);
+  };
+
+  addRoute('GET', '/api/inventory', (req, res) => {
+    if (!invAvailable()) return sendJSON(res, 200, { available: false });
+    sendJSON(res, 200, {
+      available: true,
+      quickBarSlot: bot.quickBarSlot || 0,
+      gameMode: bot.game && bot.game.gameMode,
+      slots: Array.from({ length: 46 }, (_, i) => itemInfo(bot.inventory.slots[i])),
+    });
+  });
+
+  addRoute('POST', '/api/inventory/drop', async (req, res, params, body) => {
+    let obj;
+    try { obj = JSON.parse(body || 'null'); } catch (err) { return sendJSON(res, 400, { error: '无效的 JSON' }); }
+    const slot = obj && obj.slot;
+    if (!Number.isInteger(slot) || slot < 5 || slot > 45) {
+      return sendJSON(res, 400, { error: '无效的槽位（仅支持 5-45）' });
+    }
+    if (!invAvailable()) return sendJSON(res, 400, { error: '背包尚未同步（未登录？）' });
+    if (bot.game && bot.game.gameMode === 'creative') return sendJSON(res, 400, { error: '创造模式无法丢出物品' });
+    const item = bot.inventory.slots[slot];
+    if (!item) return sendJSON(res, 400, { error: '该槽位为空' });
+    const count = obj.count;
+    const wantAll = count === 'all' || (typeof count === 'number' && count >= item.count);
+    const n = Math.floor(Number(count));
+    if (!wantAll && !(typeof count === 'number' && n >= 1)) {
+      return sendJSON(res, 400, { error: 'count 必须是 1 或 "all"' });
+    }
+    try {
+      ensurePlayerWindow();
+      if (wantAll) {
+        await bot.tossStack(item);
+      } else {
+        // 丢指定数量：transfer 支持任意槽位区间（5..46 覆盖盔甲/主背包/快捷栏/副手）
+        await bot.transfer({
+          window: bot.inventory,
+          itemType: item.type,
+          metadata: item.metadata,
+          count: Math.min(n, item.count),
+          sourceStart: 5,
+          sourceEnd: 46,
+          destStart: -999,
+        });
+      }
+      sendJSON(res, 200, { ok: true, dropped: { name: itemLabel(item), count: wantAll ? item.count : Math.min(n, item.count) } });
+    } catch (err) {
+      sendJSON(res, 500, { error: `丢出失败: ${err.message}` });
+    }
+  });
+
+  addRoute('POST', '/api/inventory/select', (req, res, params, body) => {
+    let obj;
+    try { obj = JSON.parse(body || 'null'); } catch (err) { return sendJSON(res, 400, { error: '无效的 JSON' }); }
+    const slot = obj && obj.slot;
+    if (!Number.isInteger(slot) || slot < 0 || slot > 8) return sendJSON(res, 400, { error: '快捷栏槽位必须是 0-8' });
+    try {
+      bot.setQuickBarSlot(slot);
+      sendJSON(res, 200, { ok: true, quickBarSlot: slot });
+    } catch (err) {
+      sendJSON(res, 500, { error: `切换失败: ${err.message}` });
+    }
+  });
+
+  addRoute('POST', '/api/inventory/move', async (req, res, params, body) => {
+    let obj;
+    try { obj = JSON.parse(body || 'null'); } catch (err) { return sendJSON(res, 400, { error: '无效的 JSON' }); }
+    const from = obj && obj.from, to = obj && obj.to;
+    if (!Number.isInteger(from) || !Number.isInteger(to) || from < 5 || from > 45 || to < 5 || to > 45) {
+      return sendJSON(res, 400, { error: '无效的槽位（仅支持 5-45）' });
+    }
+    if (from === to) return sendJSON(res, 400, { error: '不能移动到同一槽位' });
+    if (!invAvailable()) return sendJSON(res, 400, { error: '背包尚未同步（未登录？）' });
+    if (bot.game && bot.game.gameMode === 'creative') return sendJSON(res, 400, { error: '创造模式无法移动物品' });
+    const src = bot.inventory.slots[from];
+    if (!src) return sendJSON(res, 400, { error: '源槽位为空' });
+    if (!armorSlotMatches(src, to)) return sendJSON(res, 400, { error: '装备栏只能放入对应部位的装备' });
+    const dst = bot.inventory.slots[to];
+    const sameStack = !!dst && dst.type === src.type && dst.metadata === src.metadata &&
+      JSON.stringify(dst.nbt || null) === JSON.stringify(src.nbt || null) &&
+      customItemName(dst) === customItemName(src);
+    try {
+      ensurePlayerWindow();
+      if (!dst) {
+        // 目标为空:整组移动
+        await bot.transfer({
+          window: bot.inventory, itemType: src.type, metadata: src.metadata,
+          count: src.count, sourceStart: from, sourceEnd: from + 1, destStart: to, destEnd: to + 1,
+        });
+      } else if (sameStack && dst.count < dst.stackSize) {
+        // 同类可叠:移入 min(数量, 空位),多余放回源槽
+        await bot.transfer({
+          window: bot.inventory, itemType: src.type, metadata: src.metadata,
+          count: Math.min(src.count, dst.stackSize - dst.count),
+          sourceStart: from, sourceEnd: from + 1, destStart: to, destEnd: to + 1,
+        });
+      } else if (sameStack) {
+        return sendJSON(res, 400, { error: '目标槽位已满' });
+      } else {
+        // 不同类型:三连击互换(结束时光标为空)
+        await bot.clickWindow(from, 0, 0);
+        await bot.clickWindow(to, 0, 0);
+        await bot.clickWindow(from, 0, 0);
+      }
+      sendJSON(res, 200, { ok: true });
+    } catch (err) {
+      sendJSON(res, 500, { error: `移动失败: ${err.message}` });
+    }
+  });
+
+  // 聊天指令: !drop 丢出当前手持物品, !cginv <1-9> 切换快捷栏
+  if (commands) {
+    commands.register({
+      name: 'drop',
+      permissionLevel: 1,
+      description: '丢出当前手持物品',
+      execute: (username) => {
+        if (!invAvailable()) return bot.whisper(username, '> 背包尚未同步（未登录？）');
+        if (bot.game && bot.game.gameMode === 'creative') return bot.whisper(username, '> 创造模式无法丢出物品。');
+        const item = bot.inventory.slots[36 + (bot.quickBarSlot || 0)];
+        if (!item) return bot.whisper(username, '> 当前没有手持物品。');
+        bot.tossStack(item)
+          .then(() => bot.whisper(username, `> 已丢出 ${itemLabel(item)} × ${item.count}。`))
+          .catch((err) => bot.whisper(username, `> 丢出失败: ${err.message}`));
+      },
+    });
+    commands.register({
+      name: 'cginv',
+      permissionLevel: 1,
+      description: '切换快捷栏: !cginv <1-9>（1-9 对应第 1-9 格,0 为第 1 格）',
+      execute: (username, args) => {
+        const n = parseInt(args[0], 10);
+        if (isNaN(n) || n < 0 || n > 9) return bot.whisper(username, '> 用法: !cginv <1-9>');
+        const slot = n === 0 ? 0 : n - 1;
+        try {
+          bot.setQuickBarSlot(slot);
+        } catch (err) {
+          return bot.whisper(username, `> 切换失败: ${err.message}`);
+        }
+        const item = bot.inventory && bot.inventory.slots[36 + slot];
+        bot.whisper(username, `> 已切换到快捷栏第 ${slot + 1} 格${item ? `: ${itemLabel(item)} × ${item.count}` : '（空）'}`);
+      },
+    });
+  }
+
+  addRoute('POST', '/api/restart', (req, res) => {
+    sendJSON(res, 200, { ok: true, message: '机器人正在重启...' });
+    setTimeout(() => {
+      console.log('[web-manager] 收到重启指令，进程即将退出（需进程管理器自动拉起）。');
+      process.exit(0);
+    }, 300);
+  });
+
+  // ---- 路由匹配（支持 :name 动态段）----
+  const matchRoute = (method, pathname) => {
+    for (const [key, { handler }] of wm.routes) {
+      const [pMethod, pPath] = key.split(' ');
+      if (pMethod !== method) continue;
+      const pSegs = pPath.split('/').filter(Boolean);
+      const uSegs = pathname.split('/').filter(Boolean);
+      if (pSegs.length !== uSegs.length) continue;
+      const params = {};
+      let ok = true;
+      for (let i = 0; i < pSegs.length; i++) {
+        if (pSegs[i].startsWith(':')) params[pSegs[i].slice(1)] = decodeURIComponent(uSegs[i]);
+        else if (pSegs[i] !== uSegs[i]) { ok = false; break; }
+      }
+      if (ok) return { handler, params };
+    }
     return null;
   };
 
-  const taskById = (id) => st.tasks.find((task) => task.id === id);
-
-  const itemPresets = () => {
-    return registryItems()
-      .filter((item) => item && item.name)
-      .map((item) => ({
-        name: item.name,
-        displayName: preferredLabelForItem(item.name, item.displayName || item.name),
-      }))
-      .sort((a, b) => a.displayName.localeCompare(b.displayName, 'zh-CN'));
-  };
-
-  const taskTerminalStates = new Set(['delivered', 'cancelled', 'failed']);
-  const taskStateRank = (status) => ({
-    pending: 0,
-    collecting: 1,
-    awaiting_partial: 2,
-    ready: 3,
-    delivering: 4,
-    failed: 5,
-    cancelled: 6,
-    delivered: 7,
-  })[status] ?? 7;
-
-  const compareTasks = (a, b) => taskStateRank(a.status) - taskStateRank(b.status) ||
-    (a.createdAt || 0) - (b.createdAt || 0) ||
-    (a.id || 0) - (b.id || 0);
-
-  const isTaskTerminal = (task) => taskTerminalStates.has(String(task && task.status || ''));
-
-  const activeTasks = () => st.tasks.filter((task) => !isTaskTerminal(task)).sort(compareTasks);
-
-  const taskQueuePosition = (task) => {
-    const idx = activeTasks().findIndex((entry) => entry.id === task.id);
-    return idx >= 0 ? idx + 1 : null;
-  };
-
-  const normalizeTaskItems = (task) => {
-    if (!task) return [];
-    if (!Array.isArray(task.items) || !task.items.length) {
-      const itemName = String(task.itemName || '').trim();
-      const requestedCount = Math.max(0, Math.floor(Number(task.requestedCount || 0)));
-      if (itemName && requestedCount > 0) {
-        task.items = [{
-          itemName,
-          displayName: task.displayName || itemName,
-          requestedInput: task.requestedInput || itemName,
-          requestedCount,
-          collectedCount: Math.max(0, Math.floor(Number(task.collectedCount || 0))),
-        }];
-      } else {
-        task.items = [];
-      }
-    }
-
-    const merged = new Map();
-    for (const item of task.items) {
-      const itemName = String(item && (item.itemName || item.name) || '').trim();
-      const requestedCount = Math.max(0, Math.floor(Number(item && (item.requestedCount ?? item.count) || 0)));
-      if (!itemName || requestedCount <= 0) continue;
-      const existing = merged.get(itemName) || {
-        itemName,
-        displayName: String(item.displayName || item.label || itemName),
-        requestedInput: String(item.requestedInput || item.input || itemName),
-        requestedCount: 0,
-        collectedCount: 0,
-      };
-      existing.requestedCount += requestedCount;
-      existing.collectedCount += Math.max(0, Math.floor(Number(item && item.collectedCount || 0)));
-      if (!existing.displayName && (item.displayName || item.label)) existing.displayName = String(item.displayName || item.label);
-      if (!existing.requestedInput && (item.requestedInput || item.input)) existing.requestedInput = String(item.requestedInput || item.input);
-      merged.set(itemName, existing);
-    }
-
-    task.items = Array.from(merged.values());
-    return task.items;
-  };
-
-  const refreshTaskCounts = (task) => {
-    const items = normalizeTaskItems(task);
-    let requestedCount = 0;
-    let collectedCount = 0;
-
-    for (const item of items) {
-      const actualCount = Math.min(countInInventory(item.itemName), item.requestedCount);
-      item.collectedCount = actualCount;
-      requestedCount += item.requestedCount;
-      collectedCount += actualCount;
-    }
-
-    task.requestedCount = requestedCount;
-    task.collectedCount = collectedCount;
-    task.remainingCount = Math.max(0, requestedCount - collectedCount);
-    task.progress = requestedCount > 0 ? Math.min(1, collectedCount / requestedCount) : 0;
-
-    if (items.length) {
-      task.itemName = items[0].itemName;
-      task.requestedInput = items.length === 1
-        ? items[0].requestedInput
-        : items.map((item) => item.requestedInput).join(' + ');
-      const labels = items.slice(0, 3).map((item) => (
-        item.displayName && item.displayName !== item.itemName ? item.displayName : item.itemName
-      ));
-      task.displayName = items.length === 1
-        ? (items[0].displayName || items[0].itemName)
-        : `${labels.join('、')}${items.length > 3 ? '…' : ''}`;
-    }
-
-    return items;
-  };
-
-  const taskLabel = (task) => {
-    const items = refreshTaskCounts(task);
-    if (!items.length) return task.displayName && task.displayName !== task.itemName
-      ? `${task.displayName} (${task.itemName})`
-      : task.itemName || '未命名任务';
-    if (items.length === 1) {
-      return items[0].displayName && items[0].displayName !== items[0].itemName
-        ? `${items[0].displayName} (${items[0].itemName})`
-        : items[0].itemName;
-    }
-    const labels = items.slice(0, 3).map((item) => (
-      item.displayName && item.displayName !== item.itemName ? item.displayName : item.itemName
-    ));
-    return `${labels.join('、')}${items.length > 3 ? '…' : ''}（${items.length}种）`;
-  };
-
-  const taskDisplayLabel = (task) => taskLabel(task);
-
-  const findOpenTaskForPlayer = (playerName) => {
-    const target = String(playerName || '').trim();
-    if (!target) return null;
-    return activeTasks().find((task) => task.targetPlayer === target) || null;
-  };
-
-  const queueNoticeText = (task) => {
-    const queuePosition = taskQueuePosition(task);
-    if (!queuePosition || queuePosition <= 1) return `> 已收到你的备货申请：${taskDisplayLabel(task)} × ${task.requestedCount}。`;
-    return `> 已收到你的备货申请：${taskDisplayLabel(task)} × ${task.requestedCount}，你当前在队列第 ${queuePosition} 位。`;
-  };
-
-  const promptBeforeTpa = (task) => {
-    if (typeof bot.whisper !== 'function') return;
-    bot.whisper(task.targetPlayer, `> ${taskDisplayLabel(task)} 已备好，我准备发起传送送货，你现在方便接货吗？`);
-  };
-
-  const startTpaDelivery = (task, source = 'auto', force = false) => {
-    if (!task || task.status !== 'ready' || (!force && !task.autoDeliver)) return false;
-    if (task.tpaSentAt && task.stage === 'tpa') return false;
-    promptBeforeTpa(task);
-    sendTpaForTask(task);
-    task.tpaSentAt = Date.now();
-    task.tpaSource = source;
-    setTaskStage(task, 'tpa', '已发起传送，等待自动交付');
-    scheduleAutoDeliver(task.id, 1);
-    return true;
-  };
-
-  const insideWarehouse = (position) => {
-    if (!position) return false;
-    if (String(cfg.warehouseMode || 'area') === 'list') {
-      return normalizedWarehouseContainers().some((target) => {
-        const dx = Math.abs(position.x - target.x);
-        const dy = Math.abs(position.y - target.y);
-        const dz = Math.abs(position.z - target.z);
-        return dx <= 3 && dy <= 3 && dz <= 3;
-      });
-    }
-    if (!cfg.warehouseCenter || !cfg.warehouseSize) return false;
-    const dx = Math.abs(position.x - Number(cfg.warehouseCenter.x || 0));
-    const dy = Math.abs(position.y - Number(cfg.warehouseCenter.y || 0));
-    const dz = Math.abs(position.z - Number(cfg.warehouseCenter.z || 0));
-    return dx <= Number(cfg.warehouseSize.x || 0) &&
-    dy <= Number(cfg.warehouseSize.y || 0) &&
-      dz <= Number(cfg.warehouseSize.z || 0);
-  };
-
-  const normalizeAxisGroup = (value, label) => {
-    if (!value || typeof value !== 'object') throw new Error(`${label} 必须是对象`);
-    const x = Number(value.x);
-    const y = Number(value.y);
-    const z = Number(value.z);
-    if (![x, y, z].every(Number.isFinite)) throw new Error(`${label} 的 x/y/z 必须是数字`);
-    return { x, y, z };
-  };
-
-  const normalizedWarehouseContainers = () => {
-    if (!Array.isArray(cfg.warehouseContainers)) return [];
-    return cfg.warehouseContainers
-      .map((entry) => {
-        try {
-          return normalizeAxisGroup(entry, 'warehouseContainers');
-        } catch (err) {
-          return null;
-        }
-      })
-      .filter(Boolean);
-  };
-
-  const warehouseContainerVec3s = () => normalizedWarehouseContainers()
-    .map((pos) => new Vec3(Number(pos.x), Number(pos.y), Number(pos.z)))
-    .filter((pos) => Number.isFinite(pos.x) && Number.isFinite(pos.y) && Number.isFinite(pos.z));
-
-  const warehouseFocusPoint = () => {
-    if (String(cfg.warehouseMode || 'area') === 'list') {
-      const targets = normalizedWarehouseContainers();
-      return targets[0] || null;
-    }
-    return cfg.warehouseCenter || null;
-  };
-
-  const summarizeTask = (task) => ({
-    id: task.id,
-    itemName: task.itemName,
-    displayName: task.displayName,
-    requestedInput: task.requestedInput,
-    targetPlayer: task.targetPlayer,
-    requestedCount: task.requestedCount,
-    collectedCount: task.collectedCount,
-    remainingCount: Math.max(0, task.requestedCount - task.collectedCount),
-    progress: task.requestedCount > 0 ? Math.min(1, task.collectedCount / task.requestedCount) : 0,
-    queuePosition: taskQueuePosition(task),
-    itemCount: Array.isArray(task.items) ? task.items.length : 0,
-    items: (task.items || []).map((item) => ({
-      itemName: item.itemName,
-      displayName: item.displayName,
-      requestedInput: item.requestedInput,
-      requestedCount: item.requestedCount,
-      collectedCount: Math.min(countInInventory(item.itemName), item.requestedCount),
-      remainingCount: Math.max(0, item.requestedCount - Math.min(countInInventory(item.itemName), item.requestedCount)),
-    })),
-    status: task.status,
-    stage: task.stage || null,
-    stageLabel: task.stageLabel || null,
-    deliveryMode: task.deliveryMode || 'direct',
-    autoDeliver: !!task.autoDeliver,
-    lastError: task.lastError || null,
-    createdAt: task.createdAt,
-    updatedAt: task.updatedAt,
-    readyAt: task.readyAt || null,
-    deliveredAt: task.deliveredAt || null,
-    partialPromptedAt: task.partialPromptedAt || null,
-  });
-
-  const setTaskStage = (task, stage, label) => {
-    task.stage = stage || null;
-    task.stageLabel = label || null;
-    task.updatedAt = Date.now();
-  };
-
-  const stopPathfinder = () => {
+  // ---- 请求入口 ----
+  const handleRequest = async (req, res) => {
+    const url = new URL(req.url, 'http://localhost');
+    const { pathname } = url;
     try {
-      if (bot.pathfinder && typeof bot.pathfinder.stop === 'function') {
-        bot.pathfinder.stop();
-        return;
-      }
-      if (bot.pathfinder && typeof bot.pathfinder.setGoal === 'function') {
-        bot.pathfinder.setGoal(null);
-      }
-    } catch (err) {}
-  };
+      if (pathname.startsWith('/api/')) {
+        // 所有 /api/* 均需认证（未配置 token 时放行）
+        if (!authOk(req, url)) return sendJSON(res, 401, { error: '未授权：需要正确的 token' });
 
-  const isNearPoint = (point, distance = 3) => {
-    if (!bot.entity || !bot.entity.position || !point) return false;
-    return bot.entity.position.distanceTo(new Vec3(Number(point.x || 0), Number(point.y || 0), Number(point.z || 0))) <= distance;
-  };
-
-  const currentAvailableForTask = (task) => normalizeTaskItems(task)
-    .map((item) => {
-      const availableCount = Math.min(countInInventory(item.itemName), item.requestedCount);
-      return {
-        itemName: item.itemName,
-        displayName: item.displayName,
-        requestedInput: item.requestedInput,
-        requestedCount: item.requestedCount,
-        availableCount,
-        missingCount: Math.max(0, item.requestedCount - availableCount),
-      };
-    })
-    .filter((item) => item.availableCount > 0);
-
-  const partialDeliverySummary = (task) => {
-    const availableItems = currentAvailableForTask(task);
-    const availableCount = availableItems.reduce((sum, item) => sum + item.availableCount, 0);
-    return {
-      availableItems,
-      availableCount,
-      missingCount: Math.max(0, task.requestedCount - availableCount),
-    };
-  };
-
-  const promptPartialDeliveryChoice = (task) => {
-    if (typeof bot.whisper !== 'function') return;
-    const partial = partialDeliverySummary(task);
-    if (!partial.availableCount) return;
-    bot.whisper(task.targetPlayer, `> ${taskDisplayLabel(task)} 目前只备到 ${partial.availableCount}/${task.requestedCount}，请到网页选择“取消任务”或“先送已有物品”。`);
-  };
-
-  const markAwaitingPartial = (task, reason = '') => {
-    const partial = partialDeliverySummary(task);
-    if (!partial.availableCount) throw new Error(reason || `仓库内没有足够的 ${taskDisplayLabel(task)}`);
-    task.status = 'awaiting_partial';
-    task.lastError = reason || `库存不足，还差 ${partial.missingCount}`;
-    task.partialPromptedAt = Date.now();
-    setTaskStage(task, 'partial', `库存不足，待网页选择（已备 ${partial.availableCount}/${task.requestedCount}）`);
-    promptPartialDeliveryChoice(task);
-    return summarizeTask(task);
-  };
-
-  const stockItemCount = (itemName) => {
-    const entry = (st.stock.items || []).find((item) => item && item.itemName === itemName);
-    return entry ? Math.max(0, Number(entry.count || 0)) : 0;
-  };
-
-  const reconcileTask = (task) => {
-    if (!task || task.status === 'cancelled' || task.status === 'delivered' || task.status === 'failed') return;
-    if (task.status === 'awaiting_partial') {
-      task.updatedAt = Date.now();
-      setTaskStage(task, 'partial', task.stageLabel || '等待网页选择');
-      return;
-    }
-
-    refreshTaskCounts(task);
-    task.updatedAt = Date.now();
-    const enough = task.collectedCount >= task.requestedCount && task.requestedCount > 0;
-    const queuePosition = taskQueuePosition(task);
-
-    if (st.activeDeliveryId === task.id) {
-      task.status = 'delivering';
-      setTaskStage(task, 'delivering', '正在交付');
-      return;
-    }
-
-    if (st.activeFulfillmentId === task.id || st.activeRequestId === task.id) {
-      task.status = 'collecting';
-      setTaskStage(task, 'collect', '正在补货');
-      return;
-    }
-
-    if (enough) {
-      if (task.status !== 'ready') task.readyAt = Date.now();
-      task.status = 'ready';
-      if (task.autoDeliver && task.deliveryMode === 'tpa' && !task.tpaSentAt) {
-        setTaskStage(task, 'queue', queuePosition && queuePosition > 1
-          ? `已备齐，排队第 ${queuePosition} 位`
-          : '已备齐，等待传送');
-      } else {
-        setTaskStage(task, 'ready', queuePosition && queuePosition > 1
-          ? `已备齐，排队第 ${queuePosition} 位`
-          : '已备齐，等待交付');
-      }
-      return;
-    }
-
-    task.readyAt = null;
-    task.status = 'pending';
-    if (queuePosition && queuePosition > 1) {
-      setTaskStage(task, 'queue', `排队中，第 ${queuePosition} 位`);
-    } else if (!task.stage || task.stage === 'queue') {
-      setTaskStage(task, 'pending', '等待补货');
-    }
-  };
-
-  const reconcileAll = () => {
-    for (const task of st.tasks) reconcileTask(task);
-
-    if (!st.fulfillmentPromise) {
-      const nextNeed = activeTasks().find((task) => task.status === 'pending' || task.status === 'collecting');
-      if (nextNeed) {
-        st.fulfillmentPromise = fulfillTask(nextNeed.id).catch((err) => {
-          const task = taskById(nextNeed.id);
-          if (task) {
-            task.lastError = err.message;
-            task.updatedAt = Date.now();
-          }
-        }).finally(() => {
-          st.fulfillmentPromise = null;
-          st.activeFulfillmentId = null;
-        });
-      }
-    }
-
-    if (!st.deliveryPromise) {
-      const next = activeTasks().find((task) => task.status === 'ready' && task.autoDeliver);
-      if (next) {
-        if (next.stage === 'tpa') return;
-        if (next.deliveryMode === 'tpa') {
-          if (!next.tpaSentAt) {
-            next.lastError = null;
-            try {
-              startTpaDelivery(next, 'queue');
-            } catch (err) {
-              next.lastError = err.message;
-              setTaskStage(next, 'ready', '发起传送失败，等待重试');
-            }
-            return;
-          }
-        } else {
-          const player = bot.players && bot.players[next.targetPlayer];
-          if ((!player || !player.entity) && next.stage !== 'tpa') {
-            next.lastError = null;
-            setTaskStage(next, 'tpa', '目标不在视线内，已发起传送');
-            try {
-              promptBeforeTpa(next);
-              sendTpaForTask(next);
-              scheduleAutoDeliver(next.id, 1);
-            } catch (err) {
-              next.lastError = err.message;
-              setTaskStage(next, 'ready', '发起传送失败，等待重试');
-            }
-            return;
-          }
-        }
-        st.deliveryPromise = deliverTask(next.id, 'auto').finally(() => {
-          st.deliveryPromise = null;
-        });
-      }
-    }
-  };
-
-  const waitUntilNear = async (entity, distance, timeoutMs) => {
-    const started = Date.now();
-    while (Date.now() - started < timeoutMs) {
-      if (!bot.entity || !entity || !entity.position) throw new Error('机器人或目标实体不可用');
-      if (bot.entity.position.distanceTo(entity.position) <= distance) return;
-      await sleep(200);
-    }
-    throw new Error(`接近目标超时（>${Math.round(timeoutMs / 1000)} 秒）`);
-  };
-
-  const waitUntilNearPoint = async (point, distance, timeoutMs) => {
-    const started = Date.now();
-    while (Date.now() - started < timeoutMs) {
-      if (!bot.entity || !point) throw new Error('机器人位置不可用');
-      if (bot.entity.position.distanceTo(point) <= distance) return;
-      await sleep(200);
-    }
-    throw new Error(`接近目标超时（>${Math.round(timeoutMs / 1000)} 秒）`);
-  };
-
-  const moveToWarehouseCenter = async (task = null) => {
-    const focus = warehouseFocusPoint();
-    if (!focus) throw new Error(String(cfg.warehouseMode || 'area') === 'list' ? '未配置仓库箱子坐标' : '未配置仓库中心坐标');
-    if (!bot.entity) throw new Error('机器人尚未进入世界');
-    if (!bot.pathfinder) throw new Error('未检测到寻路模块，请先启用 navigator 插件');
-
-    const targetPoint = { x: Number(focus.x || 0), y: Number(focus.y || 0), z: Number(focus.z || 0) };
-    const radius = Math.max(1, Math.min(
-      Number(cfg.warehouseSize && cfg.warehouseMode !== 'list' ? cfg.warehouseSize.x || 0 : 0),
-      Number(cfg.warehouseSize && cfg.warehouseMode !== 'list' ? cfg.warehouseSize.z || 0 : 0),
-      3
-    ));
-
-    if (isNearPoint(targetPoint, Math.max(radius + 1, 3))) {
-      stopPathfinder();
-      return;
-    }
-
-    if (task) setTaskStage(task, 'warehouse', '正在前往仓库中心');
-    bot.pathfinder.setGoal(new GoalNear(targetPoint.x, targetPoint.y, targetPoint.z, radius));
-    try {
-      await waitUntilNearPoint(targetPoint, Math.max(radius + 1, 3), cfg.deliveryMoveTimeoutMs);
-    } catch (err) {
-      if (String(err.message || '').includes('接近目标超时')) {
-        throw new Error(`前往仓库超时（>${Math.round(cfg.deliveryMoveTimeoutMs / 1000)} 秒）`);
-      }
-      throw err;
-    }
-    stopPathfinder();
-    await sleep(500);
-  };
-
-  const waitForPlayerArrival = async (playerName, timeoutMs) => {
-    const started = Date.now();
-    while (Date.now() - started < timeoutMs) {
-      const player = bot.players && bot.players[playerName];
-      if (player && player.entity && bot.entity && bot.entity.position.distanceTo(player.entity.position) <= cfg.handoffDistance) {
-        return player.entity;
-      }
-      await sleep(200);
-    }
-    throw new Error(`等待玩家接受 TPA 超时（>${Math.round(timeoutMs / 1000)} 秒）`);
-  };
-
-  const tossExact = async (itemName, count) => {
-    let remaining = count;
-    while (remaining > 0) {
-      const stack = inventoryItems().find((item) => item && item.name === itemName);
-      if (!stack) throw new Error(`库存不足，还差 ${remaining}`);
-      const amount = Math.min(remaining, stack.count);
-      await bot.toss(stack.type, stack.metadata, amount);
-      remaining -= amount;
-      await sleep(120);
-    }
-  };
-
-  const blockIds = (names) => {
-    const reg = bot.registry && bot.registry.blocksByName ? bot.registry.blocksByName : {};
-    return names.map((name) => reg[name] && reg[name].id).filter((id) => Number.isInteger(id));
-  };
-
-  const warehouseContainerPositions = () => {
-    const ids = blockIds(cfg.warehouseBlocks);
-    if (String(cfg.warehouseMode || 'area') === 'list') {
-      // 指定坐标可能位于尚未加载的区块，不能在走过去之前调用 blockAt 过滤。
-      return warehouseContainerVec3s().sort((a, b) => {
-        if (!bot.entity || !bot.entity.position) return 0;
-        return bot.entity.position.distanceTo(a) - bot.entity.position.distanceTo(b);
-      });
-    }
-    if (typeof bot.findBlocks !== 'function') return [];
-    if (!ids.length) return [];
-    const maxDistance = Math.max(
-      Number(cfg.warehouseSize.x || 0),
-      Number(cfg.warehouseSize.y || 0),
-      Number(cfg.warehouseSize.z || 0)
-    ) + 8;
-    const center = new Vec3(
-      Number(cfg.warehouseCenter.x || 0),
-      Number(cfg.warehouseCenter.y || 0),
-      Number(cfg.warehouseCenter.z || 0)
-    );
-    try {
-      return (bot.findBlocks({
-        point: center,
-        matching: ids,
-        maxDistance,
-        count: cfg.maxStorageBlocksScan,
-      }) || []).filter(insideWarehouse).sort((a, b) => center.distanceTo(a) - center.distanceTo(b));
-    } catch (err) {
-      return [];
-    }
-  };
-
-  let activeScanPromise = null;
-
-  const runWarehouseScan = async (reason, allowRetry) => {
-    try {
-      await moveToWarehouseCenter();
-      const positions = warehouseContainerPositions();
-      if (!positions.length) {
-        throw new Error(String(cfg.warehouseMode || 'area') === 'list'
-          ? '没有可扫描的箱子坐标，请先在仓库设置里添加并保存坐标'
-          : '指定范围内没有找到可扫描的容器');
-      }
-      const merged = new Map();
-
-      const configuredContainerIds = blockIds(cfg.warehouseBlocks);
-      for (const pos of positions) {
-        let block = null;
-        try {
-          if (String(cfg.warehouseMode || 'area') === 'list') {
-            await approachPoint(pos, 2);
-            block = bot.blockAt(pos);
-            if (!block) throw new Error(`坐标 ${pos.x},${pos.y},${pos.z} 处没有加载方块`);
-            if (!configuredContainerIds.includes(block.type)) {
-              throw new Error(`坐标 ${pos.x},${pos.y},${pos.z} 不是已配置的容器`);
-            }
-          } else {
-            block = bot.blockAt(pos);
-            if (!block) continue;
-            await approachBlock(block, 2);
-          }
-          const container = await openContainerBlock(block);
+        // 解析请求体（PUT/POST）
+        let body;
+        if (req.method === 'PUT' || req.method === 'POST') {
           try {
-            for (const item of containerItems(container)) {
-              if (!item || !item.name || !item.count) continue;
-              const existing = merged.get(item.name) || {
-                itemName: item.name,
-                displayName: item.displayName || item.name,
-                label: preferredLabelForItem(item.name, item.displayName || item.name),
-                count: 0,
-              };
-              existing.count += item.count;
-              merged.set(item.name, existing);
-            }
-          } finally {
-            if (typeof container.close === 'function') {
-              try { container.close(); } catch (err) {}
-            }
+            body = await readBody(req);
+          } catch (err) {
+            return sendJSON(res, 400, { error: err.message });
           }
-        } catch (err) {
-          if (isWarehouseStuckError(err)) throw err;
-          const targetLabel = block && block.name ? block.name : `${pos.x},${pos.y},${pos.z}`;
-          st.stock.lastError = `扫描 ${targetLabel} 失败: ${err.message}`;
         }
+
+        // 内置路由（含动态段）
+        const m = matchRoute(req.method, pathname);
+        if (m) return await m.handler(req, res, m.params, body, url);
+
+        // 插件注册的自定义端点（精确匹配）
+        const ep = webManager.endpoints.get(`${req.method} ${pathname}`);
+        if (ep) return await ep.handler(req, res, url, body);
+
+        return sendJSON(res, 404, { error: '接口不存在' });
       }
 
-      st.stock.items = Array.from(merged.values()).sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
-      st.stock.scannedAt = Date.now();
-      console.log(`[stock-prep] 已完成仓库库存扫描 (${reason})，共 ${st.stock.items.length} 种物品`);
-      return {
-        items: st.stock.items,
-        scannedAt: st.stock.scannedAt,
-        lastError: st.stock.lastError,
-      };
+      // 静态页面（GET /）
+      const page = matchRoute('GET', pathname);
+      if (page) return await page.handler(req, res, page.params, null, url);
+      return sendJSON(res, 404, { error: 'Not Found' });
     } catch (err) {
-      if (allowRetry && isWarehouseStuckError(err)) {
-        st.stock.lastError = `扫描卡住，已执行回仓并重试: ${err.message}`;
-        await recoverWarehouseStuck(null, '仓库扫描卡住');
-        return runWarehouseScan(`${reason}:retry`, false);
-      }
-      throw err;
+      console.error('[web-manager] 请求处理错误:', err);
+      sendJSON(res, 500, { error: err.message });
     }
   };
 
-  const scanWarehouseInventory = (reason = 'manual') => {
-    if (activeScanPromise) {
-      return Promise.reject(new Error('已有扫描正在进行'));
-    }
-
-    st.stock.scanning = true;
-    st.stock.lastError = null;
-    activeScanPromise = runWarehouseScan(reason, true).catch((err) => {
-      st.stock.lastError = err.message;
-      throw err;
-    }).finally(() => {
-      stopPathfinder();
-      st.stock.scanning = false;
-      activeScanPromise = null;
-    });
-    return activeScanPromise;
-  };
-
-  const approachPoint = async (point, distance = cfg.blockApproachDistance) => {
-    if (!point) throw new Error('目标坐标不可用');
-    if (!bot.pathfinder) throw new Error('未检测到寻路模块，请先启用 navigator 插件');
-    bot.pathfinder.setGoal(new GoalNear(
-      point.x,
-      point.y,
-      point.z,
-      Math.max(1, Math.ceil(distance))
-    ));
-    try {
-      await waitUntilNearPoint(point, distance + 0.8, cfg.deliveryMoveTimeoutMs);
-    } catch (err) {
-      if (String(err.message || '').includes('接近目标超时')) {
-        throw new Error(`接近容器超时（>${Math.round(cfg.deliveryMoveTimeoutMs / 1000)} 秒）`);
-      }
-      throw err;
-    }
-    stopPathfinder();
-  };
-
-  const approachBlock = async (block, distance = cfg.blockApproachDistance) => {
-    if (!block || !block.position) throw new Error('目标方块不可用');
-    await approachPoint(block.position, distance);
-  };
-
-  const openContainerBlock = async (block) => {
-    const opener = typeof bot.openContainer === 'function'
-      ? () => bot.openContainer(block)
-      : (typeof bot.openChest === 'function' ? () => bot.openChest(block) : null);
-    if (!opener) throw new Error('当前机器人不支持打开容器');
-    const timeoutMs = Math.max(1000, Number(cfg.containerOpenTimeoutMs || 8000));
-    return Promise.race([
-      opener(),
-      new Promise((_, reject) => setTimeout(() => reject(new Error(`打开容器超时（>${Math.round(timeoutMs / 1000)} 秒）`)), timeoutMs)),
-    ]);
-  };
-
-  const containerItems = (container) => {
-    if (!container) return [];
-    if (typeof container.containerItems === 'function') return container.containerItems();
-    if (typeof container.items === 'function') return container.items();
-    return Array.isArray(container.slots) ? container.slots.filter(Boolean) : [];
-  };
-
-  const withdrawFromStorage = async (task, item, needed, allowRetry = true) => {
-    const positions = warehouseContainerPositions();
-    if (!positions.length) return 0;
-
-    let taken = 0;
-    for (const pos of positions) {
-      if (taken >= needed) break;
-      try {
-        if (String(cfg.warehouseMode || 'area') === 'list') {
-          await approachPoint(pos, 2);
-        }
-        const block = bot.blockAt(pos);
-        if (!block) throw new Error(`坐标 ${pos.x},${pos.y},${pos.z} 处没有加载方块`);
-        if (String(cfg.warehouseMode || 'area') === 'list') {
-          const configuredContainerIds = blockIds(cfg.warehouseBlocks);
-          if (!configuredContainerIds.includes(block.type)) {
-            throw new Error(`坐标 ${pos.x},${pos.y},${pos.z} 不是已配置的容器`);
-          }
-        } else {
-          await approachBlock(block, 2);
-        }
-        setTaskStage(task, 'storage', `前往 ${block.name} 取 ${item.displayName || item.itemName}`);
-        const container = await openContainerBlock(block);
-        try {
-          const stack = containerItems(container).find((slot) => slot && slot.name === item.itemName);
-          if (!stack) continue;
-          const amount = Math.min(needed - taken, stack.count);
-          setTaskStage(task, 'storage', `从 ${block.name} 取出 ${item.displayName || item.itemName} × ${amount}`);
-          await container.withdraw(stack.type, stack.metadata, amount);
-          taken += amount;
-          await sleep(cfg.collectPauseMs);
-        } finally {
-          if (typeof container.close === 'function') {
-            try { container.close(); } catch (err) {}
-          }
-        }
-      } catch (err) {
-        if (allowRetry && isWarehouseStuckError(err)) {
-          task.lastError = `仓库流程卡住，已执行回仓并重试: ${err.message}`;
-          await recoverWarehouseStuck(task, '仓库取货卡住');
-          return taken + await withdrawFromStorage(task, item, needed - taken, false);
-        }
-        task.lastError = `仓库取货失败: ${item.displayName || item.itemName} - ${err.message}`;
-      }
-    }
-    return taken;
-  };
-
-  async function fulfillTask(id) {
-    const task = taskById(id);
-    if (!task) throw new Error('任务不存在');
-    if (task.status === 'cancelled' || task.status === 'delivered') return summarizeTask(task);
-
-    st.activeFulfillmentId = task.id;
-    task.lastError = null;
-    task.status = 'collecting';
-    setTaskStage(task, 'collect', '开始补货');
-    reconcileTask(task);
-    await moveToWarehouseCenter(task);
-    if (task.status === 'cancelled') return summarizeTask(task);
-
-    const items = normalizeTaskItems(task).slice();
-    for (const item of items) {
-      if (task.status === 'cancelled') return summarizeTask(task);
-      const need = () => Math.max(0, item.requestedCount - Math.min(countInInventory(item.itemName), item.requestedCount));
-      while (need() > 0) {
-        if (task.status === 'cancelled') return summarizeTask(task);
-        const missingNow = need();
-        const pulled = await withdrawFromStorage(task, item, missingNow);
-        refreshTaskCounts(task);
-        if (pulled > 0) {
-          setTaskStage(task, 'storage', `已从仓库补到 ${taskLabel(task)} ${task.collectedCount}/${task.requestedCount}`);
-        }
-        if (task.status === 'cancelled') return summarizeTask(task);
-        if (need() <= 0) break;
-        const missing = need();
-        if (task.collectedCount > 0) {
-          return markAwaitingPartial(task, `仓库内没有足够的 ${item.displayName || item.itemName}，当前仍缺少 ${missing} 个`);
-        }
-        throw new Error(`仓库内没有足够的 ${item.displayName || item.itemName}，当前仍缺少 ${missing} 个`);
-      }
-    }
-
-    reconcileTask(task);
-    return summarizeTask(task);
-  }
-
-  async function deliverTask(id, source = 'manual', options = {}) {
-    const task = taskById(id);
-    if (!task) throw new Error('任务不存在');
-    if (task.status === 'cancelled') throw new Error('任务已取消');
-    if (task.status === 'delivered') throw new Error('任务已完成');
-    if (st.activeDeliveryId && st.activeDeliveryId !== task.id) throw new Error('已有其他任务正在交付');
-
-    reconcileTask(task);
-    const partialAllowed = !!options.allowPartial || source === 'partial';
-    if (task.collectedCount < task.requestedCount && !partialAllowed) {
-      if (task.collectedCount > 0) return markAwaitingPartial(task);
-      throw new Error(`库存不足，还差 ${task.requestedCount - task.collectedCount}`);
-    }
-
-    const deliveryItems = partialAllowed
-      ? currentAvailableForTask(task)
-      : normalizeTaskItems(task).map((item) => ({
-        itemName: item.itemName,
-        displayName: item.displayName,
-        requestedInput: item.requestedInput,
-        requestedCount: item.requestedCount,
-        availableCount: item.requestedCount,
-        missingCount: 0,
-      }));
-    const totalDeliverCount = deliveryItems.reduce((sum, item) => sum + item.availableCount, 0);
-    if (!totalDeliverCount) {
-      if (partialAllowed) throw new Error('当前没有可送的物品');
-      throw new Error(`库存不足，还差 ${task.requestedCount - task.collectedCount}`);
-    }
-
-    st.activeDeliveryId = task.id;
-    task.status = 'delivering';
-    task.lastError = null;
-    task.updatedAt = Date.now();
-
-    try {
-      if (!task.tpaSentAt || task.stage !== 'tpa') {
-        promptBeforeTpa(task);
-        sendTpaForTask(task);
-        task.tpaSentAt = Date.now();
-        task.tpaSource = source;
-        setTaskStage(task, 'tpa', '已发起传送，等待自动交付');
-      }
-
-      const targetEntity = await waitForPlayerArrival(task.targetPlayer, cfg.deliveryMoveTimeoutMs);
-      if (typeof bot.lookAt === 'function') {
-        await bot.lookAt(targetEntity.position.offset(0, 1.2, 0), true);
-      }
-      for (const item of deliveryItems) {
-        await tossExact(item.itemName, item.availableCount);
-      }
-      if (partialAllowed) {
-        for (const delivered of deliveryItems) {
-          const entry = normalizeTaskItems(task).find((item) => item.itemName === delivered.itemName);
-          if (!entry) continue;
-          entry.requestedCount = Math.max(0, entry.requestedCount - delivered.availableCount);
-        }
-        task.items = normalizeTaskItems(task).filter((item) => item.requestedCount > 0);
-        refreshTaskCounts(task);
-        if (!task.items.length || task.requestedCount <= 0) {
-          task.status = 'delivered';
-          setTaskStage(task, 'delivered', '已交付完成');
-          task.deliveredAt = Date.now();
-        } else {
-          task.status = 'pending';
-          setTaskStage(task, 'pending', '已送出当前可用物品，等待继续补货');
-          task.partialPromptedAt = null;
-        }
+  // ---- HTTP 服务器（仅首次运行时创建，重载复用）----
+  if (!wm.server) {
+    wm.server = http.createServer(handleRequest);
+    // 必须处理 error，否则端口被占用时进程直接崩溃
+    wm.server.on('error', (err) => {
+      if (err.code === 'EADDRINUSE') {
+        console.error(`[web-manager] 端口 ${wm.auth.port} 已被占用，Web 管理界面不可用。请修改 config.json 后重启机器人。`);
       } else {
-        task.collectedCount = task.requestedCount;
-        task.status = 'delivered';
-        setTaskStage(task, 'delivered', '已交付完成');
-        task.deliveredAt = Date.now();
-        task.updatedAt = task.deliveredAt;
+        console.error('[web-manager] HTTP 服务器错误:', err);
       }
-      try {
-        sendHome();
-      } catch (homeErr) {
-        task.lastError = `已送达，但回仓失败: ${homeErr.message}`;
-      }
-      console.log(`[stock-prep] 任务 #${task.id} 已交付给 ${task.targetPlayer}: ${taskLabel(task)} x${task.requestedCount} (${source})`);
-      if (typeof bot.whisper === 'function') {
-        bot.whisper(task.targetPlayer, `> 你的备货已送达：${taskLabel(task)} × ${task.requestedCount}`);
-      }
-      return summarizeTask(task);
-    } catch (err) {
-      const shouldFallbackToTpa = cfg.fallbackToTpaOnDeliveryTimeout &&
-        typeof err.message === 'string' &&
-        err.message.includes('接近目标超时') &&
-        !String(source).startsWith('auto-after-tpa:');
-
-      if (shouldFallbackToTpa) {
-        task.lastError = null;
-        setTaskStage(task, 'tpa', '寻路超时，已改为传送送货');
-        startTpaDelivery(task, 'fallback', true);
-        if (typeof bot.whisper === 'function') {
-          bot.whisper(task.targetPlayer, `> 送货路上卡住了，已改为向你发起传送并继续自动交付 ${taskLabel(task)} × ${task.requestedCount}。`);
-        }
-        return summarizeTask(task);
-      }
-
-      task.lastError = err.message;
-      task.updatedAt = Date.now();
-      reconcileTask(task);
-      throw err;
-    } finally {
-      stopPathfinder();
-      st.activeDeliveryId = null;
-    }
-  }
-
-  const createTask = (payload) => {
-    const item = resolveItem(payload.item);
-    if (!item) throw new Error('无法识别物品，请填写原版物品 ID 或在配置里增加别名');
-
-    const requestedCount = Math.floor(Number(payload.count));
-    if (!Number.isInteger(requestedCount) || requestedCount <= 0) {
-      throw new Error('数量必须是正整数');
-    }
-
-    const targetPlayer = String(payload.targetPlayer || '').trim();
-    if (!targetPlayer) throw new Error('目标玩家不能为空');
-
-    const autoDeliver = payload.autoDeliver == null ? !!cfg.autoDeliverByDefault : !!payload.autoDeliver;
-    const deliveryMode = String(payload.deliveryMode || 'direct').trim().toLowerCase() === 'tpa' ? 'tpa' : 'direct';
-    const existingTask = findOpenTaskForPlayer(targetPlayer);
-    const canMerge = !!existingTask && existingTask.status !== 'delivering';
-    let task = existingTask;
-    let merged = false;
-
-    if (canMerge) {
-      const items = normalizeTaskItems(task);
-      const sameItem = items.find((entry) => entry.itemName === item.name);
-      if (sameItem) {
-        sameItem.requestedCount += requestedCount;
-      } else {
-        items.push({
-          itemName: item.name,
-          displayName: item.displayName,
-          requestedInput: item.input,
-          requestedCount,
-          collectedCount: 0,
-        });
-      }
-      task.autoDeliver = task.autoDeliver || autoDeliver;
-      task.deliveryMode = task.deliveryMode === 'tpa' || deliveryMode === 'tpa' ? 'tpa' : 'direct';
-      task.lastError = null;
-      task.updatedAt = Date.now();
-      refreshTaskCounts(task);
-      reconcileTask(task);
-      merged = true;
-    } else {
-      const openTaskCount = st.tasks.filter((entry) => !isTaskTerminal(entry) && entry.status !== 'delivering').length;
-      if (openTaskCount >= cfg.maxTasks) {
-        throw new Error(`任务过多，最多保留 ${cfg.maxTasks} 个未结束任务`);
-      }
-
-      task = {
-        id: st.nextId++,
-        itemName: item.name,
-        displayName: item.displayName,
-        requestedInput: item.input,
-        targetPlayer,
-        items: [{
-          itemName: item.name,
-          displayName: item.displayName,
-          requestedInput: item.input,
-          requestedCount,
-          collectedCount: 0,
-        }],
-        requestedCount,
-        collectedCount: 0,
-        remainingCount: requestedCount,
-        progress: 0,
-        status: 'pending',
-        stage: 'pending',
-        stageLabel: '等待补货',
-        autoDeliver,
-        deliveryMode,
-        lastError: null,
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-        readyAt: null,
-        deliveredAt: null,
-        tpaSentAt: null,
-      };
-
-      st.tasks.unshift(task);
-      refreshTaskCounts(task);
-      reconcileTask(task);
-    }
-
-    const queuePosition = taskQueuePosition(task);
-    const display = taskDisplayLabel(task);
-    console.log(`[stock-prep] ${merged ? '合并任务' : '新任务'} #${task.id}: ${display} x${task.requestedCount} -> ${task.targetPlayer}`);
-
-    if (payload.notifyPlayer && typeof bot.whisper === 'function') {
-      bot.whisper(targetPlayer, merged
-        ? `> 已把 ${display} 合并到你的任务里，当前总计 ${task.requestedCount} 个。${queuePosition && queuePosition > 1 ? `你当前在队列第 ${queuePosition} 位。` : ''}`
-        : queueNoticeText(task));
-    }
-
-    reconcileAll();
-    return { task: summarizeTask(task), merged, queuePosition };
-  };
-
-  const removeTask = (id) => {
-    const idx = st.tasks.findIndex((task) => task.id === id);
-    if (idx === -1) throw new Error('任务不存在');
-    if (st.activeDeliveryId === id) throw new Error('任务正在交付中，不能删除');
-    const [task] = st.tasks.splice(idx, 1);
-    return summarizeTask(task);
-  };
-
-  const cancelTask = (id) => {
-    const task = taskById(id);
-    if (!task) throw new Error('任务不存在');
-    if (st.activeDeliveryId === id) throw new Error('任务正在交付中，不能取消');
-    if (st.activeFulfillmentId === id) st.activeFulfillmentId = null;
-    if (st.activeRequestId === id) st.activeRequestId = null;
-    task.status = 'cancelled';
-    setTaskStage(task, 'cancelled', '任务已取消');
-    task.lastError = null;
-    task.updatedAt = Date.now();
-    return summarizeTask(task);
-  };
-
-  const statusPayload = () => {
-    reconcileAll();
-    return {
-      activeDeliveryId: st.activeDeliveryId,
-      inventoryReady: !!(bot.inventory && bot.inventory.slots),
-      onlinePlayers: Object.values(bot.players || {})
-        .filter((p) => p && p.username)
-        .map((p) => ({
-          username: p.username,
-          visible: !!p.entity,
-        }))
-        .sort((a, b) => a.username.localeCompare(b.username)),
-      tasks: st.tasks.slice().sort(compareTasks).map(summarizeTask),
-      aliases: cfg.aliases,
-      warehouseMode: cfg.warehouseMode,
-      warehouseBlocks: cfg.warehouseBlocks,
-      warehouseCenter: cfg.warehouseCenter,
-      warehouseSize: cfg.warehouseSize,
-      warehouseContainers: normalizedWarehouseContainers(),
-      tpaCommand: cfg.tpaCommand,
-      itemPresets: itemPresets(),
-      stock: {
-        items: st.stock.items,
-        scannedAt: st.stock.scannedAt,
-        lastError: st.stock.lastError,
-        scanning: st.stock.scanning,
-      },
-    };
-  };
-
-  const settingsPayload = () => ({
-    warehouseMode: cfg.warehouseMode,
-    warehouseCenter: cfg.warehouseCenter,
-    warehouseSize: cfg.warehouseSize,
-    warehouseContainers: normalizedWarehouseContainers(),
-    warehouseBlocks: cfg.warehouseBlocks,
-    tpaCommand: cfg.tpaCommand,
-    homeCommand: cfg.homeCommand,
-    fallbackToTpaOnDeliveryTimeout: cfg.fallbackToTpaOnDeliveryTimeout,
-    maxStorageBlocksScan: cfg.maxStorageBlocksScan,
-  });
-
-  const fillTemplate = (template, params) => {
-    let result = String(template || '');
-    for (const [key, value] of Object.entries(params || {})) {
-      result = result.replaceAll(`{${key}}`, String(value));
-    }
-    return result;
-  };
-
-  const runChatCommand = (command, label) => {
-    const text = String(command || '').trim();
-    if (!text) throw new Error(`${label} 未配置`);
-    if (typeof bot.chat !== 'function') throw new Error(`当前机器人无法执行${label}`);
-    bot.chat(text);
-    return text;
-  };
-
-  const isWarehouseStuckError = (err) => {
-    const message = String((err && err.message) || '');
-    return message.includes('前往仓库超时') ||
-      message.includes('接近容器超时') ||
-      message.includes('打开容器超时');
-  };
-
-  const sendTpaForTask = (task) => {
-    const tpaCommand = fillTemplate(cfg.tpaCommand, {
-      player: task.targetPlayer,
-      username: task.targetPlayer,
-      item: task.itemName,
-      count: task.requestedCount,
-    }).trim();
-    task.updatedAt = Date.now();
-    return runChatCommand(tpaCommand, 'TPA 指令');
-  };
-
-  const sendHome = () => {
-    const homeCommand = String(cfg.homeCommand || '/home').trim();
-    return runChatCommand(homeCommand, '回仓指令');
-  };
-
-  const recoverWarehouseStuck = async (task = null, label = '仓库流程卡住') => {
-    if (task) setTaskStage(task, 'home', `${label}，正在回仓`);
-    stopPathfinder();
-    sendHome();
-    await sleep(2000);
-  };
-
-  const scheduleAutoDeliver = (taskId, attempt = 1) => {
-    const delay = attempt === 1
-      ? cfg.postTpaAutoDeliverDelayMs
-      : Math.max(25000, Number(cfg.postTpaAutoDeliverRetryMs || 25000));
-    setTimeout(() => {
-      const task = taskById(taskId);
-      if (!task || task.status === 'delivered' || task.status === 'cancelled' || task.status === 'failed') return;
-      if (st.activeDeliveryId && st.activeDeliveryId !== taskId) {
-        return scheduleAutoDeliver(taskId, attempt);
-      }
-
-      deliverTask(taskId, `auto-after-tpa:${attempt}`).catch((err) => {
-        task.lastError = err.message;
-        if (attempt < cfg.postTpaAutoDeliverMaxAttempts) {
-          task.tpaSentAt = null;
-          setTaskStage(task, 'tpa', `已发起传送，等待交付（重试 ${attempt}/${cfg.postTpaAutoDeliverMaxAttempts}）`);
-          scheduleAutoDeliver(taskId, attempt + 1);
-        } else {
-          task.tpaSentAt = null;
-          setTaskStage(task, 'ready', '传送后自动交付超时，请手动补发');
-        }
-      });
-    }, Math.max(0, delay));
-  };
-
-  const requestByCommand = async (username, itemInput, countInput) => {
-    try {
-      return createTask({
-        item: itemInput,
-        count: countInput,
-        targetPlayer: username,
-        autoDeliver: true,
-        deliveryMode: 'tpa',
-        notifyPlayer: true,
-      });
-    } catch (err) {
-      if (typeof bot.whisper === 'function') {
-        bot.whisper(username, `> ${err.message}`);
-      }
-      throw err;
-    }
-  };
-
-  const jsonBody = (body) => {
-    try {
-      return JSON.parse(body || 'null');
-    } catch (err) {
-      throw new Error('无效 JSON');
-    }
-  };
-
-  const ep = (method, rel, handler) => {
-    webManager.registerEndpoint(method, `/api/plugins/${pluginName}/${rel}`, async (req, res, url, body) => {
-      try {
-        await handler(req, res, url, body);
-      } catch (err) {
-        fail(res, 400, err.message);
-      }
-    }, pluginName);
-  };
-
-  ep('GET', 'panel', (req, res) => {
-    if (!fs.existsSync(htmlFile)) return fail(res, 404, '面板文件不存在');
-    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-    res.end(fs.readFileSync(htmlFile, 'utf8'));
-  });
-
-  ep('GET', 'status', (req, res) => ok(res, statusPayload()));
-
-  ep('GET', 'settings', (req, res) => ok(res, { settings: settingsPayload() }));
-
-  ep('POST', 'scan', async (req, res) => {
-    const result = await scanWarehouseInventory('manual');
-    ok(res, {
-      stock: {
-        items: result.items,
-        scannedAt: result.scannedAt,
-        lastError: result.lastError,
-        scanning: st.stock.scanning,
-      },
     });
-  });
-
-  ep('PUT', 'settings', (req, res, url, body) => {
-    const payload = jsonBody(body) || {};
-    const { warehouseMode, warehouseCenter, warehouseSize, warehouseBlocks, warehouseContainers, tpaCommand, homeCommand, fallbackToTpaOnDeliveryTimeout, maxStorageBlocksScan } = payload;
-
-    if (warehouseMode !== undefined) {
-      const mode = String(warehouseMode || '').trim().toLowerCase();
-      if (!['area', 'list'].includes(mode)) throw new Error('warehouseMode 只能是 area 或 list');
-      cfg.warehouseMode = mode;
-    }
-    if (warehouseCenter !== undefined) cfg.warehouseCenter = normalizeAxisGroup(warehouseCenter, 'warehouseCenter');
-    if (warehouseSize !== undefined) {
-      const nextSize = normalizeAxisGroup(warehouseSize, 'warehouseSize');
-      if (nextSize.x < 0 || nextSize.y < 0 || nextSize.z < 0) throw new Error('warehouseSize 不能为负数');
-      cfg.warehouseSize = nextSize;
-    }
-    if (warehouseContainers !== undefined) {
-      if (!Array.isArray(warehouseContainers)) throw new Error('warehouseContainers 必须是数组');
-      cfg.warehouseContainers = warehouseContainers.map((entry, index) => normalizeAxisGroup(entry, `warehouseContainers[${index}]`));
-    }
-    if (warehouseBlocks !== undefined) {
-      if (!Array.isArray(warehouseBlocks) || warehouseBlocks.some((v) => typeof v !== 'string' || !v.trim())) {
-        throw new Error('warehouseBlocks 必须是字符串数组');
-      }
-      cfg.warehouseBlocks = warehouseBlocks.map((v) => v.trim());
-    }
-    if (tpaCommand !== undefined) {
-      if (typeof tpaCommand !== 'string' || !tpaCommand.trim()) throw new Error('tpaCommand 不能为空');
-      cfg.tpaCommand = tpaCommand.trim();
-    }
-    if (homeCommand !== undefined) {
-      if (typeof homeCommand !== 'string' || !homeCommand.trim()) throw new Error('homeCommand 不能为空');
-      cfg.homeCommand = homeCommand.trim();
-    }
-    if (fallbackToTpaOnDeliveryTimeout !== undefined) {
-      cfg.fallbackToTpaOnDeliveryTimeout = !!fallbackToTpaOnDeliveryTimeout;
-    }
-    if (maxStorageBlocksScan !== undefined) {
-      const n = Number(maxStorageBlocksScan);
-      if (!Number.isInteger(n) || n <= 0) throw new Error('maxStorageBlocksScan 必须是正整数');
-      cfg.maxStorageBlocksScan = n;
-    }
-
-    persistConfig();
-    ok(res, { settings: settingsPayload() });
-  });
-
-  ep('POST', 'create', (req, res, url, body) => {
-    const result = createTask(jsonBody(body) || {});
-    ok(res, result);
-  });
-
-  ep('POST', 'cancel', (req, res, url, body) => {
-    const payload = jsonBody(body) || {};
-    ok(res, { task: cancelTask(Number(payload.id)) });
-  });
-
-  ep('POST', 'delete', (req, res, url, body) => {
-    const payload = jsonBody(body) || {};
-    ok(res, { task: removeTask(Number(payload.id)) });
-  });
-
-  ep('POST', 'deliver', async (req, res, url, body) => {
-    const payload = jsonBody(body) || {};
-    const task = await deliverTask(Number(payload.id), payload.partial ? 'partial' : 'web', { allowPartial: !!payload.partial });
-    ok(res, { task });
-  });
-
-  ep('POST', 'deliver-partial', async (req, res, url, body) => {
-    const payload = jsonBody(body) || {};
-    const task = await deliverTask(Number(payload.id), 'partial', { allowPartial: true });
-    ok(res, { task });
-  });
-
-  commands.register({
-    name: 'stocktasks',
-    permissionLevel: 1,
-    description: '查看当前备货任务概览',
-    execute: (username) => {
-      reconcileAll();
-      if (!st.tasks.length) return bot.whisper(username, '> 当前没有备货任务。');
-      const lines = st.tasks.slice(0, 3).map((task) => `#${task.id} ${taskLabel(task)} ${task.collectedCount}/${task.requestedCount} -> ${task.targetPlayer} [${task.status}]`);
-      bot.whisper(username, `> 备货任务：${lines.join(' | ')}${st.tasks.length > 3 ? ` | 另有 ${st.tasks.length - 3} 个` : ''}`);
-    },
-  });
-
-  commands.register({
-    name: 'deliverstock',
-    permissionLevel: 1,
-    description: '手动交付备货任务: !deliverstock <任务ID>',
-    execute: (username, args) => {
-      const id = Number(args[0]);
-      if (!Number.isInteger(id) || id <= 0) return bot.whisper(username, '> 用法: !deliverstock <任务ID>');
-      deliverTask(id, `command:${username}`)
-        .then((task) => bot.whisper(username, `> 任务 #${task.id} 已交付给 ${task.targetPlayer}。`))
-        .catch((err) => bot.whisper(username, `> 交付失败: ${err.message}`));
-    },
-  });
-
-  commands.register({
-    name: 'iwant',
-    permissionLevel: 0,
-    description: '仓库申请物品: !iwant <物品id> <数量>',
-    execute: (username, args) => {
-      if (args.length < 2) return bot.whisper(username, '> 用法: !iwant <物品id> <数量>');
-      requestByCommand(username, args[0], args[1]).catch(() => {});
-    },
-  });
-
-  if (!st.timer) {
-    st.timer = setInterval(reconcileAll, Math.max(500, cfg.reconcileIntervalMs));
-    if (typeof st.timer.unref === 'function') st.timer.unref();
+    wm.server.listen(cfg.port, cfg.host, () => {
+      console.log(`[web-manager] 管理界面已启动: http://${cfg.host}:${cfg.port} (token: ${wm.auth.token ? '已设置' : '未设置'})`);
+    });
   }
 
+  // ---- 自注册磁贴 ----
   webManager.registerTile({
-    name: pluginName,
-    title: '备货中心',
-    description: '网页下达备货任务，实时查看进度，并将货物交给指定玩家',
-    panel: `/api/plugins/${pluginName}/panel`,
-    endpoints: {},
+    name: 'web-manager',
+    title: 'Web 管理器',
+    description: 'HTTP 管理界面与插件接入接口',
   });
 
-  console.log('[stock-prep] 插件已加载');
+  console.log(`[web-manager] 插件已加载 (host=${cfg.host}, port=${cfg.port}, token: ${cfg.token ? '已设置' : '未设置'})`);
 };
