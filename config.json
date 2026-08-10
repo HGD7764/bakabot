@@ -19,7 +19,8 @@
     "interactor",
     "chat",
     "web-manager",
-    "warehouse-tasks",
+    "stock-prep",
+    "auto-eat",
     "fisher",
     "disc-jockey"
   ]
