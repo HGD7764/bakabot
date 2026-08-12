@@ -80,6 +80,46 @@ module.exports = (context) => {
 
   const htmlFile = path.join(__dirname, 'panel.html');
 
+  const fmtPos = (pos) => {
+    if (!pos) return '?, ?, ?';
+    return `${Number(pos.x ?? 0)}, ${Number(pos.y ?? 0)}, ${Number(pos.z ?? 0)}`;
+  };
+
+  const log = (message, extra = null) => {
+    if (extra == null) {
+      console.log(`[stock-prep] ${message}`);
+      return;
+    }
+    console.log(`[stock-prep] ${message}`, extra);
+  };
+
+  const warn = (message, extra = null) => {
+    if (extra == null) {
+      console.warn(`[stock-prep] ${message}`);
+      return;
+    }
+    console.warn(`[stock-prep] ${message}`, extra);
+  };
+
+  const errorLog = (message, extra = null) => {
+    if (extra == null) {
+      console.error(`[stock-prep] ${message}`);
+      return;
+    }
+    console.error(`[stock-prep] ${message}`, extra);
+  };
+
+  const taskLogMeta = (task) => ({
+    id: task && task.id,
+    player: task && task.targetPlayer,
+    status: task && task.status,
+    stage: task && task.stage,
+    requested: task && task.requestedCount,
+    collected: task && task.collectedCount,
+    remaining: task && task.remainingCount,
+    label: task ? taskLabel(task) : null,
+  });
+
   const persistConfig = () => {
     fs.writeFileSync(configFile, JSON.stringify({
       autoDeliverByDefault: cfg.autoDeliverByDefault,
@@ -102,6 +142,14 @@ module.exports = (context) => {
       postCollectTpaDelayMs: cfg.postCollectTpaDelayMs,
       aliases: cfg.aliases,
     }, null, 2));
+    log('配置已保存', {
+      warehouseMode: cfg.warehouseMode,
+      warehouseCenter: cfg.warehouseCenter,
+      warehouseSize: cfg.warehouseSize,
+      warehouseContainers: Array.isArray(cfg.warehouseContainers) ? cfg.warehouseContainers.length : 0,
+      warehouseBlocks: cfg.warehouseBlocks,
+      maxStorageBlocksScan: cfg.maxStorageBlocksScan,
+    });
   };
 
   const ok = (res, data = {}) => {
@@ -459,9 +507,19 @@ module.exports = (context) => {
   });
 
   const setTaskStage = (task, stage, label) => {
+    const beforeStage = task.stage || null;
+    const beforeStatus = task.status || null;
     task.stage = stage || null;
     task.stageLabel = label || null;
     task.updatedAt = Date.now();
+    if (beforeStage !== task.stage || label) {
+      log(`任务 #${task.id} 阶段更新`, {
+        fromStage: beforeStage,
+        toStage: task.stage,
+        status: beforeStatus,
+        stageLabel: task.stageLabel,
+      });
+    }
   };
 
   const reconcileTask = (task) => {
@@ -509,18 +567,27 @@ module.exports = (context) => {
   };
 
   const reconcileAll = () => {
+    log('开始协调任务状态', {
+      taskCount: st.tasks.length,
+      activeDeliveryId: st.activeDeliveryId,
+      activeFulfillmentId: st.activeFulfillmentId,
+      activeRequestId: st.activeRequestId,
+    });
     for (const task of st.tasks) reconcileTask(task);
 
     if (!st.fulfillmentPromise) {
       const nextNeed = activeTasks().find((task) => task.status === 'pending' || task.status === 'collecting');
       if (nextNeed) {
+        log(`准备开始补货任务 #${nextNeed.id}`, taskLogMeta(nextNeed));
         st.fulfillmentPromise = fulfillTask(nextNeed.id).catch((err) => {
           const task = taskById(nextNeed.id);
           if (task) {
             task.lastError = err.message;
             task.updatedAt = Date.now();
           }
+          errorLog(`补货任务 #${nextNeed.id} 失败: ${err.message}`, task ? taskLogMeta(task) : null);
         }).finally(() => {
+          log(`补货任务 #${nextNeed.id} 结束`);
           st.fulfillmentPromise = null;
           st.activeFulfillmentId = null;
         });
@@ -535,10 +602,12 @@ module.exports = (context) => {
           if (!next.tpaSentAt) {
             next.lastError = null;
             try {
+              log(`准备发起 TPA 交付任务 #${next.id}`, taskLogMeta(next));
               startTpaDelivery(next, 'queue');
             } catch (err) {
               next.lastError = err.message;
               setTaskStage(next, 'ready', '发起传送失败，等待重试');
+              errorLog(`任务 #${next.id} 发起 TPA 失败: ${err.message}`, taskLogMeta(next));
             }
             return;
           }
@@ -548,17 +617,21 @@ module.exports = (context) => {
             next.lastError = null;
             setTaskStage(next, 'tpa', '目标不在视线内，已发起传送');
             try {
+              log(`任务 #${next.id} 目标不在视线内，尝试转为 TPA`, taskLogMeta(next));
               promptBeforeTpa(next);
               sendTpaForTask(next);
               scheduleAutoDeliver(next.id, 1);
             } catch (err) {
               next.lastError = err.message;
               setTaskStage(next, 'ready', '发起传送失败，等待重试');
+              errorLog(`任务 #${next.id} 视线外 TPA 失败: ${err.message}`, taskLogMeta(next));
             }
             return;
           }
         }
+        log(`准备开始交付任务 #${next.id}`, taskLogMeta(next));
         st.deliveryPromise = deliverTask(next.id, 'auto').finally(() => {
+          log(`交付任务 #${next.id} 结束`);
           st.deliveryPromise = null;
         });
       }
@@ -601,8 +674,19 @@ module.exports = (context) => {
     if (insideWarehouse(bot.entity.position)) return;
 
     if (task) setTaskStage(task, 'warehouse', '正在前往仓库中心');
+    log('前往仓库中心', {
+      taskId: task && task.id,
+      target: targetPoint,
+      radius,
+      current: bot.entity && bot.entity.position ? fmtPos(bot.entity.position) : null,
+    });
     bot.pathfinder.setGoal(new GoalNear(targetPoint.x, targetPoint.y, targetPoint.z, radius));
     await waitUntilNearPoint(targetPoint, Math.max(radius + 1, 3), cfg.deliveryMoveTimeoutMs);
+    log('已到达仓库中心附近', {
+      taskId: task && task.id,
+      target: targetPoint,
+      current: bot.entity && bot.entity.position ? fmtPos(bot.entity.position) : null,
+    });
     await sleep(500);
   };
 
@@ -654,13 +738,22 @@ module.exports = (context) => {
       ? bot.entity.position
       : cfg.warehouseCenter;
     try {
-      return (bot.findBlocks({
+      const positions = (bot.findBlocks({
         point: center,
         matching: ids,
         maxDistance,
         count: cfg.maxStorageBlocksScan,
       }) || []).filter(insideWarehouse);
+      log('已生成仓库容器候选列表', {
+        warehouseMode: cfg.warehouseMode,
+        center: fmtPos(center),
+        maxDistance,
+        requestedTypes: cfg.warehouseBlocks,
+        count: positions.length,
+      });
+      return positions;
     } catch (err) {
+      errorLog(`查找仓库容器失败: ${err.message}`);
       return [];
     }
   };
@@ -679,17 +772,24 @@ module.exports = (context) => {
     st.stock.scanning = true;
     st.stock.lastError = null;
     try {
+      log(`开始扫描仓库库存 (${reason})`);
       await moveToWarehouseCenter();
       const positions = warehouseContainerPositions();
       const merged = new Map();
+      log(`仓库扫描目标容器数: ${positions.length}`, {
+        reason,
+        warehouseMode: cfg.warehouseMode,
+      });
 
       for (const pos of positions) {
         const block = bot.blockAt(pos);
         if (!block) continue;
         try {
+          log(`扫描容器 ${block.name}`, { position: fmtPos(block.position) });
           await approachBlock(block, 2);
           const container = await openContainerBlock(block);
           try {
+            let localCount = 0;
             for (const item of containerItems(container)) {
               if (!item || !item.name || !item.count || !isBlockItemName(item.name)) continue;
               const existing = merged.get(item.name) || {
@@ -700,7 +800,13 @@ module.exports = (context) => {
               };
               existing.count += item.count;
               merged.set(item.name, existing);
+              localCount += item.count;
             }
+            log(`容器扫描完成 ${block.name}`, {
+              position: fmtPos(block.position),
+              stackedItemKinds: containerItems(container).filter((item) => item && item.name && item.count).length,
+              acceptedItemTotal: localCount,
+            });
           } finally {
             if (typeof container.close === 'function') {
               try { container.close(); } catch (err) {}
@@ -709,12 +815,17 @@ module.exports = (context) => {
         } catch (err) {
           if (isWarehouseStuckError(err)) throw err;
           st.stock.lastError = `扫描 ${block.name} 失败: ${err.message}`;
+          warn(`扫描容器失败 ${block.name}: ${err.message}`, { position: fmtPos(pos) });
         }
       }
 
       st.stock.items = Array.from(merged.values()).sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
       st.stock.scannedAt = Date.now();
-      console.log(`[stock-prep] 已完成仓库库存扫描 (${reason})，共 ${st.stock.items.length} 种物品`);
+      log(`已完成仓库库存扫描 (${reason})`, {
+        itemKinds: st.stock.items.length,
+        scannedAt: st.stock.scannedAt,
+        lastError: st.stock.lastError,
+      });
       return {
         items: st.stock.items,
         scannedAt: st.stock.scannedAt,
@@ -723,12 +834,15 @@ module.exports = (context) => {
     } catch (err) {
       if (allowRetry && isWarehouseStuckError(err)) {
         st.stock.lastError = `扫描卡住，已执行回仓并重试: ${err.message}`;
+        warn(`仓库扫描卡住，准备回仓重试: ${err.message}`);
         await recoverWarehouseStuck(null, '仓库扫描卡住');
         return scanWarehouseInventory(`${reason}:retry`);
       }
+      errorLog(`仓库扫描失败 (${reason}): ${err.message}`);
       throw err;
     } finally {
       st.stock.scanning = false;
+      log(`仓库扫描流程结束 (${reason})`);
     }
   };
 
@@ -750,6 +864,10 @@ module.exports = (context) => {
       : (typeof bot.openChest === 'function' ? () => bot.openChest(block) : null);
     if (!opener) throw new Error('当前机器人不支持打开容器');
     const timeoutMs = Math.max(1000, Number(cfg.containerOpenTimeoutMs || 8000));
+    log(`尝试打开容器 ${block.name}`, {
+      position: block && block.position ? fmtPos(block.position) : null,
+      timeoutMs,
+    });
     return Promise.race([
       opener(),
       new Promise((_, reject) => setTimeout(() => reject(new Error(`打开容器超时（>${Math.round(timeoutMs / 1000)} 秒）`)), timeoutMs)),
@@ -768,6 +886,13 @@ module.exports = (context) => {
     if (!positions.length) return 0;
 
     let taken = 0;
+    log(`开始仓库取货`, {
+      ...taskLogMeta(task),
+      item: item.itemName,
+      needed,
+      candidateContainers: positions.length,
+      allowRetry,
+    });
     for (const pos of positions) {
       if (taken >= needed) break;
       const block = bot.blockAt(pos);
@@ -775,6 +900,14 @@ module.exports = (context) => {
 
       try {
         setTaskStage(task, 'storage', `前往 ${block.name} 取 ${item.displayName || item.itemName}`);
+        log(`检查容器是否有目标物品`, {
+          ...taskLogMeta(task),
+          block: block.name,
+          position: fmtPos(block.position),
+          item: item.itemName,
+          needed,
+          taken,
+        });
         await approachBlock(block, 2);
         const container = await openContainerBlock(block);
         try {
@@ -782,8 +915,23 @@ module.exports = (context) => {
           if (!stack) continue;
           const amount = Math.min(needed - taken, stack.count);
           setTaskStage(task, 'storage', `从 ${block.name} 取出 ${item.displayName || item.itemName} × ${amount}`);
+          log(`从容器取出物品`, {
+            ...taskLogMeta(task),
+            block: block.name,
+            position: fmtPos(block.position),
+            item: item.itemName,
+            stackCount: stack.count,
+            amount,
+          });
           await container.withdraw(stack.type, stack.metadata, amount);
           taken += amount;
+          log(`取货成功`, {
+            ...taskLogMeta(task),
+            item: item.itemName,
+            amount,
+            taken,
+            stillNeeded: Math.max(0, needed - taken),
+          });
           await sleep(cfg.collectPauseMs);
         } finally {
           if (typeof container.close === 'function') {
@@ -793,12 +941,30 @@ module.exports = (context) => {
       } catch (err) {
         if (allowRetry && isWarehouseStuckError(err)) {
           task.lastError = `仓库流程卡住，已执行回仓并重试: ${err.message}`;
+          warn(`仓库取货卡住，准备回仓重试: ${err.message}`, {
+            ...taskLogMeta(task),
+            item: item.itemName,
+            taken,
+            needed,
+          });
           await recoverWarehouseStuck(task, '仓库取货卡住');
           return taken + await withdrawFromStorage(task, item, needed - taken, false);
         }
         task.lastError = `仓库取货失败: ${item.displayName || item.itemName} - ${err.message}`;
+        warn(`仓库取货失败: ${err.message}`, {
+          ...taskLogMeta(task),
+          item: item.itemName,
+          block: block && block.name,
+          position: fmtPos(pos),
+        });
       }
     }
+    log(`仓库取货结束`, {
+      ...taskLogMeta(task),
+      item: item.itemName,
+      needed,
+      taken,
+    });
     return taken;
   };
 
@@ -811,6 +977,7 @@ module.exports = (context) => {
     task.lastError = null;
     task.status = 'collecting';
     setTaskStage(task, 'collect', '开始补货');
+    log(`开始执行补货任务 #${task.id}`, taskLogMeta(task));
     reconcileTask(task);
     await moveToWarehouseCenter(task);
     if (task.status === 'cancelled') return summarizeTask(task);
@@ -822,6 +989,11 @@ module.exports = (context) => {
       while (need() > 0) {
         if (task.status === 'cancelled') return summarizeTask(task);
         const missing = need();
+        log(`任务 #${task.id} 仍需补货`, {
+          ...taskLogMeta(task),
+          item: item.itemName,
+          missing,
+        });
         const pulled = await withdrawFromStorage(task, item, missing);
         refreshTaskCounts(task);
         if (pulled > 0) {
@@ -829,11 +1001,17 @@ module.exports = (context) => {
         }
         if (task.status === 'cancelled') return summarizeTask(task);
         if (need() <= 0) break;
+        warn(`任务 #${task.id} 仓库库存不足`, {
+          ...taskLogMeta(task),
+          item: item.itemName,
+          stillMissing: need(),
+        });
         throw new Error(`仓库内没有足够的 ${item.displayName || item.itemName}，当前仍缺少 ${need()} 个`);
       }
     }
 
     reconcileTask(task);
+    log(`补货任务 #${task.id} 完成`, taskLogMeta(task));
     return summarizeTask(task);
   }
 
@@ -851,6 +1029,12 @@ module.exports = (context) => {
     task.status = 'delivering';
     task.lastError = null;
     task.updatedAt = Date.now();
+    log(`开始交付任务 #${task.id}`, {
+      ...taskLogMeta(task),
+      source,
+      deliveryMode: task.deliveryMode,
+      tpaSentAt: task.tpaSentAt,
+    });
 
     try {
       if (!task.tpaSentAt || task.stage !== 'tpa') {
@@ -859,13 +1043,27 @@ module.exports = (context) => {
         task.tpaSentAt = Date.now();
         task.tpaSource = source;
         setTaskStage(task, 'tpa', '已发起传送，等待自动交付');
+        log(`任务 #${task.id} 已发送 TPA`, {
+          ...taskLogMeta(task),
+          source,
+          tpaSource: task.tpaSource,
+        });
       }
 
       const targetEntity = await waitForPlayerArrival(task.targetPlayer, cfg.deliveryMoveTimeoutMs);
+      log(`任务 #${task.id} 检测到目标玩家已到位`, {
+        ...taskLogMeta(task),
+        playerPosition: targetEntity && targetEntity.position ? fmtPos(targetEntity.position) : null,
+      });
       if (typeof bot.lookAt === 'function') {
         await bot.lookAt(targetEntity.position.offset(0, 1.2, 0), true);
       }
       for (const item of normalizeTaskItems(task)) {
+        log(`准备投递物品`, {
+          ...taskLogMeta(task),
+          item: item.itemName,
+          count: item.requestedCount,
+        });
         await tossExact(item.itemName, item.requestedCount);
       }
       task.collectedCount = task.requestedCount;
@@ -878,7 +1076,10 @@ module.exports = (context) => {
       } catch (homeErr) {
         task.lastError = `已送达，但回仓失败: ${homeErr.message}`;
       }
-      console.log(`[stock-prep] 任务 #${task.id} 已交付给 ${task.targetPlayer}: ${taskLabel(task)} x${task.requestedCount} (${source})`);
+      log(`任务 #${task.id} 已交付给 ${task.targetPlayer}`, {
+        ...taskLogMeta(task),
+        source,
+      });
       if (typeof bot.whisper === 'function') {
         bot.whisper(task.targetPlayer, `> 你的备货已送达：${taskLabel(task)} × ${task.requestedCount}`);
       }
@@ -892,6 +1093,11 @@ module.exports = (context) => {
       if (shouldFallbackToTpa) {
         task.lastError = null;
         setTaskStage(task, 'tpa', '寻路超时，已改为传送送货');
+        warn(`任务 #${task.id} 交付寻路超时，切换 TPA`, {
+          ...taskLogMeta(task),
+          source,
+          error: err.message,
+        });
         startTpaDelivery(task, 'fallback', true);
         if (typeof bot.whisper === 'function') {
           bot.whisper(task.targetPlayer, `> 送货路上卡住了，已改为向你发起传送并继续自动交付 ${taskLabel(task)} × ${task.requestedCount}。`);
@@ -902,13 +1108,25 @@ module.exports = (context) => {
       task.lastError = err.message;
       task.updatedAt = Date.now();
       reconcileTask(task);
+      errorLog(`任务 #${task.id} 交付失败: ${err.message}`, {
+        ...taskLogMeta(task),
+        source,
+      });
       throw err;
     } finally {
+      log(`交付任务 #${task.id} finally`, {
+        ...taskLogMeta(task),
+        source,
+      });
       st.activeDeliveryId = null;
     }
   }
 
   const createTask = (payload) => {
+    log('收到创建任务请求', {
+      payload,
+      currentTaskCount: st.tasks.length,
+    });
     const item = resolveItem(payload.item);
     if (!item) throw new Error('无法识别物品，请填写原版物品 ID 或在配置里增加别名');
 
@@ -991,7 +1209,13 @@ module.exports = (context) => {
 
     const queuePosition = taskQueuePosition(task);
     const display = taskDisplayLabel(task);
-    console.log(`[stock-prep] ${merged ? '合并任务' : '新任务'} #${task.id}: ${display} x${task.requestedCount} -> ${task.targetPlayer}`);
+    log(`${merged ? '合并任务' : '新任务'} #${task.id}`, {
+      ...taskLogMeta(task),
+      merged,
+      queuePosition,
+      deliveryMode: task.deliveryMode,
+      autoDeliver: task.autoDeliver,
+    });
 
     if (payload.notifyPlayer && typeof bot.whisper === 'function') {
       bot.whisper(targetPlayer, merged
@@ -1008,6 +1232,7 @@ module.exports = (context) => {
     if (idx === -1) throw new Error('任务不存在');
     if (st.activeDeliveryId === id) throw new Error('任务正在交付中，不能删除');
     const [task] = st.tasks.splice(idx, 1);
+    log(`任务 #${id} 已删除`, taskLogMeta(task));
     return summarizeTask(task);
   };
 
@@ -1021,6 +1246,7 @@ module.exports = (context) => {
     setTaskStage(task, 'cancelled', '任务已取消');
     task.lastError = null;
     task.updatedAt = Date.now();
+    log(`任务 #${id} 已取消`, taskLogMeta(task));
     return summarizeTask(task);
   };
 
@@ -1078,6 +1304,7 @@ module.exports = (context) => {
     const text = String(command || '').trim();
     if (!text) throw new Error(`${label} 未配置`);
     if (typeof bot.chat !== 'function') throw new Error(`当前机器人无法执行${label}`);
+    log(`执行聊天命令: ${label}`, { command: text });
     bot.chat(text);
     return text;
   };
@@ -1107,23 +1334,28 @@ module.exports = (context) => {
 
   const recoverWarehouseStuck = async (task = null, label = '仓库流程卡住') => {
     if (task) setTaskStage(task, 'home', `${label}，正在回仓`);
+    warn(`执行卡住恢复流程: ${label}`, task ? taskLogMeta(task) : null);
     sendHome();
     await sleep(2000);
+    log(`卡住恢复流程结束: ${label}`, task ? taskLogMeta(task) : null);
   };
 
   const scheduleAutoDeliver = (taskId, attempt = 1) => {
     const delay = attempt === 1
       ? cfg.postTpaAutoDeliverDelayMs
       : Math.max(25000, Number(cfg.postTpaAutoDeliverRetryMs || 25000));
+    log(`计划自动交付重试`, { taskId, attempt, delay });
     setTimeout(() => {
       const task = taskById(taskId);
       if (!task || task.status === 'delivered' || task.status === 'cancelled' || task.status === 'failed') return;
       if (st.activeDeliveryId && st.activeDeliveryId !== taskId) {
+        log(`自动交付重试被占用，重新排队`, { taskId, attempt, activeDeliveryId: st.activeDeliveryId });
         return scheduleAutoDeliver(taskId, attempt);
       }
 
       deliverTask(taskId, `auto-after-tpa:${attempt}`).catch((err) => {
         task.lastError = err.message;
+        warn(`自动交付失败`, { taskId, attempt, error: err.message });
         if (attempt < cfg.postTpaAutoDeliverMaxAttempts) {
           task.tpaSentAt = null;
           setTaskStage(task, 'tpa', `已发起传送，等待交付（重试 ${attempt}/${cfg.postTpaAutoDeliverMaxAttempts}）`);
@@ -1138,6 +1370,7 @@ module.exports = (context) => {
 
   const requestByCommand = async (username, itemInput, countInput) => {
     try {
+      log(`收到命令申请`, { username, itemInput, countInput });
       return createTask({
         item: itemInput,
         count: countInput,
@@ -1147,6 +1380,7 @@ module.exports = (context) => {
         notifyPlayer: true,
       });
     } catch (err) {
+      warn(`命令申请失败: ${err.message}`, { username, itemInput, countInput });
       if (typeof bot.whisper === 'function') {
         bot.whisper(username, `> ${err.message}`);
       }
@@ -1183,6 +1417,7 @@ module.exports = (context) => {
   ep('GET', 'settings', (req, res) => ok(res, { settings: settingsPayload() }));
 
   ep('POST', 'scan', async (req, res) => {
+    log('收到网页扫描请求');
     const result = await scanWarehouseInventory('manual');
     ok(res, {
       stock: {
@@ -1196,6 +1431,7 @@ module.exports = (context) => {
 
   ep('PUT', 'settings', (req, res, url, body) => {
     const payload = jsonBody(body) || {};
+    log('收到网页设置更新请求', payload);
     const { warehouseMode, warehouseCenter, warehouseSize, warehouseBlocks, warehouseContainers, tpaCommand, homeCommand, fallbackToTpaOnDeliveryTimeout, maxStorageBlocksScan } = payload;
 
     if (warehouseMode !== undefined) {
@@ -1241,22 +1477,26 @@ module.exports = (context) => {
   });
 
   ep('POST', 'create', (req, res, url, body) => {
+    log('收到网页创建任务请求');
     const result = createTask(jsonBody(body) || {});
     ok(res, result);
   });
 
   ep('POST', 'cancel', (req, res, url, body) => {
     const payload = jsonBody(body) || {};
+    log('收到网页取消任务请求', payload);
     ok(res, { task: cancelTask(Number(payload.id)) });
   });
 
   ep('POST', 'delete', (req, res, url, body) => {
     const payload = jsonBody(body) || {};
+    log('收到网页删除任务请求', payload);
     ok(res, { task: removeTask(Number(payload.id)) });
   });
 
   ep('POST', 'deliver', async (req, res, url, body) => {
     const payload = jsonBody(body) || {};
+    log('收到网页手动交付请求', payload);
     const task = await deliverTask(Number(payload.id), 'web');
     ok(res, { task });
   });
@@ -1269,6 +1509,7 @@ module.exports = (context) => {
       reconcileAll();
       if (!st.tasks.length) return bot.whisper(username, '> 当前没有备货任务。');
       const lines = st.tasks.slice(0, 3).map((task) => `#${task.id} ${taskLabel(task)} ${task.collectedCount}/${task.requestedCount} -> ${task.targetPlayer} [${task.status}]`);
+      log(`玩家 ${username} 查询任务概览`, { taskCount: st.tasks.length });
       bot.whisper(username, `> 备货任务：${lines.join(' | ')}${st.tasks.length > 3 ? ` | 另有 ${st.tasks.length - 3} 个` : ''}`);
     },
   });
@@ -1280,6 +1521,7 @@ module.exports = (context) => {
     execute: (username, args) => {
       const id = Number(args[0]);
       if (!Number.isInteger(id) || id <= 0) return bot.whisper(username, '> 用法: !deliverstock <任务ID>');
+      log(`玩家 ${username} 手动交付任务`, { id });
       deliverTask(id, `command:${username}`)
         .then((task) => bot.whisper(username, `> 任务 #${task.id} 已交付给 ${task.targetPlayer}。`))
         .catch((err) => bot.whisper(username, `> 交付失败: ${err.message}`));
@@ -1303,8 +1545,10 @@ module.exports = (context) => {
 
   if (!st.stock.timer) {
     st.stock.timer = setInterval(() => {
+      log('触发定时仓库扫描');
       scanWarehouseInventory('timer').catch((err) => {
         st.stock.lastError = err.message;
+        errorLog(`定时仓库扫描失败: ${err.message}`);
       });
     }, 10 * 60 * 1000);
     if (typeof st.stock.timer.unref === 'function') st.stock.timer.unref();
